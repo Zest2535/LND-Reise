@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="g2" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#2b5876"/>
+      <stop offset="100%" stop-color="#4e4376"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#g2)" />
+  <text x="50%" y="50%" font-family="Poppins, Arial, sans-serif" font-size="72" fill="#fff" text-anchor="middle" alignment-baseline="middle">Dubai</text>
+  <text x="50%" y="60%" font-family="Poppins, Arial, sans-serif" font-size="28" fill="#fff" text-anchor="middle">Moderne Metropole & Wüstenabenteuer</text>
+</svg>
