@@ -112,7 +112,7 @@ function showOfferDetails(offerId) {
   modal.querySelector('#offerModalLongText').textContent = offer.longText;
   modal.querySelector('#offerModalPrice').textContent = offer.price;
   modal.querySelector('#offerModalDuration').textContent = offer.duration;
-  modal.querySelector('#offerModalBook').href = 'formular.html?offer=' + encodeURIComponent(offerId);
+  modal.querySelector('#offerModalBook').href = 'buchung.html?offer=' + encodeURIComponent(offerId);
   if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
     new bootstrap.Modal(modal).show();
   }

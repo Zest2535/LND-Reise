@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LND-Reisen Admin - Konten</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1 id="panelTitle">LND-Reisen - Panel</h1>
+        <small class="text-muted" id="userInfo">Lade...</small>
+      </div>
+      <button class="btn btn-danger" onclick="logout()">Abmelden</button>
+    </div>
+    
+    <button class="btn btn-primary mb-3" onclick="loadBuchungen()">Aktualisieren</button>
+
+    <table class="table table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Vorname</th>
+          <th>Nachname</th>
+          <th>E-Mail</th>
+          <th>Passwort</th>
+          <th>Bundesland</th>
+          <th>Datum</th>
+          <th>Rolle</th>
+          <th>Aktionen</th>
+        </tr>
+      </thead>
+      <tbody id="buchungenTable">
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">Kundendetails</h5>
+      </div>
+      <div class="card-body" id="kundenDetails">
+        <p class="text-muted">Wählen Sie einen Kunden aus, um dessen Buchungen zu sehen.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Admin-Zugang prüfen
+    const adminAccess = localStorage.getItem('adminAccess');
+    if (!adminAccess) {
+      window.location.href = 'admin-login.html';
+    }
+    
+    // Benutzertyp bestimmen
+    const isSuperAdmin = adminAccess === 'superadmin';
+    const currentAdminUser = JSON.parse(localStorage.getItem('currentAdminUser') || 'null');
+    const isAdmin = isSuperAdmin;
+    const isModerator = !isSuperAdmin;
+    
+    function loadBuchungen() {
+      const tbody = document.getElementById('buchungenTable');
+      const konten = JSON.parse(localStorage.getItem('konten') || '[]');
+      
+      if (konten.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center">Keine Konten vorhanden</td></tr>';
+        return;
+      }
+      
+      tbody.innerHTML = konten.map(k => `
+        <tr>
+          <td>${k.id}</td>
+          <td>${k.firstName}</td>
+          <td>${k.lastName}</td>
+          <td>${k.email}</td>
+          <td>${k.password}</td>
+          <td>${k.state}</td>
+          <td>${k.datum}</td>
+          <td>
+            ${isAdmin ? `
+            <select class="form-select form-select-sm" onchange="changeRole('${k.email}', this.value)">
+              <option value="user" ${!k.role || k.role === 'user' ? 'selected' : ''}>Benutzer</option>
+              <option value="admin" ${k.role === 'admin' ? 'selected' : ''}>Admin</option>
+              <option value="moderator" ${k.role === 'moderator' ? 'selected' : ''}>Moderator</option>
+            </select>
+            ` : `<span class="badge bg-${k.role === 'admin' ? 'danger' : k.role === 'moderator' ? 'warning' : 'secondary'}">${k.role === 'admin' ? 'Admin' : k.role === 'moderator' ? 'Moderator' : 'Benutzer'}</span>`}
+          </td>
+          <td><button class="btn btn-sm btn-primary" onclick="showKundeBuchungen('${k.email}')">Buchungen</button></td>
+        </tr>
+      `).join('');
+    }
+    
+    function changeRole(email, newRole) {
+      const konten = JSON.parse(localStorage.getItem('konten') || '[]');
+      const kundeIndex = konten.findIndex(k => k.email === email);
+      
+      if (kundeIndex !== -1) {
+        konten[kundeIndex].role = newRole;
+        localStorage.setItem('konten', JSON.stringify(konten));
+        
+        // Aktualisiere currentUser falls es der gleiche Benutzer ist
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        if (currentUser && currentUser.email === email) {
+          currentUser.role = newRole;
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+        
+        loadBuchungen();
+      }
+    }
+    
+    function logout() {
+      localStorage.removeItem('adminAccess');
+      localStorage.removeItem('currentAdminUser');
+      window.location.href = 'startseite.html';
+    }
+    
+    function showKundeBuchungen(email) {
+      const buchungen = JSON.parse(localStorage.getItem('buchungen_' + email) || '[]');
+      const konten = JSON.parse(localStorage.getItem('konten') || '[]');
+      const kunde = konten.find(k => k.email === email);
+      
+      let content = `<h4>Buchungen von ${kunde.firstName} ${kunde.lastName}</h4>`;
+      
+      if (buchungen.length === 0) {
+        content += '<p>Keine Buchungen vorhanden</p>';
+      } else {
+        content += '<table class="table table-sm">';
+        content += '<tr><th>Angebot</th><th>Datum</th><th>Personen</th><th>Telefon</th><th>Status</th></tr>';
+        buchungen.forEach(b => {
+          content += `<tr>
+            <td>${b.angebot}</td>
+            <td>${b.reisedatum}</td>
+            <td>${b.personen}</td>
+            <td>${b.telefon || '-'}</td>
+            <td><span class="badge bg-success">${b.status}</span></td>
+          </tr>`;
+        });
+        content += '</table>';
+      }
+      
+      document.getElementById('kundenDetails').innerHTML = content;
+    }
+
+    function clearAll() {
+      if (!isAdmin) {
+        alert('Nur Admins können Daten löschen!');
+        return;
+      }
+      if (confirm('Alle Konten löschen?')) {
+        localStorage.removeItem('konten');
+        localStorage.removeItem('currentUser');
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('buchungen_')) {
+            localStorage.removeItem(key);
+          }
+        });
+        loadBuchungen();
+      }
+    }
+
+    // UI aktualisieren
+    document.getElementById('panelTitle').textContent = `LND-Reisen - ${isAdmin ? 'Super Admin' : 'Moderator'} Panel`;
+    const userName = isSuperAdmin ? 'Super Administrator' : (currentAdminUser ? currentAdminUser.firstName + ' ' + currentAdminUser.lastName : 'Unbekannt');
+    document.getElementById('userInfo').textContent = `Angemeldet als: ${userName} (${isAdmin ? 'Super Admin' : 'Moderator'})`;
+    
+    // Lösch-Button hinzufügen falls Admin
+    if (isAdmin) {
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'btn btn-danger mb-3 ms-2';
+      deleteBtn.textContent = 'Alle löschen';
+      deleteBtn.onclick = clearAll;
+      document.querySelector('.btn-primary').after(deleteBtn);
+    }
+    
+    loadBuchungen();
+  </script>
+</body>
+</html>
