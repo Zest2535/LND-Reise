@@ -18,17 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const firstName = document.getElementById("firstName").value.trim();
     const lastName = document.getElementById("lastName").value.trim();
     const email = document.getElementById("email").value.trim();
-    const city = document.getElementById("city").value.trim();
+    const password = document.getElementById("password").value.trim();
     const state = document.getElementById("state").value;
-    const zip = document.getElementById("zip").value.trim();
     const terms = document.getElementById("terms").checked;
 
     if (firstName === "") showError("firstName", "Bitte gib deinen Vornamen ein.");
     if (lastName === "") showError("lastName", "Bitte gib deinen Nachnamen ein.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) showError("email", "Bitte gib eine gültige E-Mail-Adresse ein.");
-    if (city === "") showError("city", "Bitte gib deine Stadt ein.");
+    if (password.length < 6) showError("password", "Passwort muss mindestens 6 Zeichen haben.");
     if (state === "") showError("state", "Bitte wähle ein Bundesland aus.");
-    if (!/^[0-9]{4,5}$/.test(zip)) showError("zip", "Bitte gib eine gültige PLZ ein (4–5 Zahlen).");
     if (!terms) {
       const termsLabel = document.querySelector('label[for="terms"]');
       const wrapper = document.createElement("div");
@@ -39,11 +37,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (valid) {
+      // Konto erstellen
+      const konto = {
+        id: Date.now(),
+        firstName,
+        lastName,
+        email,
+        password,
+        state,
+        role: 'user', // Standard-Rolle
+        offer: new URLSearchParams(window.location.search).get('offer'),
+        datum: new Date().toLocaleString('de-DE')
+      };
+
+      // In localStorage speichern
+      let konten = JSON.parse(localStorage.getItem('konten') || '[]');
+      konten.push(konto);
+      localStorage.setItem('konten', JSON.stringify(konten));
+      
+      console.log('Neues Konto erstellt:', konto);
+      console.log('Alle Konten:', konten);
+
       const success = document.createElement("div");
-      success.textContent = "✅ Formular erfolgreich abgeschickt!";
+      success.textContent = "✅ Konto erfolgreich erstellt!";
       success.className = "success-message";
       form.appendChild(success);
       form.reset();
+      
+      alert('Konto erstellt! Konten: ' + konten.length);
     }
   });
 
