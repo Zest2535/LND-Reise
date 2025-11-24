@@ -6,7 +6,7 @@ function updateNavigation() {
     // Benutzer ist angemeldet - zeige Profil
     navbarNav.innerHTML = `
       <li class="nav-item">
-        <a class="nav-link" href="startseite.html">Startseite</a>
+        <a class="nav-link" href="index.html">Startseite</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#angebote">Angebote</a>
@@ -48,7 +48,7 @@ function updateNavigation() {
     // Benutzer ist nicht angemeldet - zeige Login/Register
     navbarNav.innerHTML = `
       <li class="nav-item">
-        <a class="nav-link" href="startseite.html">Startseite</a>
+        <a class="nav-link" href="index.html">Startseite</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#angebote">Angebote</a>
@@ -73,7 +73,7 @@ function showProfile() {
 
 function logout() {
   localStorage.removeItem('currentUser');
-  window.location.href = 'startseite.html';
+  window.location.href = 'index.html';
 }
 
 
