@@ -1,0 +1,229 @@
+127.0.0.1 - - [24/Nov/2025 16:11:22] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:11:22] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:22] "GET /img/Thailand.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:22] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:22] "GET /img/Malediven.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:22] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:22] "GET /img/kyoto.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:22] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:22] "GET /img/Island.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:22] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:22] "GET /img/New%20York.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:22] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:22] "GET /img/Lissabon.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:23] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:11:23] "GET / HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:11:24] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:24] "GET /img/Thailand.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:24] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:24] "GET /img/Malediven.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:24] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:24] "GET /img/kyoto.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:24] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:24] "GET /img/Island.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:24] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:24] "GET /img/New%20York.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:24] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:24] "GET /img/Lissabon.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:24] "GET /formular.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:11:24] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:24] "GET /styleStartseite.css HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:24] "GET /formular.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:11:25] "GET /formular.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:11:26] "GET /login.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:11:26] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:26] "GET /styleStartseite.css HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:27] "GET /login.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:11:27] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:27] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:27] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:27] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:31] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:31] "GET /styleStartseite.css HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:32] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:32] "GET /styleStartseite.css HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:32] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:32] "GET /styleStartseite.css HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:33] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:33] "GET /styleStartseite.css HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:34] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:34] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:34] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:34] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:40] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:40] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:40] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:40] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:41] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:41] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:42] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:42] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:46] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:46] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:46] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:46] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:47] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:47] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:47] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:11:47] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:11:51] "GET /img/dubai.svg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:11:51] "GET /img/New%20York.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:11:55] "GET /img/dubai.svg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:11:58] "GET /img/edinburgh.svg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:12:00] "GET /img/sydney.svg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:12:00] "GET /img/Lissabon.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:12:02] "GET /img/bali.svg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:12:02] "GET /img/Thailand.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:12:32] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:12:33] "GET /img/Thailand.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:33] "GET /img/kyoto.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:12:33] "GET /img/Island.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:12:33] "GET /img/Lissabon.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:33] "GET /img/Paris.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:12:33] "GET /img/santorini.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:12:36] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:12:36] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:12:36] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:12:36] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:12:41] "GET / HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:41] "GET /img/Thailand.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:41] "GET /img/kyoto.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:41] "GET /img/Lissabon.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:41] "GET /img/Paris.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:41] "GET /img/santorini.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:41] "GET /img/Island.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:47] "HEAD /img/santorini.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:12:56] "GET / HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:57] "GET /img/Thailand.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:57] "GET /img/kyoto.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:57] "GET /img/Island.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:57] "GET /img/Paris.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:57] "GET /img/santorini.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:12:57] "GET /img/Lissabon.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:13:03] "GET /img/bali.svg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:13:05] "GET /img/barcelona.svg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:13:59] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:16:23] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:16:26] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:16:26] "GET /img/Thailand.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:16:26] "GET /img/kyoto.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:16:26] "GET /img/Island.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:16:26] "GET /img/Lissabon.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:16:27] "GET /img/Paris.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:16:27] "GET /img/santorini.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:16:28] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:28] "GET /styleStartseite.css HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:29] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:29] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:29] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:29] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:32] "GET /img/santorini.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:16:34] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:34] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:35] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:35] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:43] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:43] "GET /styleStartseite.css HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:49] "GET /formular.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:16:50] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:50] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:51] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:51] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:52] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:52] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:52] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:52] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:52] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:52] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:54] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:54] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:54] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:54] "GET /startseite.html HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:54] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:54] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:57] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:57] "GET /styleStartseite.css HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:16:59] "GET /login.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:16:59] "GET /styleIndex.css HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:16:59] "GET /nav.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:16:59] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:16:59] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:17:00] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:17:00] "GET /img/kyoto.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:17:00] "GET /img/Island.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:17:00] "GET /img/Thailand.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:17:00] "GET /img/Paris.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:17:00] "GET /img/Lissabon.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:17:00] "GET /img/Malediven.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:17:00] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:17:01] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:17:01] "GET /styleIndex.css HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:17:01] "GET /nav.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:17:01] "GET /index.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:17:01] "GET /img/kyoto.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:17:01] "GET /img/Malediven.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:17:01] "GET /img/Island.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:17:01] "GET /img/Thailand.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:17:01] "GET /img/Paris.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:17:01] "GET /img/Lissabon.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:17:01] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:17:01] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:17:03] "GET /img/sydney.svg HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:20:26] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:20:26] "GET /styleIndex.css HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:20:26] "GET /nav.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:20:26] "GET /index.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:20:27] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:20:27] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:20:27] "GET /index.html HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:21:53] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:21:56] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:21:57] "GET /styleIndex.css HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:21:57] "GET /nav.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:21:57] "GET /index.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:21:57] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:21:57] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:21:57] "GET /index.html HTTP/1.1" 304 -
+127.0.0.1 - - [24/Nov/2025 16:21:58] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:21:58] "GET /styleIndex.css HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:21:58] "GET /nav.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:21:58] "GET /index.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:21:59] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:21:59] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:21:59] "GET /index.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:04] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:04] "GET /styleIndex.css HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:04] "GET /nav.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:04] "GET /index.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:05] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:22:05] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:22:07] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:07] "GET /styleIndex.css HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:07] "GET /nav.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:07] "GET /index.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:07] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:22:07] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:22:11] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:11] "GET /styleIndex.css HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:11] "GET /nav.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:11] "GET /index.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:12] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:22:12] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:22:12] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:12] "GET /styleIndex.css HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:12] "GET /nav.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:12] "GET /index.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:13] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:22:13] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:22:13] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:13] "GET /styleIndex.css HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:13] "GET /nav.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:13] "GET /index.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:14] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:22:14] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [24/Nov/2025 16:22:15] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:15] "GET /styleIndex.css HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:15] "GET /nav.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:15] "GET /index.js HTTP/1.1" 200 -
+127.0.0.1 - - [24/Nov/2025 16:22:15] code 404, message File not found
+127.0.0.1 - - [24/Nov/2025 16:22:15] "GET /favicon.ico HTTP/1.1" 404 -
