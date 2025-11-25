@@ -280,20 +280,68 @@ document.querySelectorAll('img').forEach(img => {
 });
 
 let reiseendePicker = null;
+let reisebeginnPicker = null;
+
+function calculateDuration() {
+  const beginn = reisebeginnPicker?.selectedDates[0];
+  const ende = reiseendePicker?.selectedDates[0];
+  if (beginn && ende && ende >= beginn) {
+    const diff = Math.ceil((ende - beginn) / (1000 * 60 * 60 * 24));
+    const dauerInput = document.getElementById('dauer-input');
+    const unitBtn = document.getElementById('dauer-unit');
+    const unit = unitBtn?.getAttribute('data-selected') || 'tage';
+    
+    if (unit === 'wochen') {
+      dauerInput.value = Math.round(diff / 7);
+    } else if (unit === 'monate') {
+      dauerInput.value = Math.round(diff / 30);
+    } else {
+      dauerInput.value = diff;
+    }
+  }
+}
+
+function calculateEndDate() {
+  const beginn = reisebeginnPicker?.selectedDates[0];
+  const dauerInput = document.getElementById('dauer-input');
+  const dauer = parseInt(dauerInput?.value);
+  const unitBtn = document.getElementById('dauer-unit');
+  const unit = unitBtn?.getAttribute('data-selected') || 'tage';
+  
+  if (beginn && dauer > 0) {
+    let days = dauer;
+    if (unit === 'wochen') days = dauer * 7;
+    else if (unit === 'monate') days = dauer * 30;
+    
+    const ende = new Date(beginn);
+    ende.setDate(ende.getDate() + days);
+    reiseendePicker?.setDate(ende);
+  }
+}
+
 if (typeof flatpickr === 'function') {
-  flatpickr("#reisebeginn", {
+  reisebeginnPicker = flatpickr("#reisebeginn", {
     dateFormat: "d.m.Y",
     locale: "de",
     minDate: "today",
     onChange: function(selectedDates, dateStr) {
       if (reiseendePicker) reiseendePicker.set('minDate', dateStr);
+      const dauerInput = document.getElementById('dauer-input');
+      if (dauerInput?.value) calculateEndDate();
+      else calculateDuration();
     }
   });
   reiseendePicker = flatpickr("#reiseende", {
     dateFormat: "d.m.Y",
     locale: "de",
-    minDate: "today"
+    minDate: "today",
+    onChange: calculateDuration
   });
+  
+  const dauerInput = document.getElementById('dauer-input');
+  if (dauerInput) {
+    dauerInput.addEventListener('input', calculateEndDate);
+  }
 }
 
 document.querySelectorAll('.dropdown-item').forEach(item => {
@@ -304,6 +352,7 @@ document.querySelectorAll('.dropdown-item').forEach(item => {
     if (button) {
       button.textContent = this.textContent;
       button.setAttribute('data-selected', value);
+      calculateDuration();
     }
   });
 });
@@ -388,6 +437,65 @@ function initAutocomplete() {
   document.addEventListener('click', function(e) {
     if (e.target !== input) list.style.display = 'none';
   });
+}
+
+function initMainReviews() {
+  const mainReviews = JSON.parse(localStorage.getItem('mainReviews') || '[]');
+  const stars = document.querySelectorAll('.rating-input-main i');
+  let selectedRating = 0;
+  
+  stars.forEach(star => {
+    star.onclick = () => {
+      selectedRating = parseInt(star.getAttribute('data-rating'));
+      stars.forEach((s, i) => {
+        s.className = i < selectedRating ? 'bi bi-star-fill text-warning' : 'bi bi-star';
+      });
+    };
+  });
+  
+  document.getElementById('submitReviewMain').onclick = () => {
+    const name = document.getElementById('reviewName').value.trim();
+    const text = document.getElementById('reviewTextMain').value.trim();
+    if (selectedRating === 0) return alert('Bitte wählen Sie eine Bewertung');
+    if (!name) return alert('Bitte geben Sie Ihren Namen ein');
+    if (!text) return alert('Bitte schreiben Sie eine Bewertung');
+    
+    mainReviews.push({ rating: selectedRating, name, text, date: new Date().toLocaleDateString('de-DE') });
+    localStorage.setItem('mainReviews', JSON.stringify(mainReviews));
+    
+    document.getElementById('reviewName').value = '';
+    document.getElementById('reviewTextMain').value = '';
+    selectedRating = 0;
+    stars.forEach(s => s.className = 'bi bi-star');
+    displayMainReviews();
+  };
+  
+  displayMainReviews();
+}
+
+function displayMainReviews() {
+  const reviews = JSON.parse(localStorage.getItem('mainReviews') || '[]');
+  const listEl = document.getElementById('reviewsListMain');
+  
+  if (reviews.length === 0) {
+    listEl.innerHTML = '<p class="text-center text-muted">Noch keine Bewertungen vorhanden</p>';
+    return;
+  }
+  
+  listEl.innerHTML = reviews.slice().reverse().map(r => `
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h6 class="mb-1">${r.name}</h6>
+            <div class="text-warning mb-2">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+          </div>
+          <small class="text-muted">${r.date}</small>
+        </div>
+        <p class="mb-0">${r.text}</p>
+      </div>
+    </div>
+  `).join('');
 }
 
 document.addEventListener('DOMContentLoaded', function() {
