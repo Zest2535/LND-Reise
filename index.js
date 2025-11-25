@@ -102,9 +102,12 @@ function renderOffers(options = { count: 6 }) {
   });
 }
 
+let currentBookingOffer = null;
+
 function showOfferDetails(offerId) {
   const offer = offersData.find(o => o.id === offerId);
   if (!offer) return;
+  currentBookingOffer = offer;
   const modal = document.getElementById('offerDetailsModal');
   if (!modal) return;
   modal.querySelector('#offerModalImage').src = offer.img.startsWith('http') ? offer.img : 'img/' + offer.img;
@@ -112,10 +115,36 @@ function showOfferDetails(offerId) {
   modal.querySelector('#offerModalLongText').textContent = offer.longText;
   modal.querySelector('#offerModalPrice').textContent = offer.price;
   modal.querySelector('#offerModalDuration').textContent = offer.duration;
-  modal.querySelector('#offerModalBook').href = 'buchung.html?offer=' + encodeURIComponent(offerId);
+  
+  const bookBtn = modal.querySelector('#offerModalBook');
+  bookBtn.onclick = function() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+      bootstrap.Modal.getInstance(modal).hide();
+      new bootstrap.Modal(document.getElementById('loginModal')).show();
+      return;
+    }
+    bootstrap.Modal.getInstance(modal).hide();
+    openBookingModal(offer);
+  };
+  
   if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
     new bootstrap.Modal(modal).show();
   }
+}
+
+function openBookingModal(offer) {
+  const modal = document.getElementById('bookingModal');
+  document.getElementById('bookingOfferDetails').innerHTML = `
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">${offer.title}</h5>
+        <p class="mb-1"><strong>Preis:</strong> ${offer.price}</p>
+        <p class="mb-0"><strong>Dauer:</strong> ${offer.duration}</p>
+      </div>
+    </div>
+  `;
+  new bootstrap.Modal(modal).show();
 }
 
 function renderDestinations(options = { count: 8 }) {
@@ -366,4 +395,72 @@ document.addEventListener('DOMContentLoaded', function() {
   initDestinationFilters();
   renderOffers();
   renderDestinations();
+  initModals();
 });
+
+function initModals() {
+  document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const konten = JSON.parse(localStorage.getItem('konten') || '[]');
+    const konto = konten.find(k => k.email === email && k.password === password);
+    
+    if (konto) {
+      localStorage.setItem('currentUser', JSON.stringify(konto));
+      bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+      updateNavigation();
+      alert('✅ Erfolgreich angemeldet!');
+    } else {
+      alert('❌ E-Mail oder Passwort falsch!');
+    }
+  });
+
+  document.getElementById('registerForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const konto = {
+      id: Date.now(),
+      firstName: document.getElementById('regFirstName').value,
+      lastName: document.getElementById('regLastName').value,
+      email: document.getElementById('regEmail').value,
+      password: document.getElementById('regPassword').value,
+      state: document.getElementById('regState').value,
+      role: 'user',
+      datum: new Date().toLocaleString('de-DE')
+    };
+    
+    let konten = JSON.parse(localStorage.getItem('konten') || '[]');
+    konten.push(konto);
+    localStorage.setItem('konten', JSON.stringify(konten));
+    
+    bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
+    alert('✅ Konto erfolgreich erstellt!');
+    this.reset();
+  });
+
+  document.getElementById('bookingForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || !currentBookingOffer) return;
+    
+    const buchung = {
+      id: Date.now(),
+      angebot: currentBookingOffer.title,
+      preis: currentBookingOffer.price,
+      dauer: currentBookingOffer.duration,
+      reisedatum: document.getElementById('bookingDate').value,
+      personen: document.getElementById('bookingPersons').value,
+      telefon: document.getElementById('bookingPhone').value,
+      buchungsdatum: new Date().toLocaleString('de-DE'),
+      status: 'Bestätigt'
+    };
+    
+    let buchungen = JSON.parse(localStorage.getItem('buchungen_' + currentUser.email) || '[]');
+    buchungen.push(buchung);
+    localStorage.setItem('buchungen_' + currentUser.email, JSON.stringify(buchungen));
+    
+    bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();
+    alert('✅ Buchung erfolgreich!');
+    this.reset();
+  });
+}
