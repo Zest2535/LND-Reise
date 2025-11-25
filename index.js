@@ -113,6 +113,7 @@ function showOfferDetails(offerId) {
   modal.querySelector('#offerModalPrice').textContent = offer.price;
   modal.querySelector('#offerModalDuration').textContent = offer.duration;
   modal.querySelector('#offerModalBook').href = 'buchung.html?offer=' + encodeURIComponent(offerId);
+  
   if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
     new bootstrap.Modal(modal).show();
   }
@@ -410,9 +411,69 @@ function initAutocomplete() {
   });
 }
 
+function initMainReviews() {
+  const mainReviews = JSON.parse(localStorage.getItem('mainReviews') || '[]');
+  const stars = document.querySelectorAll('.rating-input-main i');
+  let selectedRating = 0;
+  
+  stars.forEach(star => {
+    star.onclick = () => {
+      selectedRating = parseInt(star.getAttribute('data-rating'));
+      stars.forEach((s, i) => {
+        s.className = i < selectedRating ? 'bi bi-star-fill text-warning' : 'bi bi-star';
+      });
+    };
+  });
+  
+  document.getElementById('submitReviewMain').onclick = () => {
+    const name = document.getElementById('reviewName').value.trim();
+    const text = document.getElementById('reviewTextMain').value.trim();
+    if (selectedRating === 0) return alert('Bitte wählen Sie eine Bewertung');
+    if (!name) return alert('Bitte geben Sie Ihren Namen ein');
+    if (!text) return alert('Bitte schreiben Sie eine Bewertung');
+    
+    mainReviews.push({ rating: selectedRating, name, text, date: new Date().toLocaleDateString('de-DE') });
+    localStorage.setItem('mainReviews', JSON.stringify(mainReviews));
+    
+    document.getElementById('reviewName').value = '';
+    document.getElementById('reviewTextMain').value = '';
+    selectedRating = 0;
+    stars.forEach(s => s.className = 'bi bi-star');
+    displayMainReviews();
+  };
+  
+  displayMainReviews();
+}
+
+function displayMainReviews() {
+  const reviews = JSON.parse(localStorage.getItem('mainReviews') || '[]');
+  const listEl = document.getElementById('reviewsListMain');
+  
+  if (reviews.length === 0) {
+    listEl.innerHTML = '<p class="text-center text-muted">Noch keine Bewertungen vorhanden</p>';
+    return;
+  }
+  
+  listEl.innerHTML = reviews.slice().reverse().map(r => `
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h6 class="mb-1">${r.name}</h6>
+            <div class="text-warning mb-2">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+          </div>
+          <small class="text-muted">${r.date}</small>
+        </div>
+        <p class="mb-0">${r.text}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   initAutocomplete();
   initDestinationFilters();
   renderOffers();
   renderDestinations();
+  initMainReviews();
 });
