@@ -251,20 +251,68 @@ document.querySelectorAll('img').forEach(img => {
 });
 
 let reiseendePicker = null;
+let reisebeginnPicker = null;
+
+function calculateDuration() {
+  const beginn = reisebeginnPicker?.selectedDates[0];
+  const ende = reiseendePicker?.selectedDates[0];
+  if (beginn && ende && ende >= beginn) {
+    const diff = Math.ceil((ende - beginn) / (1000 * 60 * 60 * 24));
+    const dauerInput = document.getElementById('dauer-input');
+    const unitBtn = document.getElementById('dauer-unit');
+    const unit = unitBtn?.getAttribute('data-selected') || 'tage';
+    
+    if (unit === 'wochen') {
+      dauerInput.value = Math.round(diff / 7);
+    } else if (unit === 'monate') {
+      dauerInput.value = Math.round(diff / 30);
+    } else {
+      dauerInput.value = diff;
+    }
+  }
+}
+
+function calculateEndDate() {
+  const beginn = reisebeginnPicker?.selectedDates[0];
+  const dauerInput = document.getElementById('dauer-input');
+  const dauer = parseInt(dauerInput?.value);
+  const unitBtn = document.getElementById('dauer-unit');
+  const unit = unitBtn?.getAttribute('data-selected') || 'tage';
+  
+  if (beginn && dauer > 0) {
+    let days = dauer;
+    if (unit === 'wochen') days = dauer * 7;
+    else if (unit === 'monate') days = dauer * 30;
+    
+    const ende = new Date(beginn);
+    ende.setDate(ende.getDate() + days);
+    reiseendePicker?.setDate(ende);
+  }
+}
+
 if (typeof flatpickr === 'function') {
-  flatpickr("#reisebeginn", {
+  reisebeginnPicker = flatpickr("#reisebeginn", {
     dateFormat: "d.m.Y",
     locale: "de",
     minDate: "today",
     onChange: function(selectedDates, dateStr) {
       if (reiseendePicker) reiseendePicker.set('minDate', dateStr);
+      const dauerInput = document.getElementById('dauer-input');
+      if (dauerInput?.value) calculateEndDate();
+      else calculateDuration();
     }
   });
   reiseendePicker = flatpickr("#reiseende", {
     dateFormat: "d.m.Y",
     locale: "de",
-    minDate: "today"
+    minDate: "today",
+    onChange: calculateDuration
   });
+  
+  const dauerInput = document.getElementById('dauer-input');
+  if (dauerInput) {
+    dauerInput.addEventListener('input', calculateEndDate);
+  }
 }
 
 document.querySelectorAll('.dropdown-item').forEach(item => {
@@ -275,6 +323,7 @@ document.querySelectorAll('.dropdown-item').forEach(item => {
     if (button) {
       button.textContent = this.textContent;
       button.setAttribute('data-selected', value);
+      calculateDuration();
     }
   });
 });
