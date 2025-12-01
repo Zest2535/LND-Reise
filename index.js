@@ -279,95 +279,25 @@ document.querySelectorAll('img').forEach(img => {
   if (img.complete) img.classList.add('loaded');
 });
 
-let reiseendePicker = null;
-let reisebeginnPicker = null;
-
-function calculateDuration() {
-  const beginn = reisebeginnPicker?.selectedDates[0];
-  const ende = reiseendePicker?.selectedDates[0];
-  if (beginn && ende && ende >= beginn) {
-    const diff = Math.ceil((ende - beginn) / (1000 * 60 * 60 * 24));
-    const dauerInput = document.getElementById('dauer-input');
-    const unitBtn = document.getElementById('dauer-unit');
-    const unit = unitBtn?.getAttribute('data-selected') || 'tage';
+const searchBtn = document.querySelector('.btn-search');
+if (searchBtn) {
+  searchBtn.addEventListener('click', function() {
+    const destination = document.getElementById('destination-search')?.value;
+    const abflug = document.getElementById('abflughafen')?.value;
+    const personen = document.getElementById('personen')?.value;
+    const datum = document.getElementById('reisedatum')?.value;
     
-    if (unit === 'wochen') {
-      dauerInput.value = Math.round(diff / 7);
-    } else if (unit === 'monate') {
-      dauerInput.value = Math.round(diff / 30);
-    } else {
-      dauerInput.value = diff;
+    if (!destination) {
+      alert('Bitte geben Sie ein Reiseziel ein');
+      return;
     }
-  }
-}
-
-function calculateEndDate() {
-  const beginn = reisebeginnPicker?.selectedDates[0];
-  const dauerInput = document.getElementById('dauer-input');
-  const dauer = parseInt(dauerInput?.value);
-  const unitBtn = document.getElementById('dauer-unit');
-  const unit = unitBtn?.getAttribute('data-selected') || 'tage';
-  
-  if (beginn && dauer > 0) {
-    let days = dauer;
-    if (unit === 'wochen') days = dauer * 7;
-    else if (unit === 'monate') days = dauer * 30;
     
-    const ende = new Date(beginn);
-    ende.setDate(ende.getDate() + days);
-    reiseendePicker?.setDate(ende);
-  }
-}
-
-if (typeof flatpickr === 'function') {
-  reisebeginnPicker = flatpickr("#reisebeginn", {
-    dateFormat: "d.m.Y",
-    locale: "de",
-    minDate: "today",
-    onChange: function(selectedDates, dateStr) {
-      if (reiseendePicker) reiseendePicker.set('minDate', dateStr);
-      const dauerInput = document.getElementById('dauer-input');
-      if (dauerInput?.value) calculateEndDate();
-      else calculateDuration();
-    }
-  });
-  reiseendePicker = flatpickr("#reiseende", {
-    dateFormat: "d.m.Y",
-    locale: "de",
-    minDate: "today",
-    onChange: calculateDuration
-  });
-  
-  const dauerInput = document.getElementById('dauer-input');
-  if (dauerInput) {
-    dauerInput.addEventListener('input', calculateEndDate);
-  }
-}
-
-document.querySelectorAll('.dropdown-item').forEach(item => {
-  item.addEventListener('click', function(e) {
-    e.preventDefault();
-    const value = this.getAttribute('data-value');
-    const button = document.getElementById('dauer-unit');
-    if (button) {
-      button.textContent = this.textContent;
-      button.setAttribute('data-selected', value);
-      calculateDuration();
-    }
-  });
-});
-
-const resetBtn = document.querySelector('.btn-reset');
-if (resetBtn) {
-  resetBtn.addEventListener('click', function() {
-    document.querySelectorAll('.search-row input').forEach(input => input.value = '');
-    if (typeof flatpickr === 'function') flatpickr("#reisebeginn").clear();
-    if (reiseendePicker) reiseendePicker.clear();
-    const button = document.getElementById('dauer-unit');
-    if (button) {
-      button.textContent = 'Tage';
-      button.setAttribute('data-selected', 'tage');
-    }
+    const params = new URLSearchParams();
+    if (destination) params.set('destination', destination);
+    if (abflug) params.set('airport', abflug);
+    if (datum) params.set('date', datum);
+    
+    window.location.href = 'angebote.html?' + params.toString();
   });
 }
 
@@ -398,6 +328,9 @@ function initAutocomplete() {
   const input = document.getElementById('destination-search');
   const list = document.getElementById('autocomplete-list');
   if (!input || !list) return;
+  
+  const allDestinations = destinationsDB.concat(['Paris', 'London', 'Rom', 'Barcelona', 'Amsterdam', 'Berlin', 'Wien', 'Prag', 'Budapest', 'Krakau', 'Lissabon', 'Madrid', 'Athen', 'Istanbul', 'Dubai', 'Bangkok', 'Tokio', 'New York', 'Los Angeles', 'Miami', 'Cancun', 'Rio de Janeiro', 'Buenos Aires', 'Sydney', 'Melbourne', 'Bali', 'Singapur', 'Hongkong', 'Malediven', 'Mauritius', 'Seychellen', 'Sansibar', 'Kapstadt', 'Marrakesch', 'Kairo', 'Jerusalem', 'Reykjavik', 'Oslo', 'Stockholm', 'Kopenhagen', 'Helsinki', 'Tallinn', 'Riga', 'Warschau', 'Moskau', 'St. Petersburg', 'Dubrovnik', 'Split', 'Santorini', 'Mykonos']);
+  
   input.addEventListener('input', function() {
     const value = this.value.toLowerCase();
     list.innerHTML = '';
@@ -405,7 +338,7 @@ function initAutocomplete() {
       list.style.display = 'none';
       return;
     }
-    const matches = destinationsDB.filter(item => item.toLowerCase().includes(value)).slice(0, 8);
+    const matches = allDestinations.filter(item => item.toLowerCase().includes(value)).slice(0, 8);
     if (matches.length > 0) {
       matches.forEach(match => {
         const div = document.createElement('div');
@@ -444,21 +377,43 @@ function initMainReviews() {
   const stars = document.querySelectorAll('.rating-input-main i');
   let selectedRating = 0;
   
-  stars.forEach(star => {
-    star.onclick = () => {
-      selectedRating = parseInt(star.getAttribute('data-rating'));
+  stars.forEach((star, index) => {
+    star.addEventListener('mouseenter', () => {
+      stars.forEach((s, i) => {
+        s.className = i <= index ? 'bi bi-star-fill text-warning active' : 'bi bi-star';
+      });
+    });
+    
+    star.addEventListener('click', () => {
+      selectedRating = index + 1;
       stars.forEach((s, i) => {
         s.className = i < selectedRating ? 'bi bi-star-fill text-warning' : 'bi bi-star';
       });
-    };
+    });
   });
   
-  document.getElementById('submitReviewMain').onclick = () => {
+  document.querySelector('.rating-input-main')?.addEventListener('mouseleave', () => {
+    stars.forEach((s, i) => {
+      s.className = i < selectedRating ? 'bi bi-star-fill text-warning' : 'bi bi-star';
+    });
+  });
+  
+  document.getElementById('submitReviewMain')?.addEventListener('click', () => {
     const name = document.getElementById('reviewName').value.trim();
     const text = document.getElementById('reviewTextMain').value.trim();
-    if (selectedRating === 0) return alert('Bitte wählen Sie eine Bewertung');
-    if (!name) return alert('Bitte geben Sie Ihren Namen ein');
-    if (!text) return alert('Bitte schreiben Sie eine Bewertung');
+    
+    if (selectedRating === 0) {
+      alert('⭐ Bitte wählen Sie eine Bewertung');
+      return;
+    }
+    if (!name) {
+      alert('👤 Bitte geben Sie Ihren Namen ein');
+      return;
+    }
+    if (!text) {
+      alert('✍️ Bitte schreiben Sie eine Bewertung');
+      return;
+    }
     
     mainReviews.push({ rating: selectedRating, name, text, date: new Date().toLocaleDateString('de-DE') });
     localStorage.setItem('mainReviews', JSON.stringify(mainReviews));
@@ -467,8 +422,10 @@ function initMainReviews() {
     document.getElementById('reviewTextMain').value = '';
     selectedRating = 0;
     stars.forEach(s => s.className = 'bi bi-star');
+    
+    alert('✅ Vielen Dank für Ihre Bewertung!');
     displayMainReviews();
-  };
+  });
   
   displayMainReviews();
 }
@@ -498,18 +455,134 @@ function displayMainReviews() {
   `).join('');
 }
 
+function updateNavigation() {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  const navLogin = document.getElementById('navLogin');
+  const navRegister = document.getElementById('navRegister');
+  const navUser = document.getElementById('navUser');
+  const navUserName = document.getElementById('navUserName');
+  
+  if (currentUser) {
+    navLogin.style.display = 'none';
+    navRegister.style.display = 'none';
+    navUser.style.display = 'block';
+    navUserName.textContent = currentUser.firstName;
+  } else {
+    navLogin.style.display = 'block';
+    navRegister.style.display = 'block';
+    navUser.style.display = 'none';
+  }
+}
+
+function showProfile() {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser) return;
+  
+  const initials = currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0);
+  document.getElementById('profileAvatar').textContent = initials;
+  document.getElementById('profileFullName').textContent = currentUser.firstName + ' ' + currentUser.lastName;
+  document.getElementById('profileEmail').textContent = currentUser.email;
+  document.getElementById('profileFirstName').textContent = currentUser.firstName;
+  document.getElementById('profileLastName').textContent = currentUser.lastName;
+  document.getElementById('profileDatum').textContent = currentUser.datum || 'Nicht verfügbar';
+  
+  const buchungen = JSON.parse(localStorage.getItem('buchungen_' + currentUser.email) || '[]');
+  const buchungenEl = document.getElementById('profileBuchungen');
+  
+  if (buchungen.length === 0) {
+    buchungenEl.innerHTML = '<p class="text-muted">Noch keine Buchungen vorhanden</p>';
+  } else {
+    buchungenEl.innerHTML = buchungen.map(b => `
+      <div class="card mb-2">
+        <div class="card-body p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="mb-1">${b.angebot}</h6>
+              <small class="text-muted">${b.reisedatum} • ${b.personen} Person(en) • ${b.preis}</small>
+            </div>
+            <span class="badge bg-success">${b.status}</span>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  new bootstrap.Modal(document.getElementById('profileModal')).show();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   initAutocomplete();
   initDestinationFilters();
   renderOffers();
   renderDestinations();
   initModals();
+  initMainReviews();
+  updateNavigation();
+  
+  const today = new Date().toISOString().split('T')[0];
+  const dateInput = document.getElementById('reisedatum');
+  if (dateInput) dateInput.min = today;
+  
+  document.getElementById('showProfile')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    showProfile();
+  });
+  
+  document.getElementById('navLogout')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    localStorage.removeItem('currentUser');
+    updateNavigation();
+    
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification success';
+    toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Erfolgreich abgemeldet!';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 100);
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  });
 });
 
 function initModals() {
+  const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+  const toggleRegPassword = document.getElementById('toggleRegPassword');
+  
+  toggleLoginPassword?.addEventListener('click', function() {
+    const input = document.getElementById('loginPassword');
+    const icon = this.querySelector('i');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.className = 'bi bi-eye-slash';
+    } else {
+      input.type = 'password';
+      icon.className = 'bi bi-eye';
+    }
+  });
+  
+  toggleRegPassword?.addEventListener('click', function() {
+    const input = document.getElementById('regPassword');
+    const icon = this.querySelector('i');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.className = 'bi bi-eye-slash';
+    } else {
+      input.type = 'password';
+      icon.className = 'bi bi-eye';
+    }
+  });
+  
   document.getElementById('loginForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
+    
+    if (!this.checkValidity()) {
+      e.stopPropagation();
+      this.classList.add('was-validated');
+      return;
+    }
+    
+    const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
     const konten = JSON.parse(localStorage.getItem('konten') || '[]');
     const konto = konten.find(k => k.email === email && k.password === password);
@@ -517,39 +590,115 @@ function initModals() {
     if (konto) {
       localStorage.setItem('currentUser', JSON.stringify(konto));
       bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+      this.reset();
+      this.classList.remove('was-validated');
+      
+      const toast = document.createElement('div');
+      toast.className = 'toast-notification success';
+      toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Willkommen zurück, ' + konto.firstName + '!';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+      
       updateNavigation();
-      alert('✅ Erfolgreich angemeldet!');
     } else {
-      alert('❌ E-Mail oder Passwort falsch!');
+      const emailInput = document.getElementById('loginEmail');
+      const passwordInput = document.getElementById('loginPassword');
+      emailInput.classList.add('is-invalid');
+      passwordInput.classList.add('is-invalid');
+      
+      const toast = document.createElement('div');
+      toast.className = 'toast-notification error';
+      toast.innerHTML = '<i class="bi bi-x-circle-fill me-2"></i>E-Mail oder Passwort falsch!';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
     }
   });
 
   document.getElementById('registerForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
+    
+    const password = document.getElementById('regPassword').value;
+    const passwordConfirm = document.getElementById('regPasswordConfirm').value;
+    const passwordConfirmInput = document.getElementById('regPasswordConfirm');
+    
+    if (password !== passwordConfirm) {
+      passwordConfirmInput.setCustomValidity('Passwörter stimmen nicht überein');
+    } else {
+      passwordConfirmInput.setCustomValidity('');
+    }
+    
+    if (!this.checkValidity()) {
+      e.stopPropagation();
+      this.classList.add('was-validated');
+      return;
+    }
+    
+    const email = document.getElementById('regEmail').value.trim();
+    const konten = JSON.parse(localStorage.getItem('konten') || '[]');
+    
+    if (konten.find(k => k.email === email)) {
+      const emailInput = document.getElementById('regEmail');
+      emailInput.setCustomValidity('E-Mail bereits registriert');
+      emailInput.classList.add('is-invalid');
+      
+      const toast = document.createElement('div');
+      toast.className = 'toast-notification error';
+      toast.innerHTML = '<i class="bi bi-x-circle-fill me-2"></i>Diese E-Mail ist bereits registriert!';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+      return;
+    }
+    
     const konto = {
       id: Date.now(),
-      firstName: document.getElementById('regFirstName').value,
-      lastName: document.getElementById('regLastName').value,
-      email: document.getElementById('regEmail').value,
-      password: document.getElementById('regPassword').value,
-      state: document.getElementById('regState').value,
+      firstName: document.getElementById('regFirstName').value.trim(),
+      lastName: document.getElementById('regLastName').value.trim(),
+      email: email,
+      password: password,
       role: 'user',
       datum: new Date().toLocaleString('de-DE')
     };
     
-    let konten = JSON.parse(localStorage.getItem('konten') || '[]');
     konten.push(konto);
     localStorage.setItem('konten', JSON.stringify(konten));
     
     bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
-    alert('✅ Konto erfolgreich erstellt!');
     this.reset();
+    this.classList.remove('was-validated');
+    
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification success';
+    toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Konto erfolgreich erstellt! Sie können sich jetzt anmelden.';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 100);
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 4000);
   });
 
   document.getElementById('bookingForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser || !currentBookingOffer) return;
+    
+    if (!this.checkValidity()) {
+      e.stopPropagation();
+      this.classList.add('was-validated');
+      return;
+    }
     
     const buchung = {
       id: Date.now(),
@@ -568,7 +717,17 @@ function initModals() {
     localStorage.setItem('buchungen_' + currentUser.email, JSON.stringify(buchungen));
     
     bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();
-    alert('✅ Buchung erfolgreich!');
     this.reset();
+    this.classList.remove('was-validated');
+    
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification success';
+    toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Buchung erfolgreich! Bestätigung per E-Mail folgt.';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 100);
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 4000);
   });
 }
