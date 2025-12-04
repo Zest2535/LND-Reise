@@ -424,7 +424,7 @@ function initMainReviews() {
     });
   });
   
-  document.getElementById('submitReviewMain')?.addEventListener('click', () => {
+  document.getElementById('submitReviewMain')?.addEventListener('click', async () => {
     const name = document.getElementById('reviewName').value.trim();
     const text = document.getElementById('reviewTextMain').value.trim();
     
@@ -441,16 +441,20 @@ function initMainReviews() {
       return;
     }
     
-    mainReviews.push({ rating: selectedRating, name, text, date: new Date().toLocaleDateString('de-DE') });
-    localStorage.setItem('mainReviews', JSON.stringify(mainReviews));
-    
-    document.getElementById('reviewName').value = '';
-    document.getElementById('reviewTextMain').value = '';
-    selectedRating = 0;
-    stars.forEach(s => s.className = 'bi bi-star');
-    
-    alert('✅ Vielen Dank für Ihre Bewertung!');
-    displayMainReviews();
+    try {
+      await DB.createReview('general', selectedRating, text, name);
+      
+      document.getElementById('reviewName').value = '';
+      document.getElementById('reviewTextMain').value = '';
+      selectedRating = 0;
+      stars.forEach(s => s.className = 'bi bi-star');
+      
+      alert('✅ Vielen Dank für Ihre Bewertung!');
+      displayMainReviews();
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      alert('❌ Fehler beim Senden der Bewertung');
+    }
   });
   
   displayMainReviews();
@@ -508,40 +512,108 @@ async function updateNavigation() {
   }
 }
 
-function showProfile() {
-  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-  if (!currentUser) return;
-  
-  const initials = currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0);
-  document.getElementById('profileAvatar').textContent = initials;
-  document.getElementById('profileFullName').textContent = currentUser.firstName + ' ' + currentUser.lastName;
-  document.getElementById('profileEmail').textContent = currentUser.email;
-  document.getElementById('profileFirstName').textContent = currentUser.firstName;
-  document.getElementById('profileLastName').textContent = currentUser.lastName;
-  document.getElementById('profileDatum').textContent = currentUser.datum || 'Nicht verfügbar';
-  
-  const buchungen = JSON.parse(localStorage.getItem('buchungen_' + currentUser.email) || '[]');
-  const buchungenEl = document.getElementById('profileBuchungen');
-  
-  if (buchungen.length === 0) {
-    buchungenEl.innerHTML = '<p class="text-muted">Noch keine Buchungen vorhanden</p>';
-  } else {
-    buchungenEl.innerHTML = buchungen.map(b => `
-      <div class="card mb-2">
-        <div class="card-body p-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h6 class="mb-1">${b.angebot}</h6>
-              <small class="text-muted">${b.reisedatum} • ${b.personen} Person(en) • ${b.preis}</small>
+async function showProfile() {
+  try {
+    const profile = await DB.getUserProfile();
+    if (!profile) return;
+    
+    const initials = profile.first_name.charAt(0) + profile.last_name.charAt(0);
+    document.getElementById('profileAvatar').textContent = initials;
+    document.getElementById('profileFullName').textContent = profile.first_name + ' ' + profile.last_name;
+    document.getElementById('profileEmail').textContent = profile.email;
+    document.getElementById('profileFirstName').textContent = profile.first_name;
+    document.getElementById('profileLastName').textContent = profile.last_name;
+    document.getElementById('profilePhone').textContent = profile.phone || 'Nicht angegeben';
+    document.getElementById('profileDatum').textContent = new Date(profile.created_at).toLocaleDateString('de-DE');
+    
+    // Fülle Bearbeitungsformular
+    document.getElementById('editFirstName').value = profile.first_name;
+    document.getElementById('editLastName').value = profile.last_name;
+    document.getElementById('editPhone').value = profile.phone || '';
+    document.getElementById('editBirthDate').value = profile.date_of_birth || '';
+    document.getElementById('editAddress').value = profile.address || '';
+    
+    const buchungen = await DB.getUserBookings();
+    const buchungenEl = document.getElementById('profileBuchungen');
+    
+    if (buchungen.length === 0) {
+      buchungenEl.innerHTML = '<p class="text-muted">Noch keine Buchungen vorhanden</p>';
+    } else {
+      buchungenEl.innerHTML = buchungen.map(b => `
+        <div class="card mb-2">
+          <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-1">${b.offers?.title || 'Unbekannt'}</h6>
+                <small class="text-muted">${new Date(b.travel_date).toLocaleDateString('de-DE')} • ${b.persons} Person(en)</small>
+              </div>
+              <span class="badge bg-success">${b.status}</span>
             </div>
-            <span class="badge bg-success">${b.status}</span>
           </div>
         </div>
-      </div>
-    `).join('');
+      `).join('');
+    }
+    
+    initProfileHandlers();
+    new bootstrap.Modal(document.getElementById('profileModal')).show();
+  } catch (error) {
+    console.error('Error loading profile:', error);
   }
+}
+
+function initProfileHandlers() {
+  document.getElementById('editProfileBtn')?.addEventListener('click', function() {
+    document.getElementById('profileView').style.display = 'none';
+    document.getElementById('profileEdit').style.display = 'block';
+    this.style.display = 'none';
+  });
   
-  new bootstrap.Modal(document.getElementById('profileModal')).show();
+  document.getElementById('cancelEditBtn')?.addEventListener('click', function() {
+    document.getElementById('profileView').style.display = 'block';
+    document.getElementById('profileEdit').style.display = 'none';
+    document.getElementById('editProfileBtn').style.display = 'block';
+  });
+  
+  document.getElementById('profileEditForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    try {
+      await DB.updateProfile({
+        first_name: document.getElementById('editFirstName').value,
+        last_name: document.getElementById('editLastName').value,
+        phone: document.getElementById('editPhone').value,
+        date_of_birth: document.getElementById('editBirthDate').value || null,
+        address: document.getElementById('editAddress').value
+      });
+      
+      alert('✅ Profil erfolgreich aktualisiert!');
+      showProfile(); // Neu laden
+    } catch (error) {
+      alert('❌ Fehler beim Speichern: ' + error.message);
+    }
+  });
+  
+  document.getElementById('changePasswordBtn')?.addEventListener('click', function() {
+    const newPassword = prompt('Neues Passwort eingeben (mindestens 6 Zeichen):');
+    if (newPassword && newPassword.length >= 6) {
+      DB.changePassword(newPassword)
+        .then(() => alert('✅ Passwort erfolgreich geändert!'))
+        .catch(error => alert('❌ Fehler: ' + error.message));
+    } else if (newPassword) {
+      alert('❌ Passwort muss mindestens 6 Zeichen haben');
+    }
+  });
+  
+  document.getElementById('resetPasswordBtn')?.addEventListener('click', async function() {
+    try {
+      const user = await DB.getUser();
+      if (user) {
+        await DB.resetPassword(user.email);
+        alert('✅ Passwort-Reset E-Mail gesendet!');
+      }
+    } catch (error) {
+      alert('❌ Fehler: ' + error.message);
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', function() {

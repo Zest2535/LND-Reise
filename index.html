@@ -425,27 +425,82 @@
               <p class="text-muted" id="profileEmail"></p>
             </div>
             <div class="col-md-8">
-              <h6 class="fw-bold mb-3">Persönliche Informationen</h6>
-              <div class="row g-3 mb-4">
-                <div class="col-6">
-                  <div class="p-3 bg-light rounded">
-                    <small class="text-muted">Vorname</small>
-                    <div class="fw-semibold" id="profileFirstName"></div>
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0">Persönliche Informationen</h6>
+                <button class="btn btn-sm btn-outline-primary" id="editProfileBtn">
+                  <i class="bi bi-pencil me-1"></i>Bearbeiten
+                </button>
+              </div>
+              
+              <div id="profileView">
+                <div class="row g-3 mb-4">
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Vorname</small>
+                      <div class="fw-semibold" id="profileFirstName"></div>
+                    </div>
                   </div>
-                </div>
-                <div class="col-6">
-                  <div class="p-3 bg-light rounded">
-                    <small class="text-muted">Nachname</small>
-                    <div class="fw-semibold" id="profileLastName"></div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Nachname</small>
+                      <div class="fw-semibold" id="profileLastName"></div>
+                    </div>
                   </div>
-                </div>
-                <div class="col-12">
-                  <div class="p-3 bg-light rounded">
-                    <small class="text-muted">Registriert seit</small>
-                    <div class="fw-semibold" id="profileDatum"></div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Telefon</small>
+                      <div class="fw-semibold" id="profilePhone">Nicht angegeben</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Registriert seit</small>
+                      <div class="fw-semibold" id="profileDatum"></div>
+                    </div>
                   </div>
                 </div>
               </div>
+              
+              <div id="profileEdit" style="display: none;">
+                <form id="profileEditForm">
+                  <div class="row g-3 mb-3">
+                    <div class="col-6">
+                      <label class="form-label">Vorname</label>
+                      <input type="text" class="form-control" id="editFirstName" required>
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Nachname</label>
+                      <input type="text" class="form-control" id="editLastName" required>
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Telefon</label>
+                      <input type="tel" class="form-control" id="editPhone">
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Geburtsdatum</label>
+                      <input type="date" class="form-control" id="editBirthDate">
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label">Adresse</label>
+                      <textarea class="form-control" id="editAddress" rows="2"></textarea>
+                    </div>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn">Abbrechen</button>
+                  </div>
+                </form>
+              </div>
+              
+              <div class="d-flex gap-2 mb-4">
+                <button class="btn btn-outline-warning btn-sm" id="changePasswordBtn">
+                  <i class="bi bi-key me-1"></i>Passwort ändern
+                </button>
+                <button class="btn btn-outline-info btn-sm" id="resetPasswordBtn">
+                  <i class="bi bi-arrow-clockwise me-1"></i>Passwort zurücksetzen
+                </button>
+              </div>
+              
               <h6 class="fw-bold mb-3">Meine Buchungen</h6>
               <div id="profileBuchungen"></div>
             </div>
@@ -588,6 +643,73 @@
       async getUser() {
         const { data: { user } } = await supabase.auth.getUser()
         return user
+      },
+      async getUserProfile() {
+        const user = await this.getUser()
+        if (!user) return null
+        const { data, error } = await supabase.from('customers').select('*').eq('id', user.id).single()
+        if (error) throw error
+        return data
+      },
+      async createBooking(offerId, travelDate, persons, phone) {
+        const user = await this.getUser()
+        if (!user) throw new Error('Nicht angemeldet')
+        
+        const { data, error } = await supabase.from('bookings').insert({
+          customer_id: user.id,
+          offer_id: offerId,
+          travel_date: travelDate,
+          persons: persons,
+          total_price: 0,
+          emergency_contact_phone: phone
+        })
+        if (error) throw error
+        return data
+      },
+      async getUserBookings() {
+        const user = await this.getUser()
+        if (!user) return []
+        const { data, error } = await supabase
+          .from('bookings')
+          .select('*, offers(title, price, duration)')
+          .eq('customer_id', user.id)
+        if (error) throw error
+        return data
+      },
+      async createReview(offerId, rating, comment, name) {
+        const { data, error } = await supabase.from('reviews').insert({
+          offer_id: offerId,
+          rating: rating,
+          comment: comment,
+          title: name
+        })
+        if (error) throw error
+        return data
+      },
+      async updateProfile(profileData) {
+        const user = await this.getUser()
+        if (!user) throw new Error('Nicht angemeldet')
+        
+        const { data, error } = await supabase
+          .from('customers')
+          .update(profileData)
+          .eq('id', user.id)
+        if (error) throw error
+        return data
+      },
+      async changePassword(newPassword) {
+        const { data, error } = await supabase.auth.updateUser({
+          password: newPassword
+        })
+        if (error) throw error
+        return data
+      },
+      async resetPassword(email) {
+        const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + '/reset-password.html'
+        })
+        if (error) throw error
+        return data
       }
     }
   </script>
