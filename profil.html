@@ -25,12 +25,31 @@
 <body>
   <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top">
     <div class="container">
-      <a class="navbar-brand fw-bold text-primary" href="#">LND-Reisen</a>
+      <a class="navbar-brand fw-bold text-primary" href="index.html">LND-Reisen</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto"></ul>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Startseite</a>
+          </li>
+          <li class="nav-item" id="navRegister">
+            <a class="nav-link" href="index.html#registerModal">Registrieren</a>
+          </li>
+          <li class="nav-item" id="navLogin">
+            <a class="nav-link" href="index.html#loginModal">Anmelden</a>
+          </li>
+          <li class="nav-item dropdown" id="navUser" style="display: none;">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle"></i> <span id="navUserName"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person me-2"></i>Mein Profil</a></li>
+              <li><a class="dropdown-item" href="#" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i>Abmelden</a></li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </div>
   </nav>
@@ -134,12 +153,11 @@
       }
     }
     
-    document.addEventListener('DOMContentLoaded', async function() {
+    async function loadProfile() {
       try {
         const profile = await DB.getUserProfile();
-        
         if (!profile) {
-          window.location.href = 'index.html';
+          document.getElementById('fullName').textContent = 'Profil wird geladen...';
           return;
         }
         
@@ -172,9 +190,36 @@
         }
       } catch (error) {
         console.error('Error:', error);
-        window.location.href = 'index.html';
+        document.getElementById('fullName').textContent = 'Fehler beim Laden';
       }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(loadProfile, 500);
+      setTimeout(updateNavigation, 100);
     });
+    
+    // Navigation Funktion für Profilseite
+    async function updateNavigation() {
+      const navUser = document.getElementById('navUser');
+      const navLogin = document.getElementById('navLogin');
+      const navRegister = document.getElementById('navRegister');
+      const navUserName = document.getElementById('navUserName');
+      
+      try {
+        const user = await DB.getUser();
+        const profile = user ? await DB.getUserProfile() : null;
+        
+        if (user && profile) {
+          if (navLogin) navLogin.style.display = 'none';
+          if (navRegister) navRegister.style.display = 'none';
+          if (navUser) navUser.style.display = 'block';
+          if (navUserName) navUserName.textContent = profile.first_name + ' ' + profile.last_name;
+        }
+      } catch (error) {
+        console.error('Navigation error:', error);
+      }
+    }
     
     async function logout() {
       await DB.signOut();
