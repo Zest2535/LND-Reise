@@ -572,63 +572,26 @@
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFlY2Rld3h4enF1ZGxlcGxhbXB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4MjQ1OTcsImV4cCI6MjA4MDQwMDU5N30.3Z02Aaw7oYl12cVNHuvjbAOYIkWZ7kbM6WmdQZvaM3U";
     const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
     
-    // Тестовый запрос к базе данных
-    async function testDB() {
-      try {
-        const { data, error } = await supabase.from('destinations').select('*').limit(5)
-        if (error) throw error
-        console.log('Destinations:', data)
-        
-        const { data: offers, error: offersError } = await supabase.from('offers').select('*').limit(3)
-        if (offersError) throw offersError
-        console.log('Offers:', offers)
-      } catch (err) {
-        console.error('Database error:', err)
-      }
-    }
-    
-    // Запускаем тест при загрузке страницы
-    testDB()
-    
     window.DB = {
-      async getDestinations() {
-        const { data, error } = await supabase.from('destinations').select('*')
-        if (error) throw error
-        return data
-      },
-      async getOffers() {
-        const { data, error } = await supabase.from('offers').select('*')
-        if (error) throw error
-        return data
-      },
-      async createBooking(booking) {
-        const { data, error } = await supabase.from('bookings').insert([booking])
+      async getTours() {
+        const { data, error } = await supabase.from('tours').select('*')
         if (error) throw error
         return data
       },
       async signUp(email, password, firstName, lastName) {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { first_name: firstName, last_name: lastName }
-          }
-        })
+        const { data, error } = await supabase.auth.signUp({ email, password })
         if (error) throw error
         
-        // Создаем профиль в customers
         if (data.user) {
           const { error: profileError } = await supabase
             .from('customers')
             .insert({
-              id: data.user.id,
               email: email,
-              first_name: firstName,
-              last_name: lastName
+              firstname: firstName,
+              lastname: lastName
             })
           if (profileError) console.error('Profile creation error:', profileError)
         }
-        
         return data
       },
       async signIn(email, password) {
@@ -647,67 +610,40 @@
       async getUserProfile() {
         const user = await this.getUser()
         if (!user) return null
-        const { data, error } = await supabase.from('customers').select('*').eq('id', user.id).single()
+        const { data, error } = await supabase.from('customers').select('*').eq('email', user.email).single()
         if (error) throw error
         return data
       },
-      async createBooking(offerId, travelDate, persons, phone) {
-        const user = await this.getUser()
-        if (!user) throw new Error('Nicht angemeldet')
+      async createBooking(tourId, status = 'confirmed') {
+        const profile = await this.getUserProfile()
+        if (!profile) throw new Error('Nicht angemeldet')
         
         const { data, error } = await supabase.from('bookings').insert({
-          customer_id: user.id,
-          offer_id: offerId,
-          travel_date: travelDate,
-          persons: persons,
-          total_price: 0,
-          emergency_contact_phone: phone
+          client_id: profile.id,
+          tour_id: tourId,
+          status: status
         })
         if (error) throw error
         return data
       },
       async getUserBookings() {
-        const user = await this.getUser()
-        if (!user) return []
+        const profile = await this.getUserProfile()
+        if (!profile) return []
         const { data, error } = await supabase
           .from('bookings')
-          .select('*, offers(title, price, duration)')
-          .eq('customer_id', user.id)
-        if (error) throw error
-        return data
-      },
-      async createReview(offerId, rating, comment, name) {
-        const { data, error } = await supabase.from('reviews').insert({
-          offer_id: offerId,
-          rating: rating,
-          comment: comment,
-          title: name
-        })
+          .select('*, tours(title, price, destination, start_date, end_date)')
+          .eq('client_id', profile.id)
         if (error) throw error
         return data
       },
       async updateProfile(profileData) {
-        const user = await this.getUser()
-        if (!user) throw new Error('Nicht angemeldet')
+        const profile = await this.getUserProfile()
+        if (!profile) throw new Error('Nicht angemeldet')
         
         const { data, error } = await supabase
           .from('customers')
           .update(profileData)
-          .eq('id', user.id)
-        if (error) throw error
-        return data
-      },
-      async changePassword(newPassword) {
-        const { data, error } = await supabase.auth.updateUser({
-          password: newPassword
-        })
-        if (error) throw error
-        return data
-      },
-      async resetPassword(email) {
-        const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: window.location.origin + '/reset-password.html'
-        })
+          .eq('id', profile.id)
         if (error) throw error
         return data
       }

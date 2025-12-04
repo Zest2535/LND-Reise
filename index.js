@@ -84,32 +84,31 @@ async function renderOffers(options = { count: 6 }) {
   if (!container) return;
   
   try {
-    const offers = await DB.getOffers();
-    console.log('Loaded offers:', offers);
+    const tours = await DB.getTours();
     
-    if (!offers || offers.length === 0) {
+    if (!tours || tours.length === 0) {
       container.innerHTML = '<p class="text-center">Keine Angebote verfügbar</p>';
       return;
     }
     
-    const count = Math.min(options.count || 6, offers.length);
+    const count = Math.min(options.count || 6, tours.length);
     let html = '';
     
     for (let i = 0; i < count; i++) {
-      const o = offers[i];
-      const imgUrl = o.image_url || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop';
-      console.log(`Offer ${i}:`, o.title, 'Image:', imgUrl);
+      const t = tours[i];
+      const imgUrl = t.img || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop';
+      const price = t.price ? `€${t.price}` : 'Preis auf Anfrage';
       
       html += `
         <div class="col-lg-4 col-md-6 mb-4">
           <div class="angebot-card">
-            <img src="${imgUrl}" loading="lazy" class="card-img-top" alt="${o.title}">
+            <img src="${imgUrl}" loading="lazy" class="card-img-top" alt="${t.title}">
             <div class="card-body d-flex flex-column">
-              <h5 class="card-title">${o.title}</h5>
-              <p class="card-text">${o.description}</p>
+              <h5 class="card-title">${t.title}</h5>
+              <p class="card-text">${t.description || t.destination}</p>
               <div class="d-flex justify-content-between align-items-center mt-auto">
-                <span class="fw-bold text-primary">${o.price}</span>
-                <button class="btn btn-primary" data-offer-id="${o.id}">Details</button>
+                <span class="fw-bold text-primary">${price}</span>
+                <button class="btn btn-primary" data-tour-id="${t.tour_id}">Buchen</button>
               </div>
             </div>
           </div>
@@ -118,14 +117,25 @@ async function renderOffers(options = { count: 6 }) {
     }
     container.innerHTML = html;
     
-    container.querySelectorAll('button[data-offer-id]').forEach(btn => {
-      btn.addEventListener('click', function(ev) {
+    container.querySelectorAll('button[data-tour-id]').forEach(btn => {
+      btn.addEventListener('click', async function(ev) {
         ev.preventDefault();
-        showOfferDetails(this.getAttribute('data-offer-id'));
+        const tourId = this.getAttribute('data-tour-id');
+        const user = await DB.getUser();
+        if (!user) {
+          new bootstrap.Modal(document.getElementById('loginModal')).show();
+          return;
+        }
+        try {
+          await DB.createBooking(tourId);
+          alert('✅ Buchung erfolgreich!');
+        } catch (error) {
+          alert('❌ Fehler: ' + error.message);
+        }
       });
     });
   } catch (error) {
-    console.error('Error loading offers:', error);
+    console.error('Error loading tours:', error);
     container.innerHTML = '<p class="text-center">Fehler beim Laden der Angebote</p>';
   }
 }
@@ -539,18 +549,18 @@ async function showProfile() {
     const profile = await DB.getUserProfile();
     if (!profile) return;
     
-    const initials = profile.first_name.charAt(0) + profile.last_name.charAt(0);
+    const initials = profile.firstname.charAt(0) + profile.lastname.charAt(0);
     document.getElementById('profileAvatar').textContent = initials;
-    document.getElementById('profileFullName').textContent = profile.first_name + ' ' + profile.last_name;
+    document.getElementById('profileFullName').textContent = profile.firstname + ' ' + profile.lastname;
     document.getElementById('profileEmail').textContent = profile.email;
-    document.getElementById('profileFirstName').textContent = profile.first_name;
-    document.getElementById('profileLastName').textContent = profile.last_name;
+    document.getElementById('profileFirstName').textContent = profile.firstname;
+    document.getElementById('profileLastName').textContent = profile.lastname;
     document.getElementById('profilePhone').textContent = profile.phone || 'Nicht angegeben';
     document.getElementById('profileDatum').textContent = new Date(profile.created_at).toLocaleDateString('de-DE');
     
     // Fülle Bearbeitungsformular
-    document.getElementById('editFirstName').value = profile.first_name;
-    document.getElementById('editLastName').value = profile.last_name;
+    document.getElementById('editFirstName').value = profile.firstname;
+    document.getElementById('editLastName').value = profile.lastname;
     document.getElementById('editPhone').value = profile.phone || '';
     document.getElementById('editBirthDate').value = profile.date_of_birth || '';
     document.getElementById('editAddress').value = profile.address || '';
@@ -566,8 +576,8 @@ async function showProfile() {
           <div class="card-body p-3">
             <div class="d-flex justify-content-between align-items-center">
               <div>
-                <h6 class="mb-1">${b.offers?.title || 'Unbekannt'}</h6>
-                <small class="text-muted">${new Date(b.travel_date).toLocaleDateString('de-DE')} • ${b.persons} Person(en)</small>
+                <h6 class="mb-1">${b.tours?.title || 'Unbekannt'}</h6>
+                <small class="text-muted">${b.tours?.destination || ''} • ${b.tours?.start_date ? new Date(b.tours.start_date).toLocaleDateString('de-DE') : ''}</small>
               </div>
               <span class="badge bg-success">${b.status}</span>
             </div>
@@ -600,11 +610,10 @@ function initProfileHandlers() {
     e.preventDefault();
     try {
       await DB.updateProfile({
-        first_name: document.getElementById('editFirstName').value,
-        last_name: document.getElementById('editLastName').value,
-        phone: document.getElementById('editPhone').value,
-        date_of_birth: document.getElementById('editBirthDate').value || null,
-        address: document.getElementById('editAddress').value
+        firstname: document.getElementById('editFirstName').value,
+        lastname: document.getElementById('editLastName').value,
+        address: document.getElementById('editAddress').value,
+        date_of_birth: document.getElementById('editBirthDate').value || null
       });
       
       alert('✅ Profil erfolgreich aktualisiert!');

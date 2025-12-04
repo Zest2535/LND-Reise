@@ -15,7 +15,7 @@ async function updateNavigation() {
       navRegister.style.display = 'none';
       navUser.style.display = 'block';
       if (navUserName) {
-        navUserName.textContent = profile.first_name + ' ' + profile.last_name;
+        navUserName.textContent = profile.firstname + ' ' + profile.lastname;
       }
     } else {
       navLogin.style.display = 'block';
