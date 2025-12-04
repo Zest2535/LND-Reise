@@ -100,50 +100,87 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="nav.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-      
-      if (!currentUser) {
-        window.location.href = 'login.html';
-        return;
+    const supabaseUrl = "https://aecdewxxzqudleplampt.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFlY2Rld3h4enF1ZGxlcGxhbXB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4MjQ1OTcsImV4cCI6MjA4MDQwMDU5N30.3Z02Aaw7oYl12cVNHuvjbAOYIkWZ7kbM6WmdQZvaM3U";
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    
+    window.DB = {
+      async getUser() {
+        const { data: { user } } = await supabase.auth.getUser()
+        return user
+      },
+      async getUserProfile() {
+        const user = await this.getUser()
+        if (!user) return null
+        const { data, error } = await supabase.from('customers').select('*').eq('id', user.id).single()
+        if (error) throw error
+        return data
+      },
+      async getUserBookings() {
+        const user = await this.getUser()
+        if (!user) return []
+        const { data, error } = await supabase
+          .from('bookings')
+          .select('*, offers(title, price, duration)')
+          .eq('customer_id', user.id)
+        if (error) throw error
+        return data
+      },
+      async signOut() {
+        const { error } = await supabase.auth.signOut()
+        if (error) throw error
       }
-      
-      const initials = currentUser.firstName.charAt(0) + currentUser.lastName.charAt(0);
-      document.getElementById('avatar').textContent = initials;
-      document.getElementById('fullName').textContent = currentUser.firstName + ' ' + currentUser.lastName;
-      document.getElementById('emailDisplay').textContent = currentUser.email;
-      document.getElementById('firstName').textContent = currentUser.firstName;
-      document.getElementById('lastName').textContent = currentUser.lastName;
-      document.getElementById('datum').textContent = currentUser.datum || 'Nicht verfügbar';
-      
-      // Buchungen laden
-      const buchungen = JSON.parse(localStorage.getItem('buchungen_' + currentUser.email) || '[]');
-      const buchungenListe = document.getElementById('buchungenListe');
-      
-      if (buchungen.length === 0) {
-        buchungenListe.innerHTML = '<p class="text-muted">Noch keine Buchungen vorhanden</p>';
-      } else {
-        buchungenListe.innerHTML = buchungen.map(b => `
-          <div class="stat-card card p-3 mb-2">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <h6 class="text-white mb-1">${b.angebot}</h6>
-                <small class="text-white-50">${b.reisedatum} • ${b.personen} Person(en) • ${b.preis}</small>
-                ${b.telefon ? `<br><small class="text-white-50">Tel: ${b.telefon}</small>` : ''}
+    }
+    
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        const profile = await DB.getUserProfile();
+        
+        if (!profile) {
+          window.location.href = 'index.html';
+          return;
+        }
+        
+        const initials = profile.first_name.charAt(0) + profile.last_name.charAt(0);
+        document.getElementById('avatar').textContent = initials;
+        document.getElementById('fullName').textContent = profile.first_name + ' ' + profile.last_name;
+        document.getElementById('emailDisplay').textContent = profile.email;
+        document.getElementById('firstName').textContent = profile.first_name;
+        document.getElementById('lastName').textContent = profile.last_name;
+        document.getElementById('datum').textContent = new Date(profile.created_at).toLocaleDateString('de-DE');
+        
+        const buchungen = await DB.getUserBookings();
+        const buchungenListe = document.getElementById('buchungenListe');
+        
+        if (buchungen.length === 0) {
+          buchungenListe.innerHTML = '<p class="text-muted">Noch keine Buchungen vorhanden</p>';
+        } else {
+          buchungenListe.innerHTML = buchungen.map(b => `
+            <div class="stat-card card p-3 mb-2">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-white mb-1">${b.offers?.title || 'Unbekannt'}</h6>
+                  <small class="text-white-50">${new Date(b.travel_date).toLocaleDateString('de-DE')} • ${b.persons} Person(en)</small>
+                  ${b.emergency_contact_phone ? `<br><small class="text-white-50">Tel: ${b.emergency_contact_phone}</small>` : ''}
+                </div>
+                <span class="badge bg-success">${b.status || 'Bestätigt'}</span>
               </div>
-              <span class="badge bg-success">${b.status}</span>
             </div>
-          </div>
-        `).join('');
+          `).join('');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        window.location.href = 'index.html';
       }
     });
     
-    function logout() {
-      localStorage.removeItem('currentUser');
+    async function logout() {
+      await DB.signOut();
       window.location.href = 'index.html';
     }
   </script>
+  <script src="nav.js"></script>
 </body>
 </html>

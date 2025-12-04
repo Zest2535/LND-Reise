@@ -85,15 +85,25 @@ async function renderOffers(options = { count: 6 }) {
   
   try {
     const offers = await DB.getOffers();
+    console.log('Loaded offers:', offers);
+    
+    if (!offers || offers.length === 0) {
+      container.innerHTML = '<p class="text-center">Keine Angebote verfügbar</p>';
+      return;
+    }
+    
     const count = Math.min(options.count || 6, offers.length);
     let html = '';
     
     for (let i = 0; i < count; i++) {
       const o = offers[i];
+      const imgUrl = o.image_url || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop';
+      console.log(`Offer ${i}:`, o.title, 'Image:', imgUrl);
+      
       html += `
         <div class="col-lg-4 col-md-6 mb-4">
           <div class="angebot-card">
-            <img src="${o.image_url}" loading="lazy" class="card-img-top" alt="${o.title}">
+            <img src="${imgUrl}" loading="lazy" class="card-img-top" alt="${o.title}">
             <div class="card-body d-flex flex-column">
               <h5 class="card-title">${o.title}</h5>
               <p class="card-text">${o.description}</p>
@@ -139,9 +149,9 @@ async function showOfferDetails(offerId) {
     modal.querySelector('#offerModalDuration').textContent = offer.duration;
     
     const bookBtn = modal.querySelector('#offerModalBook');
-    bookBtn.onclick = function() {
-      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-      if (!currentUser) {
+    bookBtn.onclick = async function() {
+      const user = await DB.getUser();
+      if (!user) {
         bootstrap.Modal.getInstance(modal).hide();
         new bootstrap.Modal(document.getElementById('loginModal')).show();
         return;
@@ -399,7 +409,6 @@ function initAutocomplete() {
 }
 
 function initMainReviews() {
-  const mainReviews = JSON.parse(localStorage.getItem('mainReviews') || '[]');
   const stars = document.querySelectorAll('.rating-input-main i');
   let selectedRating = 0;
   
@@ -460,29 +469,42 @@ function initMainReviews() {
   displayMainReviews();
 }
 
-function displayMainReviews() {
-  const reviews = JSON.parse(localStorage.getItem('mainReviews') || '[]');
+async function displayMainReviews() {
   const listEl = document.getElementById('reviewsListMain');
+  if (!listEl) return;
   
-  if (reviews.length === 0) {
-    listEl.innerHTML = '<p class="text-center text-muted">Noch keine Bewertungen vorhanden</p>';
-    return;
-  }
-  
-  listEl.innerHTML = reviews.slice().reverse().map(r => `
-    <div class="card mb-3">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-start">
-          <div>
-            <h6 class="mb-1">${r.name}</h6>
-            <div class="text-warning mb-2">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+  try {
+    const { data: reviews, error } = await window.supabase
+      .from('reviews')
+      .select('*')
+      .eq('offer_id', 'general')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    if (!reviews || reviews.length === 0) {
+      listEl.innerHTML = '<p class="text-center text-muted">Noch keine Bewertungen vorhanden</p>';
+      return;
+    }
+    
+    listEl.innerHTML = reviews.map(r => `
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h6 class="mb-1">${r.title || 'Anonym'}</h6>
+              <div class="text-warning mb-2">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+            </div>
+            <small class="text-muted">${new Date(r.created_at).toLocaleDateString('de-DE')}</small>
           </div>
-          <small class="text-muted">${r.date}</small>
+          <p class="mb-0">${r.comment}</p>
         </div>
-        <p class="mb-0">${r.text}</p>
       </div>
-    </div>
-  `).join('');
+    `).join('');
+  } catch (error) {
+    console.error('Error loading reviews:', error);
+    listEl.innerHTML = '<p class="text-center text-muted">Fehler beim Laden</p>';
+  }
 }
 
 async function updateNavigation() {
@@ -666,9 +688,9 @@ document.addEventListener('DOMContentLoaded', function() {
     showProfile();
   });
   
-  document.getElementById('navLogout')?.addEventListener('click', function(e) {
+  document.getElementById('navLogout')?.addEventListener('click', async function(e) {
     e.preventDefault();
-    localStorage.removeItem('currentUser');
+    await DB.signOut();
     updateNavigation();
     
     const toast = document.createElement('div');
@@ -806,10 +828,9 @@ function initModals() {
     }
   });
 
-  document.getElementById('bookingForm')?.addEventListener('submit', function(e) {
+  document.getElementById('bookingForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser || !currentBookingOffer) return;
+    if (!currentBookingOffer) return;
     
     if (!this.checkValidity()) {
       e.stopPropagation();
@@ -817,34 +838,29 @@ function initModals() {
       return;
     }
     
-    const buchung = {
-      id: Date.now(),
-      angebot: currentBookingOffer.title,
-      preis: currentBookingOffer.price,
-      dauer: currentBookingOffer.duration,
-      reisedatum: document.getElementById('bookingDate').value,
-      personen: document.getElementById('bookingPersons').value,
-      telefon: document.getElementById('bookingPhone').value,
-      buchungsdatum: new Date().toLocaleString('de-DE'),
-      status: 'Bestätigt'
-    };
-    
-    let buchungen = JSON.parse(localStorage.getItem('buchungen_' + currentUser.email) || '[]');
-    buchungen.push(buchung);
-    localStorage.setItem('buchungen_' + currentUser.email, JSON.stringify(buchungen));
-    
-    bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();
-    this.reset();
-    this.classList.remove('was-validated');
-    
-    const toast = document.createElement('div');
-    toast.className = 'toast-notification success';
-    toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Buchung erfolgreich! Bestätigung per E-Mail folgt.';
-    document.body.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 100);
-    setTimeout(() => {
-      toast.classList.remove('show');
-      setTimeout(() => toast.remove(), 300);
-    }, 4000);
+    try {
+      await DB.createBooking(
+        currentBookingOffer.id,
+        document.getElementById('bookingDate').value,
+        document.getElementById('bookingPersons').value,
+        document.getElementById('bookingPhone').value
+      );
+      
+      bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();
+      this.reset();
+      this.classList.remove('was-validated');
+      
+      const toast = document.createElement('div');
+      toast.className = 'toast-notification success';
+      toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Buchung erfolgreich!';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    } catch (error) {
+      alert('❌ Fehler: ' + error.message);
+    }
   });
 }
