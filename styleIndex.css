@@ -44,9 +44,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .navbar {
-  transition: top 0.3s ease;
+  transition: all 0.3s ease;
   padding: 1rem 0;
   border-bottom: 1px solid rgba(0,0,0,0.1);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.navbar.scrolled {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  padding: 0.5rem 0;
 }
 
 .navbar .nav-link {
@@ -65,16 +72,9 @@ h1, h2, h3, h4, h5, h6 {
   padding: 9rem 1rem;
   margin-top: -76px;
   overflow: hidden;
-  background-color: #000;
-}
-
-.hero-video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 .hero-overlay {
@@ -83,7 +83,7 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
+  background: linear-gradient(135deg, rgba(0, 123, 255, 0.7), rgba(0, 0, 0, 0.6));
   z-index: 1;
 }
 
@@ -92,20 +92,42 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 2;
 }
 
+.animate-fade-in {
+  animation: fadeInUp 1s ease;
+}
+
+.animate-fade-in-delay {
+  animation: fadeInUp 1s ease 0.3s both;
+}
+
+.animate-fade-in-delay-2 {
+  animation: fadeInUp 1s ease 0.6s both;
+}
+
 .search-strip {
   background: var(--gradient-primary);
-  border-radius: 44px;
+  border-radius: 20px;
   box-shadow: var(--shadow-medium);
-  padding: 1rem 2.5rem;
+  padding: 1.5rem;
   margin: 0 auto;
   max-width: 1200px;
 }
 
 .search-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
   align-items: center;
-  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .search-row {
+    grid-template-columns: 1fr;
+  }
+  .search-strip {
+    border-radius: 15px;
+    padding: 1rem;
+  }
 }
 
 .field.input-pill {
@@ -115,8 +137,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 999px;
   padding: 0.5rem 1rem;
   box-shadow: var(--shadow-light);
-  flex: 1;
-  min-width: 200px;
+  transition: all 0.3s ease;
 }
 
 .field.input-pill:focus-within {
@@ -175,80 +196,78 @@ h1, h2, h3, h4, h5, h6 {
   color: #007bff;
 }
 
-.date-group {
-  display: flex;
-  gap: 1rem;
-  flex: 1;
-  min-width: 400px;
-}
 
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
 
 .btn.btn-search {
-  background: var(--gradient-primary);
-  color: #fff;
+  background: #fff;
+  color: var(--primary-color);
   font-weight: 600;
   border-radius: 999px;
   border: none;
   box-shadow: var(--shadow-medium);
-  padding: 0.7rem 2.2rem;
+  padding: 0.75rem 2rem;
   font-size: 1.08rem;
-  min-width: 200px;
+  transition: all 0.3s ease;
+  width: 100%;
 }
 
 .btn.btn-search:hover {
-  background: var(--gradient-accent);
+  background: var(--accent-color);
+  color: #fff;
   transform: translateY(-2px);
-}
-
-.btn.btn-reset {
-  background: #f8f9fa;
-  color: var(--text-dark);
-  font-weight: 600;
-  border-radius: 999px;
-  border: 2px solid #e9ecef;
-  padding: 0.7rem 2.2rem;
-  font-size: 1.08rem;
-  min-width: 200px;
-}
-
-.btn.btn-reset:hover {
-  background: #e9ecef;
-  border-color: var(--secondary-color);
+  box-shadow: var(--shadow-heavy);
 }
 
 .angebot-card {
   background: #fff;
   border: none;
-  border-radius: 15px;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: var(--shadow-medium);
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: var(--shadow-light);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   height: 100%;
+  position: relative;
+}
+
+.angebot-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 123, 255, 0.1), rgba(102, 126, 234, 0.1));
+  opacity: 0;
+  transition: opacity 0.4s;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.angebot-card:hover::before {
+  opacity: 1;
 }
 
 .angebot-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-heavy);
+  transform: translateY(-15px) scale(1.03);
+  box-shadow: 0 25px 50px rgba(0,123,255,0.25);
 }
 
 .angebot-card .card-img-top {
   height: 200px;
   object-fit: cover;
-  transition: transform 0.3s;
+  transition: transform 0.6s ease;
+  position: relative;
 }
 
 .angebot-card:hover .card-img-top {
-  transform: scale(1.05);
+  transform: scale(1.1) rotate(1deg);
 }
 
 .angebot-card .card-body {
   padding: 1.5rem;
   min-height: 220px;
+  position: relative;
+  z-index: 2;
 }
 
 .angebot-card .btn {
@@ -269,6 +288,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 15px;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -290,18 +310,23 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 5;
 }
 
 .reiseziel-item span {
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  z-index: 1;
+  z-index: 10;
+  position: relative;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
 
 .reiseziel-item:hover span {
   transform: translateY(-5px);
+  transition: transform 0.3s;
 }
 
 .filter-btn {
@@ -368,15 +393,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 img {
-  transition: opacity 0.3s ease;
-}
-
-img.loaded {
   opacity: 1;
-}
-
-img:not(.loaded) {
-  opacity: 0;
 }
 
 .fade-in {
@@ -384,6 +401,428 @@ img:not(.loaded) {
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { 
+    opacity: 0; 
+    transform: translateY(40px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+.quick-search {
+  position: relative;
+  z-index: 10;
+  margin-top: -3rem;
+}
+
+@media (max-width: 576px) {
+  .quick-search {
+    margin-top: -2rem;
+  }
+}
+
+.toast-notification {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  transform: translateX(400px);
+  transition: transform 0.3s ease;
+  min-width: 300px;
+}
+
+.toast-notification.show {
+  transform: translateX(0);
+}
+
+.toast-notification.success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+}
+
+.toast-notification.error {
+  background: linear-gradient(135deg, #dc3545, #e74c3c);
+  color: white;
+}
+
+.modal-content {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.15);
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #dc3545;
+  background-image: none;
+}
+
+.form-check-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+  .toast-notification {
+    right: 10px;
+    left: 10px;
+    min-width: auto;
+  }
+}
+
+.rating-input-main {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.rating-input-main i {
+  font-size: 2rem;
+  color: #ddd;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.rating-input-main i:hover,
+.rating-input-main i.active {
+  color: #ffc107;
+  transform: scale(1.2) rotate(10deg);
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 5rem 1rem 4rem;
+    background-attachment: scroll;
+    margin-top: -76px;
+  }
+  
+  .hero h1 {
+    font-size: 2rem !important;
+  }
+  
+  .hero p {
+    font-size: 1rem;
+  }
+  
+  .section-title {
+    font-size: 1.75rem;
+  }
+  
+  .angebot-card .card-body {
+    min-height: auto;
+    padding: 1rem;
+  }
+  
+  .angebot-card .card-img-top {
+    height: 180px;
+  }
+  
+  .navbar-brand {
+    font-size: 1.25rem;
+  }
+  
+  .btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  .service-card {
+    margin-bottom: 1.5rem;
+  }
+  
+  .filter-group {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .filter-btn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .reiseziel-item {
+    height: 250px;
+  }
+  
+  .reiseziel-item span {
+    font-size: 1.25rem;
+  }
+}
+
+
+/* === Дополнительные улучшения === */
+
+/* Плавная прокрутка */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Улучшенные кнопки */
+.btn {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Улучшенные модальные окна */
+.modal-content {
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Улучшенные карточки услуг */
+.service-card {
+  transition: all 0.4s ease;
+  padding: 2rem;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.service-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0,123,255,0.2);
+}
+
+.service-card i {
+  transition: all 0.3s ease;
+}
+
+.service-card:hover i {
+  transform: scale(1.2) rotate(10deg);
+}
+
+/* Улучшенный footer */
+footer {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+}
+
+footer a {
+  transition: all 0.3s ease;
+}
+
+footer a:hover {
+  transform: translateY(-3px);
+  opacity: 0.8;
+}
+
+/* Пульсирующая анимация для важных элементов */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.btn-primary:hover {
+  animation: pulse 1s infinite;
+}
+
+/* Улучшенные тени при наведении */
+.card:hover,
+.angebot-card:hover,
+.info-card:hover {
+  box-shadow: 0 20px 60px rgba(0,123,255,0.25) !important;
+}
+
+/* Градиентный текст для заголовков */
+.section-title {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Улучшенная анимация загрузки изображений */
+img {
+  transition: opacity 0.5s ease, transform 0.3s ease;
+}
+
+img:not(.loaded) {
+  opacity: 0.5;
+}
+
+img.loaded {
+  opacity: 1;
+}
+
+/* Стили для мобильного меню */
+@media (max-width: 991px) {
+  .navbar-collapse {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    padding: 1rem;
+    border-radius: 15px;
+    margin-top: 1rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+  
+  .navbar-nav .nav-link {
+    padding: 0.75rem 1rem !important;
+    border-radius: 10px;
+    margin: 0.25rem 0;
+    transition: all 0.3s ease;
+  }
+  
+  .navbar-nav .nav-link:hover {
+    background: rgba(0,123,255,0.1);
+    transform: translateX(5px);
+  }
+}
+
+/* Улучшенные формы */
+.form-control:focus,
+.form-select:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,123,255,0.2);
+}
+
+/* Анимация для значков */
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.bi:hover {
+  animation: iconBounce 0.6s ease;
+}
+
+/* Улучшенные badge */
+.badge {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Стили для touch устройств */
+@media (hover: none) and (pointer: coarse) {
+  .angebot-card:active {
+    transform: scale(0.98);
+  }
+  
+  .btn:active {
+    transform: scale(0.95);
+  }
+  
+  .reiseziel-item:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Улучшенная типографика для мобильных */
+@media (max-width: 576px) {
+  body {
+    font-size: 0.95rem;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+  
+  h4 {
+    font-size: 1.1rem;
+  }
+  
+  .lead {
+    font-size: 1rem;
+  }
+}
+
+/* Скрытие элементов на очень маленьких экранах */
+@media (max-width: 375px) {
+  .hero {
+    padding: 4rem 0.75rem 3rem;
+  }
+  
+  .quick-search {
+    margin-top: -1.5rem;
+  }
+  
+  .search-strip {
+    padding: 1rem 0.75rem;
+  }
+}
+
+/* Улучшенные переходы для всех интерактивных элементов */
+a, button, input, select, textarea {
+  transition: all 0.3s ease;
+}
+
+/* Стили для accessibility */
+:focus-visible {
+  outline: 3px solid rgba(0,123,255,0.5);
+  outline-offset: 2px;
+}
+
+/* Улучшенный скроллбар для webkit браузеров */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
 }

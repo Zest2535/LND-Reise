@@ -20,11 +20,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Flatpickr for date picker -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 
   <!-- Eigene Styles -->
   <link rel="stylesheet" href="styleIndex.css">
+  <link rel="stylesheet" href="animations.css">
 </head>
 
 <body>
@@ -43,35 +43,43 @@
             <a class="nav-link active" aria-current="page" href="index.html">Startseite</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#angebote">Angebote</a>
+            <a class="nav-link" href="#angebote">Top-Angebote</a>
           </li>
-           <li class="nav-item">
+          <li class="nav-item">
+            <a class="nav-link" href="angebote.html">Alle Angebote</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="#reiseziele">Reiseziele</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="formular.html">Registrieren</a>
+          <li class="nav-item" id="navRegister">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#registerModal">Registrieren</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="login.html">Anmelden</a>
+          <li class="nav-item" id="navLogin">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Anmelden</a>
+          </li>
+          <li class="nav-item dropdown" id="navUser" style="display: none;">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle"></i> <span id="navUserName"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person me-2"></i>Mein Profil</a></li>
+              <li><a class="dropdown-item" href="#" id="navLogout"><i class="bi bi-box-arrow-right me-2"></i>Abmelden</a></li>
+            </ul>
           </li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- 🔹 HERO VIDEO -->
-  <header class="hero">
-    <video class="hero-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1600&q=80">
-      <source src="https://cdn.bunny.net/videos/travel_4k.mp4" type="video/mp4">
-      <source src="https://vod-progressive.akamaized.net/exp=1698480000~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F4482%2F14%2F371817311%2F1541905641.mp4~hmac=8f876f12c7f6c4c4d5c6e8c5d4c4b4a2/vimeo-prod-skyfire-std-us/01/4482/14/371817311/1541905641.mp4" type="video/mp4">
-    </video>
+  <!-- 🔹 HERO -->
+  <header class="hero" style="background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1920&q=80');">
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <div class="container">
         <div class="hero-text text-center">
-          <h1 class="display-4 fw-bold">Ihr Tor zur Welt</h1>
-          <p class="lead my-4">Entdecken Sie mit uns unvergessliche Reiseziele – komfortabel, zuverlässig und persönlich.</p>
-          <a href="formular.html" class="btn btn-primary btn-lg mt-3">Jetzt Traumreise planen</a>
+          <h1 class="display-4 fw-bold animate-fade-in">Ihr Tor zur Welt</h1>
+          <p class="lead my-4 animate-fade-in-delay">Entdecken Sie mit uns unvergessliche Reiseziele – komfortabel, zuverlässig und persönlich.</p>
+          <a href="#angebote" class="btn btn-primary btn-lg mt-3 animate-fade-in-delay-2">Jetzt Traumreise planen</a>
         </div>
       </div>
     </div>
@@ -85,58 +93,195 @@
           <div class="search-row">
             <div class="field input-pill" style="position: relative;">
               <i class="bi bi-search"></i>
-              <input type="text" class="form-control" id="destination-search" placeholder="Reiseziel, Hotel, Ort,..." autocomplete="off">
+              <input type="text" class="form-control" id="destination-search" placeholder="Reiseziel, Ort,..." autocomplete="off">
               <div id="autocomplete-list" class="autocomplete-list"></div>
             </div>
 
-            <div class="abflug-date-group">
-              <div class="field input-pill">
-                <i class="bi bi-funnel"></i>
-                <input type="text" class="form-control" placeholder="Abflughafen">
-              </div>
-            </div>
-
-            <div class="field input-pill duration-field">
-              <i class="bi bi-clock"></i>
-              <input type="number" class="form-control" id="dauer-input" min="1" max="30" placeholder="1">
-              <div class="dropdown">
-                <button class="btn dropdown-toggle duration-unit" type="button" id="dauer-unit" data-bs-toggle="dropdown" aria-expanded="false">
-                  Tage
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dauer-unit">
-                  <li><a class="dropdown-item" href="#" data-value="tage">Tage</a></li>
-                  <li><a class="dropdown-item" href="#" data-value="wochen">Wochen</a></li>
-                  <li><a class="dropdown-item" href="#" data-value="monate">Monate</a></li>
-                </ul>
-              </div>
+            <div class="field input-pill">
+              <i class="bi bi-airplane-fill"></i>
+              <select class="form-control" id="abflughafen" aria-label="Abflughafen">
+                <option value="">Abflughafen</option>
+                <option value="VIE">Wien</option>
+                <option value="SZG">Salzburg</option>
+                <option value="INN">Innsbruck</option>
+                <option value="GRZ">Graz</option>
+                <option value="LNZ">Linz</option>
+                <option value="KLU">Klagenfurt</option>
+              </select>
             </div>
 
             <div class="field input-pill">
               <i class="bi bi-people"></i>
-              <input type="text" class="form-control" placeholder="Reisende">
+              <input type="number" class="form-control" id="personen" min="1" max="10" value="2" aria-label="Anzahl Reisende">
             </div>
 
-            <div class="date-group">
-              <div class="field input-pill">
-                <i class="bi bi-calendar-event"></i>
-                <input type="text" class="form-control" id="reisebeginn" placeholder="Reisebeginn">
-              </div>
-              <div class="field input-pill">
-                <i class="bi bi-calendar-check"></i>
-                <input type="text" class="form-control" id="reiseende" placeholder="Reiseende">
-              </div>
+            <div class="field input-pill">
+              <i class="bi bi-calendar-event"></i>
+              <input type="date" class="form-control" id="reisedatum" aria-label="Reisedatum">
             </div>
 
-            <div class="button-group">
-              <button class="btn btn-reset">Zurücksetzen</button>
-              <button class="btn btn-search">Suchen</button>
-            </div>
+            <button class="btn btn-search" aria-label="Reise suchen"><i class="bi bi-search me-2"></i>Suchen</button>
           </div>
         </div>
       </div>
     </div>
   </section>
   
+  <!-- 🔹 LOGIN MODAL -->
+  <div class="modal fade" id="loginModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold"><i class="bi bi-box-arrow-in-right me-2 text-primary"></i>Anmelden</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+        </div>
+        <div class="modal-body px-4 pb-4">
+          <form id="loginForm" novalidate>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="bi bi-envelope me-2"></i>E-Mail</label>
+              <input type="email" id="loginEmail" class="form-control form-control-lg" placeholder="ihre@email.com" required>
+              <div class="invalid-feedback">Bitte geben Sie eine gültige E-Mail ein</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="bi bi-lock me-2"></i>Passwort</label>
+              <div class="input-group">
+                <input type="password" id="loginPassword" class="form-control form-control-lg" placeholder="••••••••" required minlength="6">
+                <button class="btn btn-outline-secondary" type="button" id="toggleLoginPassword">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+              <div class="invalid-feedback">Passwort muss mindestens 6 Zeichen haben</div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+              <i class="bi bi-check-circle me-2"></i>Anmelden
+            </button>
+            <p class="text-center mt-3 mb-0 text-muted">Noch kein Konto? <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal" data-bs-dismiss="modal" class="text-primary fw-semibold">Jetzt registrieren</a></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 REGISTER MODAL -->
+  <div class="modal fade" id="registerModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold"><i class="bi bi-person-plus me-2 text-primary"></i>Konto erstellen</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+        </div>
+        <div class="modal-body px-4 pb-4">
+          <form id="registerForm" novalidate>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold"><i class="bi bi-person me-2"></i>Vorname</label>
+                <input type="text" id="regFirstName" class="form-control form-control-lg" placeholder="Max" required minlength="2">
+                <div class="invalid-feedback">Vorname muss mindestens 2 Zeichen haben</div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold"><i class="bi bi-person me-2"></i>Nachname</label>
+                <input type="text" id="regLastName" class="form-control form-control-lg" placeholder="Mustermann" required minlength="2">
+                <div class="invalid-feedback">Nachname muss mindestens 2 Zeichen haben</div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="bi bi-envelope me-2"></i>E-Mail</label>
+              <input type="email" id="regEmail" class="form-control form-control-lg" placeholder="max@beispiel.com" required>
+              <div class="invalid-feedback">Bitte geben Sie eine gültige E-Mail ein</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="bi bi-lock me-2"></i>Passwort</label>
+              <div class="input-group">
+                <input type="password" id="regPassword" class="form-control form-control-lg" placeholder="Mindestens 6 Zeichen" required minlength="6">
+                <button class="btn btn-outline-secondary" type="button" id="toggleRegPassword">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+              <div class="invalid-feedback">Passwort muss mindestens 6 Zeichen haben</div>
+              <div class="form-text"><i class="bi bi-info-circle me-1"></i>Verwenden Sie Buchstaben, Zahlen und Sonderzeichen</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="bi bi-lock-fill me-2"></i>Passwort bestätigen</label>
+              <input type="password" id="regPasswordConfirm" class="form-control form-control-lg" placeholder="Passwort wiederholen" required minlength="6">
+              <div class="invalid-feedback">Passwörter stimmen nicht überein</div>
+            </div>
+
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="regAgree" required>
+              <label class="form-check-label" for="regAgree">
+                Ich akzeptiere die <a href="#" class="text-primary">AGB</a> und <a href="#" class="text-primary">Datenschutzerklärung</a>
+              </label>
+              <div class="invalid-feedback">Sie müssen den Bedingungen zustimmen</div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+              <i class="bi bi-check-circle me-2"></i>Jetzt registrieren
+            </button>
+            <p class="text-center mt-3 mb-0 text-muted">Bereits registriert? <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal" class="text-primary fw-semibold">Jetzt anmelden</a></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 SETTINGS MODAL -->
+  <div class="modal fade" id="settingsModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Einstellungen</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action" onclick="showProfileEdit()">
+              <i class="bi bi-person me-2"></i>Profil bearbeiten
+            </a>
+            <a href="#" class="list-group-item list-group-item-action" onclick="showPasswordChange()">
+              <i class="bi bi-key me-2"></i>Passwort ändern
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 BOOKING MODAL -->
+  <div class="modal fade" id="bookingModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title"><i class="bi bi-calendar-check me-2"></i>Buchung bestätigen</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="bookingOfferDetails" class="mb-4"></div>
+          <form id="bookingForm">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold"><i class="bi bi-calendar-event me-2"></i>Reisedatum</label>
+                <input type="date" id="bookingDate" class="form-control" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold"><i class="bi bi-people me-2"></i>Anzahl Personen</label>
+                <input type="number" id="bookingPersons" class="form-control" min="1" max="10" value="1" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="bi bi-telephone me-2"></i>Telefonnummer</label>
+              <input type="tel" id="bookingPhone" class="form-control" placeholder="+43 123 456789" required>
+            </div>
+            <div class="alert alert-info">
+              <i class="bi bi-info-circle me-2"></i>Nach der Buchung erhalten Sie eine Bestätigung per E-Mail.
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100">
+              <i class="bi bi-check-circle me-2"></i>Jetzt buchen
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 🔹 ANGEBOTS-DETAILS MODAL -->
   <div class="modal fade" id="offerDetailsModal" tabindex="-1" aria-labelledby="offerDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -161,7 +306,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <a href="formular.html" id="offerModalBook" class="btn btn-primary">Buchen</a>
+          <button type="button" class="btn btn-primary" id="offerModalBook">Buchen</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
         </div>
       </div>
@@ -264,6 +409,137 @@
     </div>
   </div>
 
+  <!-- 🔹 PROFIL MODAL -->
+  <div class="modal fade" id="profileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 bg-primary text-white">
+          <h5 class="modal-title fw-bold"><i class="bi bi-person-circle me-2"></i>Mein Profil</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="row">
+            <div class="col-md-4 text-center mb-4">
+              <div class="avatar-large bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" id="profileAvatar" style="width: 100px; height: 100px; font-size: 2.5rem;"></div>
+              <h5 class="fw-bold" id="profileFullName"></h5>
+              <p class="text-muted" id="profileEmail"></p>
+            </div>
+            <div class="col-md-8">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0">Persönliche Informationen</h6>
+                <button class="btn btn-sm btn-outline-primary" id="editProfileBtn">
+                  <i class="bi bi-pencil me-1"></i>Bearbeiten
+                </button>
+              </div>
+              
+              <div id="profileView">
+                <div class="row g-3 mb-4">
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Vorname</small>
+                      <div class="fw-semibold" id="profileFirstName"></div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Nachname</small>
+                      <div class="fw-semibold" id="profileLastName"></div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Telefon</small>
+                      <div class="fw-semibold" id="profilePhone">Nicht angegeben</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Registriert seit</small>
+                      <div class="fw-semibold" id="profileDatum"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="profileEdit" style="display: none;">
+                <form id="profileEditForm">
+                  <div class="row g-3 mb-3">
+                    <div class="col-6">
+                      <label class="form-label">Vorname</label>
+                      <input type="text" class="form-control" id="editFirstName" required>
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Nachname</label>
+                      <input type="text" class="form-control" id="editLastName" required>
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Telefon</label>
+                      <input type="tel" class="form-control" id="editPhone">
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Geburtsdatum</label>
+                      <input type="date" class="form-control" id="editBirthDate">
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label">Adresse</label>
+                      <textarea class="form-control" id="editAddress" rows="2"></textarea>
+                    </div>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn">Abbrechen</button>
+                  </div>
+                </form>
+              </div>
+              
+              <div class="d-flex gap-2 mb-4">
+                <button class="btn btn-outline-warning btn-sm" id="changePasswordBtn">
+                  <i class="bi bi-key me-1"></i>Passwort ändern
+                </button>
+                <button class="btn btn-outline-info btn-sm" id="resetPasswordBtn">
+                  <i class="bi bi-arrow-clockwise me-1"></i>Passwort zurücksetzen
+                </button>
+              </div>
+              
+              <h6 class="fw-bold mb-3">Meine Buchungen</h6>
+              <div id="profileBuchungen"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 BEWERTUNGEN -->
+  <section id="bewertungen" class="py-5 bg-light">
+    <div class="container">
+      <h2 class="section-title text-center">Ihre Meinung zählt</h2>
+      <p class="text-center mb-5">Teilen Sie Ihre Erfahrungen mit LND-Reisen</p>
+      
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card shadow-sm">
+            <div class="card-body p-4">
+              <h5 class="mb-3">Bewertung abgeben</h5>
+              <div class="rating-input-main mb-3">
+                <i class="bi bi-star" data-rating="1"></i>
+                <i class="bi bi-star" data-rating="2"></i>
+                <i class="bi bi-star" data-rating="3"></i>
+                <i class="bi bi-star" data-rating="4"></i>
+                <i class="bi bi-star" data-rating="5"></i>
+              </div>
+              <input type="text" class="form-control mb-2" id="reviewName" placeholder="Ihr Name">
+              <textarea class="form-control mb-3" id="reviewTextMain" rows="3" placeholder="Ihre Erfahrung mit uns..."></textarea>
+              <button class="btn btn-primary" id="submitReviewMain">Bewertung senden</button>
+            </div>
+          </div>
+          
+          <div id="reviewsListMain" class="mt-4"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- 🔹 FOOTER -->
   <footer class="bg-dark text-white py-5">
     <div class="container">
@@ -288,9 +564,155 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
-  <!-- Flatpickr JS -->
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr" crossorigin="anonymous"></script>
 
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseUrl = "https://aecdewxxzqudleplampt.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFlY2Rld3h4enF1ZGxlcGxhbXB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4MjQ1OTcsImV4cCI6MjA4MDQwMDU5N30.3Z02Aaw7oYl12cVNHuvjbAOYIkWZ7kbM6WmdQZvaM3U";
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    
+    // Тестовый запрос к базе данных
+    async function testDB() {
+      try {
+        const { data, error } = await supabase.from('destinations').select('*').limit(5)
+        if (error) throw error
+        console.log('Destinations:', data)
+        
+        const { data: offers, error: offersError } = await supabase.from('offers').select('*').limit(3)
+        if (offersError) throw offersError
+        console.log('Offers:', offers)
+      } catch (err) {
+        console.error('Database error:', err)
+      }
+    }
+    
+    // Запускаем тест при загрузке страницы
+    testDB()
+    
+    window.DB = {
+      async getDestinations() {
+        const { data, error } = await supabase.from('destinations').select('*')
+        if (error) throw error
+        return data
+      },
+      async getOffers() {
+        const { data, error } = await supabase.from('offers').select('*')
+        if (error) throw error
+        return data
+      },
+      async createBooking(booking) {
+        const { data, error } = await supabase.from('bookings').insert([booking])
+        if (error) throw error
+        return data
+      },
+      async signUp(email, password, firstName, lastName) {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { first_name: firstName, last_name: lastName }
+          }
+        })
+        if (error) throw error
+        
+        // Создаем профиль в customers
+        if (data.user) {
+          const { error: profileError } = await supabase
+            .from('customers')
+            .insert({
+              id: data.user.id,
+              email: email,
+              first_name: firstName,
+              last_name: lastName
+            })
+          if (profileError) console.error('Profile creation error:', profileError)
+        }
+        
+        return data
+      },
+      async signIn(email, password) {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+        if (error) throw error
+        return data
+      },
+      async signOut() {
+        const { error } = await supabase.auth.signOut()
+        if (error) throw error
+      },
+      async getUser() {
+        const { data: { user } } = await supabase.auth.getUser()
+        return user
+      },
+      async getUserProfile() {
+        const user = await this.getUser()
+        if (!user) return null
+        const { data, error } = await supabase.from('customers').select('*').eq('id', user.id).single()
+        if (error) throw error
+        return data
+      },
+      async createBooking(offerId, travelDate, persons, phone) {
+        const user = await this.getUser()
+        if (!user) throw new Error('Nicht angemeldet')
+        
+        const { data, error } = await supabase.from('bookings').insert({
+          customer_id: user.id,
+          offer_id: offerId,
+          travel_date: travelDate,
+          persons: persons,
+          total_price: 0,
+          emergency_contact_phone: phone
+        })
+        if (error) throw error
+        return data
+      },
+      async getUserBookings() {
+        const user = await this.getUser()
+        if (!user) return []
+        const { data, error } = await supabase
+          .from('bookings')
+          .select('*, offers(title, price, duration)')
+          .eq('customer_id', user.id)
+        if (error) throw error
+        return data
+      },
+      async createReview(offerId, rating, comment, name) {
+        const { data, error } = await supabase.from('reviews').insert({
+          offer_id: offerId,
+          rating: rating,
+          comment: comment,
+          title: name
+        })
+        if (error) throw error
+        return data
+      },
+      async updateProfile(profileData) {
+        const user = await this.getUser()
+        if (!user) throw new Error('Nicht angemeldet')
+        
+        const { data, error } = await supabase
+          .from('customers')
+          .update(profileData)
+          .eq('id', user.id)
+        if (error) throw error
+        return data
+      },
+      async changePassword(newPassword) {
+        const { data, error } = await supabase.auth.updateUser({
+          password: newPassword
+        })
+        if (error) throw error
+        return data
+      },
+      async resetPassword(email) {
+        const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + '/reset-password.html'
+        })
+        if (error) throw error
+        return data
+      }
+    }
+  </script>
   <script src="nav.js"></script>
   <script src="index.js"></script>
 
