@@ -79,66 +79,82 @@ function hashStringToInt(str) {
   return h >>> 0;
 }
 
-function renderOffers(options = { count: 6 }) {
+async function renderOffers(options = { count: 6 }) {
   const container = document.getElementById('angebote-grid');
   if (!container) return;
-  const path = (location && location.pathname) ? location.pathname : '/';
-  const seed = hashStringToInt(path + (location.search || '') + (location.hash || ''));
-  const shuffled = seededShuffle(offersData, seed);
-  const count = Math.min(options.count || 6, shuffled.length);
-  let html = '';
-  for (let i = 0; i < count; i++) {
-    const o = shuffled[i];
-    html += `
-      <div class="col-lg-4 col-md-6 mb-4">
-        <div class="angebot-card">
-          <img src="${o.img.startsWith('http') ? o.img : 'img/' + o.img}" loading="lazy" class="card-img-top" alt="${o.title}">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">${o.title}</h5>
-            <p class="card-text">${o.text}</p>
-            <button class="btn mt-auto" data-offer-id="${o.id}">Details ansehen</button>
+  
+  try {
+    const offers = await DB.getOffers();
+    const count = Math.min(options.count || 6, offers.length);
+    let html = '';
+    
+    for (let i = 0; i < count; i++) {
+      const o = offers[i];
+      html += `
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="angebot-card">
+            <img src="${o.image_url}" loading="lazy" class="card-img-top" alt="${o.title}">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">${o.title}</h5>
+              <p class="card-text">${o.description}</p>
+              <div class="d-flex justify-content-between align-items-center mt-auto">
+                <span class="fw-bold text-primary">${o.price}</span>
+                <button class="btn btn-primary" data-offer-id="${o.id}">Details</button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    `;
-  }
-  container.innerHTML = html;
-  container.querySelectorAll('button[data-offer-id]').forEach(btn => {
-    btn.addEventListener('click', function(ev) {
-      ev.preventDefault();
-      showOfferDetails(this.getAttribute('data-offer-id'));
+      `;
+    }
+    container.innerHTML = html;
+    
+    container.querySelectorAll('button[data-offer-id]').forEach(btn => {
+      btn.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        showOfferDetails(this.getAttribute('data-offer-id'));
+      });
     });
-  });
+  } catch (error) {
+    console.error('Error loading offers:', error);
+    container.innerHTML = '<p class="text-center">Fehler beim Laden der Angebote</p>';
+  }
 }
 
 let currentBookingOffer = null;
 
-function showOfferDetails(offerId) {
-  const offer = offersData.find(o => o.id === offerId);
-  if (!offer) return;
-  currentBookingOffer = offer;
-  const modal = document.getElementById('offerDetailsModal');
-  if (!modal) return;
-  modal.querySelector('#offerModalImage').src = offer.img.startsWith('http') ? offer.img : 'img/' + offer.img;
-  modal.querySelector('#offerModalTitle').textContent = offer.title;
-  modal.querySelector('#offerModalLongText').textContent = offer.longText;
-  modal.querySelector('#offerModalPrice').textContent = offer.price;
-  modal.querySelector('#offerModalDuration').textContent = offer.duration;
-  
-  const bookBtn = modal.querySelector('#offerModalBook');
-  bookBtn.onclick = function() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser) {
+async function showOfferDetails(offerId) {
+  try {
+    const offers = await DB.getOffers();
+    const offer = offers.find(o => o.id === offerId);
+    if (!offer) return;
+    
+    currentBookingOffer = offer;
+    const modal = document.getElementById('offerDetailsModal');
+    if (!modal) return;
+    
+    modal.querySelector('#offerModalImage').src = offer.image_url;
+    modal.querySelector('#offerModalTitle').textContent = offer.title;
+    modal.querySelector('#offerModalLongText').textContent = offer.description;
+    modal.querySelector('#offerModalPrice').textContent = offer.price;
+    modal.querySelector('#offerModalDuration').textContent = offer.duration;
+    
+    const bookBtn = modal.querySelector('#offerModalBook');
+    bookBtn.onclick = function() {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (!currentUser) {
+        bootstrap.Modal.getInstance(modal).hide();
+        new bootstrap.Modal(document.getElementById('loginModal')).show();
+        return;
+      }
       bootstrap.Modal.getInstance(modal).hide();
-      new bootstrap.Modal(document.getElementById('loginModal')).show();
-      return;
+      openBookingModal(offer);
+    };
+    
+    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+      new bootstrap.Modal(modal).show();
     }
-    bootstrap.Modal.getInstance(modal).hide();
-    openBookingModal(offer);
-  };
-  
-  if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-    new bootstrap.Modal(modal).show();
+  } catch (error) {
+    console.error('Error loading offer details:', error);
   }
 }
 
