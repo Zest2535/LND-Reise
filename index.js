@@ -481,20 +481,26 @@ function displayMainReviews() {
   `).join('');
 }
 
-function updateNavigation() {
-  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+async function updateNavigation() {
   const navLogin = document.getElementById('navLogin');
   const navRegister = document.getElementById('navRegister');
   const navUser = document.getElementById('navUser');
   const navUserName = document.getElementById('navUserName');
   
   if (navLogin && navRegister && navUser) {
-    if (currentUser) {
-      navLogin.style.display = 'none';
-      navRegister.style.display = 'none';
-      navUser.style.display = 'block';
-      if (navUserName) navUserName.textContent = currentUser.firstName;
-    } else {
+    try {
+      const user = await DB.getUser();
+      if (user) {
+        navLogin.style.display = 'none';
+        navRegister.style.display = 'none';
+        navUser.style.display = 'block';
+        if (navUserName) navUserName.textContent = user.user_metadata?.first_name || user.email;
+      } else {
+        navLogin.style.display = 'block';
+        navRegister.style.display = 'block';
+        navUser.style.display = 'none';
+      }
+    } catch (error) {
       navLogin.style.display = 'block';
       navRegister.style.display = 'block';
       navUser.style.display = 'none';
@@ -633,7 +639,7 @@ function initModals() {
     }
   });
   
-  document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+  document.getElementById('loginForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     
     if (!this.checkValidity()) {
@@ -642,20 +648,19 @@ function initModals() {
       return;
     }
     
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value;
-    const konten = JSON.parse(localStorage.getItem('konten') || '[]');
-    const konto = konten.find(k => k.email === email && k.password === password);
-    
-    if (konto) {
-      localStorage.setItem('currentUser', JSON.stringify(konto));
+    try {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      
+      const { user } = await DB.signIn(email, password);
+      
       bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
       this.reset();
       this.classList.remove('was-validated');
       
       const toast = document.createElement('div');
       toast.className = 'toast-notification success';
-      toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Willkommen zurück, ' + konto.firstName + '!';
+      toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Willkommen zurück!';
       document.body.appendChild(toast);
       setTimeout(() => toast.classList.add('show'), 100);
       setTimeout(() => {
@@ -664,12 +669,7 @@ function initModals() {
       }, 3000);
       
       updateNavigation();
-    } else {
-      const emailInput = document.getElementById('loginEmail');
-      const passwordInput = document.getElementById('loginPassword');
-      emailInput.classList.add('is-invalid');
-      passwordInput.classList.add('is-invalid');
-      
+    } catch (error) {
       const toast = document.createElement('div');
       toast.className = 'toast-notification error';
       toast.innerHTML = '<i class="bi bi-x-circle-fill me-2"></i>E-Mail oder Passwort falsch!';
@@ -682,7 +682,7 @@ function initModals() {
     }
   });
 
-  document.getElementById('registerForm')?.addEventListener('submit', function(e) {
+  document.getElementById('registerForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const password = document.getElementById('regPassword').value;
@@ -701,52 +701,37 @@ function initModals() {
       return;
     }
     
-    const email = document.getElementById('regEmail').value.trim();
-    const konten = JSON.parse(localStorage.getItem('konten') || '[]');
-    
-    if (konten.find(k => k.email === email)) {
-      const emailInput = document.getElementById('regEmail');
-      emailInput.setCustomValidity('E-Mail bereits registriert');
-      emailInput.classList.add('is-invalid');
+    try {
+      const email = document.getElementById('regEmail').value.trim();
+      const firstName = document.getElementById('regFirstName').value.trim();
+      const lastName = document.getElementById('regLastName').value.trim();
+      
+      await DB.signUp(email, password, firstName, lastName);
+      
+      bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
+      this.reset();
+      this.classList.remove('was-validated');
       
       const toast = document.createElement('div');
+      toast.className = 'toast-notification success';
+      toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Registrierung erfolgreich! Prüfen Sie Ihre E-Mail.';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    } catch (error) {
+      const toast = document.createElement('div');
       toast.className = 'toast-notification error';
-      toast.innerHTML = '<i class="bi bi-x-circle-fill me-2"></i>Diese E-Mail ist bereits registriert!';
+      toast.innerHTML = '<i class="bi bi-x-circle-fill me-2"></i>' + error.message;
       document.body.appendChild(toast);
       setTimeout(() => toast.classList.add('show'), 100);
       setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
       }, 3000);
-      return;
     }
-    
-    const konto = {
-      id: Date.now(),
-      firstName: document.getElementById('regFirstName').value.trim(),
-      lastName: document.getElementById('regLastName').value.trim(),
-      email: email,
-      password: password,
-      role: 'user',
-      datum: new Date().toLocaleString('de-DE')
-    };
-    
-    konten.push(konto);
-    localStorage.setItem('konten', JSON.stringify(konten));
-    
-    bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
-    this.reset();
-    this.classList.remove('was-validated');
-    
-    const toast = document.createElement('div');
-    toast.className = 'toast-notification success';
-    toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Konto erfolgreich erstellt! Sie können sich jetzt anmelden.';
-    document.body.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 100);
-    setTimeout(() => {
-      toast.classList.remove('show');
-      setTimeout(() => toast.remove(), 300);
-    }, 4000);
   });
 
   document.getElementById('bookingForm')?.addEventListener('submit', function(e) {
