@@ -7,6 +7,15 @@ if (navbar) {
     if (!ticking) {
       window.requestAnimationFrame(function() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Добавляем класс scrolled для эффекта
+        if (scrollTop > 50) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+        
+        // Скрываем/показываем навигацию при скролле
         if (scrollTop > lastScrollTop && scrollTop > 100) {
           navbar.style.top = "-80px";
         } else {
@@ -301,35 +310,48 @@ if (searchBtn) {
   });
 }
 
-const destinationsDB = [
-  'Barcelona, Spanien', 'Berlin, Deutschland', 'Bali, Indonesien',
-  'Dubai, VAE', 'Edinburgh, Schottland', 'Kapstadt, Südafrika',
-  'Kyoto, Japan', 'Lissabon, Portugal', 'Malediven',
-  'Marrakesch, Marokko', 'New York, USA', 'Paris, Frankreich',
-  'Santorini, Griechenland', 'Sydney, Australien', 'Thailand',
-  'Vancouver, Kanada', 'Wien, Österreich', 'Island', 'Rom, Italien',
-  'London, Großbritannien', 'Tokio, Japan', 'Amsterdam, Niederlande',
-  'Hotel Adlon Berlin, Deutschland', 'Hotel Sacher Wien, Österreich',
-  'Ritz Paris, Frankreich', 'Burj Al Arab Dubai, VAE',
-  'Marina Bay Sands Singapur', 'Hilton Barcelona, Spanien',
-  'Marriott London, Großbritannien', 'Sheraton New York, USA',
-  'Hyatt Regency Tokio, Japan', 'InterContinental Sydney, Australien',
-  'Four Seasons Bali, Indonesien', 'Waldorf Astoria Amsterdam, Niederlande',
-  'Grand Hyatt Dubai, VAE', 'Park Hyatt Paris, Frankreich',
-  'Mandarin Oriental Bangkok, Thailand', 'The Peninsula Hongkong',
-  'Atlantis The Palm Dubai, VAE', 'Belmond Hotel Caruso Amalfi, Italien',
-  'Aman Tokio, Japan', 'The Savoy London, Großbritannien',
-  'Hotel Arts Barcelona, Spanien', 'The Plaza New York, USA',
-  'Raffles Singapur', 'Sofitel Legend Metropole Hanoi, Vietnam',
-  'Fairmont Banff Springs Kanada', 'Shangri-La Paris, Frankreich'
+const destinations = [
+  {city: 'Paris', country: 'Frankreich'}, {city: 'Marseille', country: 'Frankreich'}, {city: 'Lyon', country: 'Frankreich'}, {city: 'Nizza', country: 'Frankreich'},
+  {city: 'London', country: 'Großbritannien'}, {city: 'Edinburgh', country: 'Großbritannien'}, {city: 'Manchester', country: 'Großbritannien'},
+  {city: 'Rom', country: 'Italien'}, {city: 'Venedig', country: 'Italien'}, {city: 'Florenz', country: 'Italien'}, {city: 'Mailand', country: 'Italien'}, {city: 'Neapel', country: 'Italien'},
+  {city: 'Barcelona', country: 'Spanien'}, {city: 'Madrid', country: 'Spanien'}, {city: 'Valencia', country: 'Spanien'}, {city: 'Sevilla', country: 'Spanien'}, {city: 'Malaga', country: 'Spanien'}, {city: 'Ibiza', country: 'Spanien'}, {city: 'Palma', country: 'Spanien'},
+  {city: 'Amsterdam', country: 'Niederlande'}, {city: 'Rotterdam', country: 'Niederlande'},
+  {city: 'Berlin', country: 'Deutschland'}, {city: 'München', country: 'Deutschland'}, {city: 'Hamburg', country: 'Deutschland'}, {city: 'Frankfurt', country: 'Deutschland'}, {city: 'Köln', country: 'Deutschland'},
+  {city: 'Wien', country: 'Österreich'}, {city: 'Salzburg', country: 'Österreich'}, {city: 'Innsbruck', country: 'Österreich'},
+  {city: 'Prag', country: 'Tschechien'}, {city: 'Budapest', country: 'Ungarn'}, {city: 'Krakau', country: 'Polen'}, {city: 'Warschau', country: 'Polen'},
+  {city: 'Lissabon', country: 'Portugal'}, {city: 'Porto', country: 'Portugal'},
+  {city: 'Athen', country: 'Griechenland'}, {city: 'Santorini', country: 'Griechenland'}, {city: 'Mykonos', country: 'Griechenland'}, {city: 'Kreta', country: 'Griechenland'}, {city: 'Rhodos', country: 'Griechenland'}, {city: 'Korfu', country: 'Griechenland'},
+  {city: 'Istanbul', country: 'Türkei'}, {city: 'Antalya', country: 'Türkei'}, {city: 'Bodrum', country: 'Türkei'}, {city: 'Izmir', country: 'Türkei'},
+  {city: 'Dubai', country: 'VAE'}, {city: 'Abu Dhabi', country: 'VAE'},
+  {city: 'Bangkok', country: 'Thailand'}, {city: 'Phuket', country: 'Thailand'}, {city: 'Krabi', country: 'Thailand'},
+  {city: 'Tokio', country: 'Japan'}, {city: 'Kyoto', country: 'Japan'}, {city: 'Osaka', country: 'Japan'},
+  {city: 'New York', country: 'USA'}, {city: 'Los Angeles', country: 'USA'}, {city: 'Miami', country: 'USA'}, {city: 'San Francisco', country: 'USA'}, {city: 'Las Vegas', country: 'USA'}, {city: 'Chicago', country: 'USA'}, {city: 'Boston', country: 'USA'}, {city: 'Washington', country: 'USA'},
+  {city: 'Cancun', country: 'Mexiko'}, {city: 'Mexiko-Stadt', country: 'Mexiko'}, {city: 'Acapulco', country: 'Mexiko'},
+  {city: 'Rio de Janeiro', country: 'Brasilien'}, {city: 'Buenos Aires', country: 'Argentinien'},
+  {city: 'Sydney', country: 'Australien'}, {city: 'Melbourne', country: 'Australien'},
+  {city: 'Bali', country: 'Indonesien'}, {city: 'Jakarta', country: 'Indonesien'},
+  {city: 'Singapur', country: 'Singapur'}, {city: 'Hongkong', country: 'China'}, {city: 'Shanghai', country: 'China'}, {city: 'Peking', country: 'China'},
+  {city: 'Malediven', country: 'Malediven'}, {city: 'Mauritius', country: 'Mauritius'}, {city: 'Seychellen', country: 'Seychellen'},
+  {city: 'Sansibar', country: 'Tansania'}, {city: 'Kapstadt', country: 'Südafrika'}, {city: 'Marrakesch', country: 'Marokko'}, {city: 'Kairo', country: 'Ägypten'}, {city: 'Hurghada', country: 'Ägypten'},
+  {city: 'Reykjavik', country: 'Island'}, {city: 'Oslo', country: 'Norwegen'}, {city: 'Stockholm', country: 'Schweden'}, {city: 'Kopenhagen', country: 'Dänemark'},
+  {city: 'Moskau', country: 'Russland'}, {city: 'St. Petersburg', country: 'Russland'},
+  {city: 'Dubrovnik', country: 'Kroatien'}, {city: 'Split', country: 'Kroatien'},
+  {city: 'Brüssel', country: 'Belgien'}, {city: 'Zürich', country: 'Schweiz'}, {city: 'Genf', country: 'Schweiz'},
+  {city: 'Dublin', country: 'Irland'}, {city: 'Zypern', country: 'Zypern'}, {city: 'Malta', country: 'Malta'},
+  {city: 'Toronto', country: 'Kanada'}, {city: 'Vancouver', country: 'Kanada'}, {city: 'Montreal', country: 'Kanada'},
+  {city: 'Seoul', country: 'Südkorea'}, {city: 'Mumbai', country: 'Indien'}, {city: 'Delhi', country: 'Indien'}, {city: 'Goa', country: 'Indien'},
+  {city: 'Hanoi', country: 'Vietnam'}, {city: 'Ho Chi Minh', country: 'Vietnam'}, {city: 'Manila', country: 'Philippinen'},
+  {city: 'Havanna', country: 'Kuba'}, {city: 'Punta Cana', country: 'Dominikanische Republik'}
 ];
+
+const destinationsDB = destinations.map(d => d.city + ', ' + d.country);
 
 function initAutocomplete() {
   const input = document.getElementById('destination-search');
   const list = document.getElementById('autocomplete-list');
   if (!input || !list) return;
   
-  const allDestinations = destinationsDB.concat(['Paris', 'London', 'Rom', 'Barcelona', 'Amsterdam', 'Berlin', 'Wien', 'Prag', 'Budapest', 'Krakau', 'Lissabon', 'Madrid', 'Athen', 'Istanbul', 'Dubai', 'Bangkok', 'Tokio', 'New York', 'Los Angeles', 'Miami', 'Cancun', 'Rio de Janeiro', 'Buenos Aires', 'Sydney', 'Melbourne', 'Bali', 'Singapur', 'Hongkong', 'Malediven', 'Mauritius', 'Seychellen', 'Sansibar', 'Kapstadt', 'Marrakesch', 'Kairo', 'Jerusalem', 'Reykjavik', 'Oslo', 'Stockholm', 'Kopenhagen', 'Helsinki', 'Tallinn', 'Riga', 'Warschau', 'Moskau', 'St. Petersburg', 'Dubrovnik', 'Split', 'Santorini', 'Mykonos']);
+  const allDestinations = destinationsDB;
   
   input.addEventListener('input', function() {
     const value = this.value.toLowerCase();
@@ -342,19 +364,7 @@ function initAutocomplete() {
     if (matches.length > 0) {
       matches.forEach(match => {
         const div = document.createElement('div');
-        const isHotel = match.toLowerCase().includes('hotel') || match.toLowerCase().includes('resort') || 
-                        match.toLowerCase().includes('marriott') || match.toLowerCase().includes('hilton') ||
-                        match.toLowerCase().includes('hyatt') || match.toLowerCase().includes('sheraton') ||
-                        match.toLowerCase().includes('ritz') || match.toLowerCase().includes('burj') ||
-                        match.toLowerCase().includes('marina bay') || match.toLowerCase().includes('four seasons') ||
-                        match.toLowerCase().includes('waldorf') || match.toLowerCase().includes('grand') ||
-                        match.toLowerCase().includes('park hyatt') || match.toLowerCase().includes('mandarin') ||
-                        match.toLowerCase().includes('peninsula') || match.toLowerCase().includes('atlantis') ||
-                        match.toLowerCase().includes('belmond') || match.toLowerCase().includes('aman') ||
-                        match.toLowerCase().includes('savoy') || match.toLowerCase().includes('plaza') ||
-                        match.toLowerCase().includes('raffles') || match.toLowerCase().includes('sofitel') ||
-                        match.toLowerCase().includes('fairmont') || match.toLowerCase().includes('shangri');
-        div.className = isHotel ? 'autocomplete-item hotel-item' : 'autocomplete-item city-item';
+        div.className = 'autocomplete-item city-item';
         div.textContent = match;
         div.addEventListener('click', function() {
           input.value = match;
@@ -462,15 +472,17 @@ function updateNavigation() {
   const navUser = document.getElementById('navUser');
   const navUserName = document.getElementById('navUserName');
   
-  if (currentUser) {
-    navLogin.style.display = 'none';
-    navRegister.style.display = 'none';
-    navUser.style.display = 'block';
-    navUserName.textContent = currentUser.firstName;
-  } else {
-    navLogin.style.display = 'block';
-    navRegister.style.display = 'block';
-    navUser.style.display = 'none';
+  if (navLogin && navRegister && navUser) {
+    if (currentUser) {
+      navLogin.style.display = 'none';
+      navRegister.style.display = 'none';
+      navUser.style.display = 'block';
+      if (navUserName) navUserName.textContent = currentUser.firstName;
+    } else {
+      navLogin.style.display = 'block';
+      navRegister.style.display = 'block';
+      navUser.style.display = 'none';
+    }
   }
 }
 
@@ -511,6 +523,26 @@ function showProfile() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  // Добавляем анимацию появления элементов
+  const animateOnScroll = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '0';
+        entry.target.style.transform = 'translateY(30px)';
+        entry.target.style.transition = 'all 0.6s ease';
+        setTimeout(() => {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }, 100);
+        animateOnScroll.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  document.querySelectorAll('.angebot-card, .service-card, .reiseziel-item').forEach(el => {
+    animateOnScroll.observe(el);
+  });
+  
   initAutocomplete();
   initDestinationFilters();
   renderOffers();
@@ -522,6 +554,18 @@ document.addEventListener('DOMContentLoaded', function() {
   const today = new Date().toISOString().split('T')[0];
   const dateInput = document.getElementById('reisedatum');
   if (dateInput) dateInput.min = today;
+  
+  // Добавляем плавное появление hero секции
+  const heroContent = document.querySelector('.hero-content');
+  if (heroContent) {
+    heroContent.style.opacity = '0';
+    heroContent.style.transform = 'translateY(50px)';
+    setTimeout(() => {
+      heroContent.style.transition = 'all 1s ease';
+      heroContent.style.opacity = '1';
+      heroContent.style.transform = 'translateY(0)';
+    }, 200);
+  }
   
   document.getElementById('showProfile')?.addEventListener('click', function(e) {
     e.preventDefault();

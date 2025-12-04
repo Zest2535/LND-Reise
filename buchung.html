@@ -9,9 +9,54 @@
   <link rel="stylesheet" href="styleIndex.css">
   <link rel="stylesheet" href="styleFormular.css">
   <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    
+    .form-container {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.95) !important;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
+    }
+    
+    h1 {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1.5rem;
+    }
+    
+    .card {
+      border: none;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+      margin-bottom: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-3px);
+    }
+    
+    .card-body h5 {
+      color: #667eea;
+      font-weight: 700;
+    }
+    
     @media (max-width: 768px) {
-      .form-container { padding: 1.5rem; margin: 1rem auto; }
-      h1 { font-size: 1.5rem; }
+      .form-container { 
+        padding: 1.5rem 1.25rem; 
+        margin: 1rem auto; 
+      }
+      h1 { 
+        font-size: 1.5rem; 
+      }
+      .card-body {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
@@ -29,23 +74,23 @@
   </nav>
 
   <main class="form-container d-flex align-items-center justify-content-center min-vh-100">
-    <div>
-    <h1>Buchung bestätigen</h1>
+    <div style="width: 100%;">
+    <h1 class="text-center"><i class="bi bi-calendar-check me-2"></i>Buchung bestätigen</h1>
     <div id="offerDetails" class="mb-4"></div>
     <form id="buchungForm">
       <div class="form-group">
-        <label for="reisedatum">Reisedatum</label>
+        <label for="reisedatum"><i class="bi bi-calendar-event me-2"></i>Reisedatum</label>
         <input type="date" id="reisedatum" required>
       </div>
       <div class="form-group">
-        <label for="personen">Anzahl Personen</label>
+        <label for="personen"><i class="bi bi-people me-2"></i>Anzahl Personen</label>
         <input type="number" id="personen" min="1" max="10" value="1" required>
       </div>
       <div class="form-group">
-        <label for="telefon">Telefonnummer</label>
-        <input type="tel" id="telefon" required>
+        <label for="e-mail"><i class="bi bi-telephone me-2"></i>E-Mail</label>
+        <input type="tel" id="e-Mail" placeholder="max.muster@gmail.com" required>
       </div>
-      <button type="submit">Jetzt buchen</button>
+      <button type="submit"><i class="bi bi-check-circle me-2"></i>Jetzt buchen</button>
     </form>
     </div>
   </main>
@@ -53,12 +98,22 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="nav.js"></script>
   <script>
+    // Добавляем анимацию появления формы
+    window.addEventListener('load', function() {
+      document.querySelector('.form-container').style.animation = 'fadeInUp 0.6s ease';
+    });
+  
+  <script>
     document.addEventListener('DOMContentLoaded', function() {
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
       if (!currentUser) {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
         return;
       }
+      
+      // Устанавливаем минимальную дату на сегодня
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('reisedatum').setAttribute('min', today);
 
       const urlParams = new URLSearchParams(window.location.search);
       const offerId = urlParams.get('offer');
@@ -79,9 +134,15 @@
         document.getElementById('offerDetails').innerHTML = `
           <div class="card">
             <div class="card-body">
-              <h5>${offer.title}</h5>
-              <p><strong>Preis:</strong> ${offer.price}</p>
-              <p><strong>Dauer:</strong> ${offer.duration}</p>
+              <h5 class="mb-3"><i class="bi bi-geo-alt-fill me-2"></i>${offer.title}</h5>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span><i class="bi bi-cash me-2 text-success"></i><strong>Preis:</strong></span>
+                <span class="fs-5 fw-bold text-success">${offer.price}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-clock me-2 text-primary"></i><strong>Dauer:</strong></span>
+                <span class="fw-semibold">${offer.duration}</span>
+              </div>
             </div>
           </div>
         `;
@@ -89,6 +150,12 @@
 
       document.getElementById('buchungForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        
+        // Добавляем визуальную обратную связь
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Wird gebucht...';
+        submitBtn.disabled = true;
         
         const buchung = {
           id: Date.now(),
@@ -105,9 +172,19 @@
         let buchungen = JSON.parse(localStorage.getItem('buchungen_' + currentUser.email) || '[]');
         buchungen.push(buchung);
         localStorage.setItem('buchungen_' + currentUser.email, JSON.stringify(buchungen));
+        
+        submitBtn.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Erfolgreich!';
+        submitBtn.classList.add('btn-success');
 
-        alert('✅ Buchung erfolgreich!');
-        window.location.href = 'profil.html';
+        // Создаем красивое уведомление
+        const successDiv = document.createElement('div');
+        successDiv.className = 'success-message';
+        successDiv.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Buchung erfolgreich! Sie werden weitergeleitet...';
+        document.querySelector('form').insertAdjacentElement('afterend', successDiv);
+        
+        setTimeout(() => {
+          window.location.href = 'profil.html';
+        }, 2000);
       });
     });
   </script>
