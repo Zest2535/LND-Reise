@@ -8,13 +8,13 @@ async function updateNavigation() {
   
   try {
     const user = await window.DB.getUser();
-    const profile = user ? await window.DB.getUserProfile() : null;
     
-    if (user && profile) {
+    if (user) {
+      const profile = await window.DB.getUserProfile();
       navLogin.style.display = 'none';
       navRegister.style.display = 'none';
       navUser.style.display = 'block';
-      if (navUserName) {
+      if (navUserName && profile) {
         navUserName.textContent = profile.firstname + ' ' + profile.lastname;
       }
     } else {
@@ -39,24 +39,27 @@ async function showProfile() {
 }
 
 async function logout() {
-  try {
-    await window.DB.signOut();
-  } catch (error) {
-    console.error('Logout error:', error);
-  } finally {
-    // Принудительная перезагрузка страницы для очистки состояния
-    window.location.replace('index.html');
+  if (confirm('Möchten Sie sich wirklich abmelden?')) {
+    try {
+      await window.DB.signOut();
+      window.location.replace('index.html');
+    } catch (error) {
+      console.error('Logout error:', error);
+      window.location.replace('index.html');
+    }
   }
 }
 
 
 
 // Navigation beim Laden der Seite aktualisieren
-document.addEventListener('DOMContentLoaded', updateNavigation);
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(updateNavigation, 100);
+});
 
-// Supabase Auth State Listener
-if (typeof window.supabase !== 'undefined') {
-  window.supabase.auth.onAuthStateChange((event, session) => {
+// Обновление при изменении видимости страницы
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
     updateNavigation();
-  });
-}
+  }
+});

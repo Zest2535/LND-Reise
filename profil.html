@@ -123,7 +123,14 @@
   <script>
     const supabaseUrl = "https://aecdewxxzqudleplampt.supabase.co";
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFlY2Rld3h4enF1ZGxlcGxhbXB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4MjQ1OTcsImV4cCI6MjA4MDQwMDU5N30.3Z02Aaw7oYl12cVNHuvjbAOYIkWZ7kbM6WmdQZvaM3U";
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        storage: window.localStorage
+      }
+    });
     
     window.DB = {
       async getUser() {
@@ -230,6 +237,12 @@
       }
     }
     
+    // Слушатель изменений авторизации
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        window.location.href = 'index.html';
+      }
+    });
   </script>
   <script src="nav.js"></script>
 </body>
