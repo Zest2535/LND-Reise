@@ -23,6 +23,7 @@ async function updateNavigation() {
       navUser.style.display = 'none';
     }
   } catch (error) {
+    console.error('Navigation error:', error);
     navLogin.style.display = 'block';
     navRegister.style.display = 'block';
     navUser.style.display = 'none';
@@ -52,9 +53,9 @@ async function logout() {
 
 
 // Проверка сессии при загрузке
-setInterval(() => {
+let checkInterval = setInterval(() => {
   if (window.DB && typeof window.DB.getUser === 'function') {
     updateNavigation();
-    clearInterval(this);
+    clearInterval(checkInterval);
   }
 }, 100);
