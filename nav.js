@@ -55,9 +55,7 @@ async function logout() {
   }
 }
 
-async function showProfile() {
-  window.location.href = 'profil.html';
-}
+
 
 // Start
 initAuth();
