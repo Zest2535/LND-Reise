@@ -140,7 +140,7 @@
       async getUserProfile() {
         const user = await this.getUser()
         if (!user) return null
-        const { data, error } = await supabase.from('customers').select('*').eq('id', user.id).single()
+        const { data, error } = await supabase.from('customers').select('*').eq('email', user.email).single()
         if (error) throw error
         return data
       },
@@ -177,12 +177,12 @@
           return;
         }
         
-        const initials = profile.first_name.charAt(0) + profile.last_name.charAt(0);
+        const initials = profile.firstname.charAt(0) + profile.lastname.charAt(0);
         document.getElementById('avatar').textContent = initials;
-        document.getElementById('fullName').textContent = profile.first_name + ' ' + profile.last_name;
+        document.getElementById('fullName').textContent = profile.firstname + ' ' + profile.lastname;
         document.getElementById('emailDisplay').textContent = profile.email;
-        document.getElementById('firstName').textContent = profile.first_name;
-        document.getElementById('lastName').textContent = profile.last_name;
+        document.getElementById('firstName').textContent = profile.firstname;
+        document.getElementById('lastName').textContent = profile.lastname;
         document.getElementById('datum').textContent = new Date(profile.created_at).toLocaleDateString('de-DE');
         
         const buchungen = await DB.getUserBookings();
@@ -214,12 +214,6 @@
       setTimeout(loadProfile, 500);
     });
     
-    // Слушатель изменений авторизации
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT') {
-        window.location.href = 'index.html';
-      }
-    });
   </script>
   <script src="nav.js"></script>
 </body>

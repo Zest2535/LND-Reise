@@ -545,6 +545,51 @@ async function updateNavigation() {
 }
 
 async function showProfile() {
+  const user = await DB.getUser();
+  if (!user) {
+    new bootstrap.Modal(document.getElementById('loginModal')).show();
+    return;
+  }
+  new bootstrap.Modal(document.getElementById('profileModal')).show();
+  
+  try {
+    const profile = await DB.getUserProfile();
+    if (!profile) return;
+    
+    const initials = profile.firstname.charAt(0) + profile.lastname.charAt(0);
+    document.getElementById('profileAvatar').textContent = initials;
+    document.getElementById('profileFullName').textContent = profile.firstname + ' ' + profile.lastname;
+    document.getElementById('profileEmail').textContent = profile.email;
+    document.getElementById('profileFirstName').textContent = profile.firstname;
+    document.getElementById('profileLastName').textContent = profile.lastname;
+    document.getElementById('profileDatum').textContent = new Date(profile.created_at).toLocaleDateString('de-DE');
+    
+    const buchungen = await DB.getUserBookings();
+    const buchungenEl = document.getElementById('profileBuchungen');
+    
+    if (buchungen.length === 0) {
+      buchungenEl.innerHTML = '<p class="text-muted">Noch keine Buchungen vorhanden</p>';
+    } else {
+      buchungenEl.innerHTML = buchungen.map(b => `
+        <div class="card mb-2">
+          <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-1">${b.tours?.title || 'Unbekannt'}</h6>
+                <small class="text-muted">${b.tours?.destination || ''}</small>
+              </div>
+              <span class="badge bg-success">${b.status}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+  } catch (error) {
+    console.error('Error loading profile:', error);
+  }
+}
+
+function oldShowProfile() {
   try {
     const profile = await DB.getUserProfile();
     if (!profile) return;

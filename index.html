@@ -62,7 +62,7 @@
               <i class="bi bi-person-circle"></i> <span id="navUserName"></span>
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person me-2"></i>Mein Profil</a></li>
+              <li><a class="dropdown-item" href="#" onclick="showProfile()"><i class="bi bi-person me-2"></i>Mein Profil</a></li>
               <li><a class="dropdown-item" href="#" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i>Abmelden</a></li>
             </ul>
           </li>
@@ -659,12 +659,6 @@
       }
     }
     
-    
-    supabase.auth.onAuthStateChange((event, session) => {
-      setTimeout(() => {
-        if (typeof updateNavigation === 'function') updateNavigation();
-      }, 100);
-    });
   </script>
   <script src="nav.js"></script>
   <script src="index.js"></script>

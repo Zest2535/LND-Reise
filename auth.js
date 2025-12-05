@@ -51,12 +51,8 @@ async function updateNavigation() {
 async function logout() {
   if (confirm('Möchten Sie sich wirklich abmelden?')) {
     await window.DB.signOut();
-    window.location.reload();
+    window.location.href = 'index.html';
   }
-}
-
-async function showProfile() {
-  window.location.href = 'profil.html';
 }
 
 // Start
