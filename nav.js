@@ -1,48 +1,91 @@
-// Простая система навигации
+// Система навигации - обновление статуса пользователя
 async function updateNavigation() {
   const navLogin = document.getElementById('navLogin');
   const navRegister = document.getElementById('navRegister');
   const navUser = document.getElementById('navUser');
   const navUserName = document.getElementById('navUserName');
   
-  if (!navLogin || !navRegister || !navUser) return;
-  if (!window.DB) return;
+  // Проверяем наличие элементов
+  if (!navLogin || !navRegister || !navUser) {
+    console.warn('Navigation elements not found');
+    return;
+  }
+  
+  // Проверяем наличие window.DB
+  if (!window.DB) {
+    console.warn('DB not initialized yet');
+    return;
+  }
   
   try {
     const user = await window.DB.getUser();
+    console.log('Current user:', user);
     
     if (user) {
+      // Пользователь авторизован
       const profile = await window.DB.getUserProfile();
+      console.log('User profile:', profile);
+      
       navLogin.style.display = 'none';
       navRegister.style.display = 'none';
       navUser.style.display = 'block';
+      
       if (navUserName && profile) {
-        navUserName.textContent = profile.firstname + ' ' + profile.lastname;
+        const fullName = `${profile.firstname || ''} ${profile.lastname || ''}`.trim();
+        navUserName.textContent = fullName || 'Пользователь';
       }
     } else {
+      // Пользователь не авторизован
       navLogin.style.display = 'block';
       navRegister.style.display = 'block';
       navUser.style.display = 'none';
     }
   } catch (error) {
+    console.error('Error updating navigation:', error);
     navLogin.style.display = 'block';
     navRegister.style.display = 'block';
     navUser.style.display = 'none';
   }
 }
 
+// Функция выхода
 async function logout() {
   if (confirm('Möchten Sie sich wirklich abmelden?')) {
-    await window.DB.signOut();
-    window.location.href = 'index.html';
+    try {
+      await window.DB.signOut();
+      window.location.href = 'index.html';
+    } catch (error) {
+      console.error('Logout error:', error);
+      alert('Fehler beim Abmelden');
+    }
   }
 }
 
-// Ждем загрузки и обновляем
+// Инициализация навигации при загрузке
+function initializeNavigation() {
+  console.log('Initializing navigation...');
+  
+  // Ждем загрузки DOM и DB
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(updateNavigation, 300);
+    });
+  } else {
+    setTimeout(updateNavigation, 300);
+  }
+  
+  // Слушаем изменения статуса авторизации
+  if (window.supabase) {
+    window.supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event);
+      setTimeout(updateNavigation, 200);
+    });
+  }
+}
+
+// Запускаем инициализацию
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(updateNavigation, 500);
-  });
+  document.addEventListener('DOMContentLoaded', initializeNavigation);
 } else {
-  setTimeout(updateNavigation, 500);
+  initializeNavigation();
 }

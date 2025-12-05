@@ -517,37 +517,7 @@ async function displayMainReviews() {
   }
 }
 
-async function updateNavigation() {
-  const navLogin = document.getElementById('navLogin');
-  const navRegister = document.getElementById('navRegister');
-  const navUser = document.getElementById('navUser');
-  const navUserName = document.getElementById('navUserName');
-  
-  if (navLogin && navRegister && navUser) {
-    try {
-      const user = await DB.getUser();
-      if (user) {
-        navLogin.style.display = 'none';
-        navRegister.style.display = 'none';
-        navUser.style.display = 'block';
-        if (navUserName) navUserName.textContent = user.user_metadata?.first_name || user.email;
-      } else {
-        navLogin.style.display = 'block';
-        navRegister.style.display = 'block';
-        navUser.style.display = 'none';
-      }
-    } catch (error) {
-      navLogin.style.display = 'block';
-      navRegister.style.display = 'block';
-      navUser.style.display = 'none';
-    }
-  }
-}
-
-
-
-
-
+// Инициализация профиля
 function initProfileHandlers() {
   document.getElementById('editProfileBtn')?.addEventListener('click', function() {
     document.getElementById('profileView').style.display = 'none';
@@ -670,161 +640,39 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initModals() {
+  // Только обработчики для переключения видимости пароля
   const toggleLoginPassword = document.getElementById('toggleLoginPassword');
   const toggleRegPassword = document.getElementById('toggleRegPassword');
   
-  toggleLoginPassword?.addEventListener('click', function() {
-    const input = document.getElementById('loginPassword');
-    const icon = this.querySelector('i');
-    if (input.type === 'password') {
-      input.type = 'text';
-      icon.className = 'bi bi-eye-slash';
-    } else {
-      input.type = 'password';
-      icon.className = 'bi bi-eye';
-    }
-  });
+  if (toggleLoginPassword) {
+    toggleLoginPassword.addEventListener('click', function() {
+      const input = document.getElementById('loginPassword');
+      const icon = this.querySelector('i');
+      if (input && icon) {
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.className = 'bi bi-eye-slash';
+        } else {
+          input.type = 'password';
+          icon.className = 'bi bi-eye';
+        }
+      }
+    });
+  }
   
-  toggleRegPassword?.addEventListener('click', function() {
-    const input = document.getElementById('regPassword');
-    const icon = this.querySelector('i');
-    if (input.type === 'password') {
-      input.type = 'text';
-      icon.className = 'bi bi-eye-slash';
-    } else {
-      input.type = 'password';
-      icon.className = 'bi bi-eye';
-    }
-  });
-  
-  document.getElementById('loginForm')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    if (!this.checkValidity()) {
-      e.stopPropagation();
-      this.classList.add('was-validated');
-      return;
-    }
-    
-    try {
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      
-      const { user } = await DB.signIn(email, password);
-      
-      bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
-      this.reset();
-      this.classList.remove('was-validated');
-      
-      const toast = document.createElement('div');
-      toast.className = 'toast-notification success';
-      toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Willkommen zurück!';
-      document.body.appendChild(toast);
-      setTimeout(() => toast.classList.add('show'), 100);
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
-      
-      updateNavigation();
-    } catch (error) {
-      const toast = document.createElement('div');
-      toast.className = 'toast-notification error';
-      toast.innerHTML = '<i class="bi bi-x-circle-fill me-2"></i>E-Mail oder Passwort falsch!';
-      document.body.appendChild(toast);
-      setTimeout(() => toast.classList.add('show'), 100);
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
-    }
-  });
-
-  document.getElementById('registerForm')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const password = document.getElementById('regPassword').value;
-    const passwordConfirm = document.getElementById('regPasswordConfirm').value;
-    const passwordConfirmInput = document.getElementById('regPasswordConfirm');
-    
-    if (password !== passwordConfirm) {
-      passwordConfirmInput.setCustomValidity('Passwörter stimmen nicht überein');
-    } else {
-      passwordConfirmInput.setCustomValidity('');
-    }
-    
-    if (!this.checkValidity()) {
-      e.stopPropagation();
-      this.classList.add('was-validated');
-      return;
-    }
-    
-    try {
-      const email = document.getElementById('regEmail').value.trim();
-      const firstName = document.getElementById('regFirstName').value.trim();
-      const lastName = document.getElementById('regLastName').value.trim();
-      
-      await DB.signUp(email, password, firstName, lastName);
-      
-      bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
-      this.reset();
-      this.classList.remove('was-validated');
-      
-      const toast = document.createElement('div');
-      toast.className = 'toast-notification success';
-      toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Registrierung erfolgreich! Prüfen Sie Ihre E-Mail.';
-      document.body.appendChild(toast);
-      setTimeout(() => toast.classList.add('show'), 100);
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-      }, 4000);
-    } catch (error) {
-      const toast = document.createElement('div');
-      toast.className = 'toast-notification error';
-      toast.innerHTML = '<i class="bi bi-x-circle-fill me-2"></i>' + error.message;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.classList.add('show'), 100);
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
-    }
-  });
-
-  document.getElementById('bookingForm')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    if (!currentBookingOffer) return;
-    
-    if (!this.checkValidity()) {
-      e.stopPropagation();
-      this.classList.add('was-validated');
-      return;
-    }
-    
-    try {
-      await DB.createBooking(
-        currentBookingOffer.id,
-        document.getElementById('bookingDate').value,
-        document.getElementById('bookingPersons').value,
-        document.getElementById('bookingPhone').value
-      );
-      
-      bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();
-      this.reset();
-      this.classList.remove('was-validated');
-      
-      const toast = document.createElement('div');
-      toast.className = 'toast-notification success';
-      toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Buchung erfolgreich!';
-      document.body.appendChild(toast);
-      setTimeout(() => toast.classList.add('show'), 100);
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-      }, 4000);
-    } catch (error) {
-      alert('❌ Fehler: ' + error.message);
-    }
-  });
+  if (toggleRegPassword) {
+    toggleRegPassword.addEventListener('click', function() {
+      const input = document.getElementById('regPassword');
+      const icon = this.querySelector('i');
+      if (input && icon) {
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.className = 'bi bi-eye-slash';
+        } else {
+          input.type = 'password';
+          icon.className = 'bi bi-eye';
+        }
+      }
+    });
+  }
 }

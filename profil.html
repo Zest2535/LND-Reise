@@ -121,85 +121,122 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const supabaseUrl = "https://aecdewxxzqudleplampt.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFlY2Rld3h4enF1ZGxlcGxhbXB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ4MjQ1OTcsImV4cCI6MjA4MDQwMDU5N30.3Z02Aaw7oYl12cVNHuvjbAOYIkWZ7kbM6WmdQZvaM3U";
-    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        storage: window.localStorage
-      }
-    });
+    // Инициализация Supabase
+    const SUPABASE_URL = 'https://ycvmtybwfxqzefkhosgs.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inljdm10eWJ3ZnhxemVma2hvc2dzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzEzNDcwMjAsImV4cCI6MjA0NjkyMzAyMH0.J-UVLrvUe82c2HL6MUQOuoMXz_dI2VqN9K5lxwOj-KY';
     
+    window.supabase = window.supabase || {};
+    if (typeof supabase !== 'undefined' && supabase.createClient) {
+      window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+    
+    // Инициализация DB объекта
     window.DB = {
       async getUser() {
-        const { data: { user } } = await supabase.auth.getUser()
-        return user
+        try {
+          const { data: { user } } = await window.supabase.auth.getUser();
+          return user;
+        } catch (error) {
+          console.error('Error getting user:', error);
+          return null;
+        }
       },
+      
       async getUserProfile() {
-        const user = await this.getUser()
-        if (!user) return null
-        const { data, error } = await supabase.from('customers').select('*').eq('email', user.email).single()
-        if (error) throw error
-        return data
+        try {
+          const user = await this.getUser();
+          if (!user) return null;
+          
+          const { data, error } = await window.supabase
+            .from('customers')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+          
+          if (error && error.code !== 'PGRST116') throw error;
+          return data || null;
+        } catch (error) {
+          console.error('Error getting profile:', error);
+          return null;
+        }
       },
+      
       async getUserBookings() {
-        const user = await this.getUser()
-        if (!user) return []
-        const { data, error } = await supabase
-          .from('bookings')
-          .select('*, offers(title, price, duration)')
-          .eq('customer_id', user.id)
-        if (error) throw error
-        return data
+        try {
+          const profile = await this.getUserProfile();
+          if (!profile) return [];
+          
+          const { data, error } = await window.supabase
+            .from('bookings')
+            .select('*, tours(title, price, destination, start_date, end_date)')
+            .eq('client_id', profile.id);
+          
+          if (error) throw error;
+          return data || [];
+        } catch (error) {
+          console.error('Error getting bookings:', error);
+          return [];
+        }
       },
+      
       async signOut() {
-        const { error } = await supabase.auth.signOut()
-        if (error) throw error
+        try {
+          const { error } = await window.supabase.auth.signOut();
+          if (error) throw error;
+        } catch (error) {
+          console.error('Sign out error:', error);
+          throw error;
+        }
       }
-    }
+    };
+    
+    console.log('DB initialized in profil.html');
     
     async function loadProfile() {
       try {
-        // Warten bis Supabase bereit ist
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Ждем загрузки Supabase
+        await new Promise(resolve => setTimeout(resolve, 500));
         
-        const user = await DB.getUser();
+        const user = await window.DB.getUser();
+        console.log('Current user:', user);
+        
         if (!user) {
           alert('⚠️ Bitte melden Sie sich an');
           window.location.href = 'index.html';
           return;
         }
         
-        const profile = await DB.getUserProfile();
+        const profile = await window.DB.getUserProfile();
+        console.log('User profile:', profile);
+        
         if (!profile) {
           alert('⚠️ Profil nicht gefunden');
           window.location.href = 'index.html';
           return;
         }
         
-        const initials = profile.firstname.charAt(0) + profile.lastname.charAt(0);
+        // Заполняем профиль
+        const initials = (profile.firstname?.charAt(0) || 'U') + (profile.lastname?.charAt(0) || 'U');
         document.getElementById('avatar').textContent = initials;
-        document.getElementById('fullName').textContent = profile.firstname + ' ' + profile.lastname;
-        document.getElementById('emailDisplay').textContent = profile.email;
-        document.getElementById('firstName').textContent = profile.firstname;
-        document.getElementById('lastName').textContent = profile.lastname;
-        document.getElementById('datum').textContent = new Date(profile.created_at).toLocaleDateString('de-DE');
+        document.getElementById('fullName').textContent = (profile.firstname || '') + ' ' + (profile.lastname || '');
+        document.getElementById('emailDisplay').textContent = profile.email || '';
+        document.getElementById('firstName').textContent = profile.firstname || '';
+        document.getElementById('lastName').textContent = profile.lastname || '';
+        document.getElementById('datum').textContent = profile.created_at ? new Date(profile.created_at).toLocaleDateString('de-DE') : 'Unbekannt';
         
-        const buchungen = await DB.getUserBookings();
+        // Загружаем бронирования
+        const buchungen = await window.DB.getUserBookings();
         const buchungenListe = document.getElementById('buchungenListe');
         
-        if (buchungen.length === 0) {
+        if (!buchungen || buchungen.length === 0) {
           buchungenListe.innerHTML = '<p class="text-muted">Noch keine Buchungen vorhanden</p>';
         } else {
           buchungenListe.innerHTML = buchungen.map(b => `
             <div class="stat-card card p-3 mb-2">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <h6 class="text-white mb-1">${b.offers?.title || 'Unbekannt'}</h6>
-                  <small class="text-white-50">${new Date(b.travel_date).toLocaleDateString('de-DE')} • ${b.persons} Person(en)</small>
-                  ${b.emergency_contact_phone ? `<br><small class="text-white-50">Tel: ${b.emergency_contact_phone}</small>` : ''}
+                  <h6 class="text-white mb-1">${b.tours?.title || 'Unbekannt'}</h6>
+                  <small class="text-white-50">Status: ${b.status || 'Bestätigt'}</small>
                 </div>
                 <span class="badge bg-success">${b.status || 'Bestätigt'}</span>
               </div>
@@ -207,15 +244,17 @@
           `).join('');
         }
       } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('fullName').textContent = 'Fehler beim Laden';
+        console.error('Error loading profile:', error);
+        document.getElementById('fullName').textContent = 'Fehler beim Laden: ' + error.message;
       }
     }
     
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(loadProfile, 1000);
-    });
-    
+    // Загружаем профиль при загрузке страницы
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadProfile);
+    } else {
+      loadProfile();
+    }
   </script>
   <script src="nav.js"></script>
 </body>
