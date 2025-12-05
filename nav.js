@@ -53,13 +53,17 @@ async function logout() {
 
 
 // Navigation beim Laden der Seite aktualisieren
-document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(updateNavigation, 100);
-});
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(updateNavigation, 500);
+  });
+} else {
+  setTimeout(updateNavigation, 500);
+}
 
 // Обновление при изменении видимости страницы
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) {
-    updateNavigation();
+    setTimeout(updateNavigation, 300);
   }
 });

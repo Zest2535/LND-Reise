@@ -212,30 +212,7 @@
     
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(loadProfile, 500);
-      setTimeout(updateNavigation, 100);
     });
-    
-    // Navigation Funktion für Profilseite
-    async function updateNavigation() {
-      const navUser = document.getElementById('navUser');
-      const navLogin = document.getElementById('navLogin');
-      const navRegister = document.getElementById('navRegister');
-      const navUserName = document.getElementById('navUserName');
-      
-      try {
-        const user = await DB.getUser();
-        const profile = user ? await DB.getUserProfile() : null;
-        
-        if (user && profile) {
-          if (navLogin) navLogin.style.display = 'none';
-          if (navRegister) navRegister.style.display = 'none';
-          if (navUser) navUser.style.display = 'block';
-          if (navUserName) navUserName.textContent = profile.first_name + ' ' + profile.last_name;
-        }
-      } catch (error) {
-        console.error('Navigation error:', error);
-      }
-    }
     
     // Слушатель изменений авторизации
     supabase.auth.onAuthStateChange((event, session) => {
