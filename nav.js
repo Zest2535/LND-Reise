@@ -1,82 +1,99 @@
-function updateNavigation() {
-  const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-  const navbarNav = document.querySelector('#navbarNav .navbar-nav');
+// Система навигации - обновление статуса пользователя
+async function updateNavigation() {
+  const navLogin = document.getElementById('navLogin');
+  const navRegister = document.getElementById('navRegister');
+  const navUser = document.getElementById('navUser');
+  const navUserName = document.getElementById('navUserName');
   
-  if (currentUser) {
-    // Benutzer ist angemeldet - zeige Profil
-    navbarNav.innerHTML = `
-      <li class="nav-item">
-        <a class="nav-link" href="index.html">Startseite</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#angebote">Angebote</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#reiseziele">Reiseziele</a>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
-          <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 14px; font-weight: bold;">
-            ${currentUser.firstName.charAt(0)}${currentUser.lastName.charAt(0)}
-          </div>
-          <span>${currentUser.firstName} ${currentUser.lastName}</span>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end shadow" style="min-width: 280px;">
-          <li class="dropdown-header">
-            <div class="d-flex align-items-center">
-              <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; font-size: 16px; font-weight: bold;">
-                ${currentUser.firstName.charAt(0)}${currentUser.lastName.charAt(0)}
-              </div>
-              <div>
-                <div class="fw-bold">${currentUser.firstName} ${currentUser.lastName}</div>
-                <small class="text-muted">${currentUser.email}</small>
-              </div>
-            </div>
-          </li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item py-2" href="profil.html"><i class="bi bi-person-circle me-2 text-primary"></i>Mein Profil</a></li>
-          <li><a class="dropdown-item py-2" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal"><i class="bi bi-gear me-2 text-primary"></i>Einstellungen</a></li>
-          <li><a class="dropdown-item py-2" href="favoriten.html"><i class="bi bi-heart me-2 text-primary"></i>Meine Favoriten</a></li>
-          <li><a class="dropdown-item py-2" href="#"><i class="bi bi-clock-history me-2 text-primary"></i>Buchungshistorie</a></li>
-          ${currentUser.role === 'moderator' || currentUser.role === 'admin' ? '<li><a class="dropdown-item py-2 text-warning" href="admin-login.html"><i class="bi bi-shield-lock me-2"></i>Moderator Panel</a></li>' : ''}
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item py-2 text-danger" href="#" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i>Abmelden</a></li>
-        </ul>
-      </li>
-    `;
-  } else {
-    // Benutzer ist nicht angemeldet - zeige Login/Register
-    navbarNav.innerHTML = `
-      <li class="nav-item">
-        <a class="nav-link" href="index.html">Startseite</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#angebote">Angebote</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#reiseziele">Reiseziele</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#registerModal">Registrieren</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Anmelden</a>
-      </li>
-    `;
+  // Проверяем наличие элементов
+  if (!navLogin || !navRegister || !navUser) {
+    console.warn('Navigation elements not found');
+    return;
+  }
+  
+  // Проверяем наличие window.DB
+  if (!window.DB) {
+    console.warn('DB not initialized yet');
+    return;
+  }
+  
+  try {
+    const user = await window.DB.getUser();
+    console.log('Current user:', user);
+    
+    if (user) {
+      // Пользователь авторизован
+      const profile = await window.DB.getUserProfile();
+      console.log('User profile:', profile);
+      
+      navLogin.style.display = 'none';
+      navRegister.style.display = 'none';
+      navUser.style.display = 'block';
+      
+      if (navUserName && profile) {
+        const fullName = `${profile.firstname || ''} ${profile.lastname || ''}`.trim();
+        navUserName.textContent = fullName || 'Пользователь';
+      }
+    } else {
+      // Пользователь не авторизован
+      navLogin.style.display = 'block';
+      navRegister.style.display = 'block';
+      navUser.style.display = 'none';
+    }
+  } catch (error) {
+    console.error('Error updating navigation:', error);
+    navLogin.style.display = 'block';
+    navRegister.style.display = 'block';
+    navUser.style.display = 'none';
+  }
+}
+  console.log('Navigation updated for user:', fullName);
+
+// Функция выхода
+async function logout() {
+  if (confirm('Möchten Sie sich wirklich abmelden?')) {
+    try {
+      await window.DB.signOut();
+      window.location.href = 'index.html';
+    } catch (error) {
+      console.error('Logout error:', error);
+      alert('Fehler beim Abmelden');
+    }
   }
 }
 
-function showProfile() {
-  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-  alert(`Profil:\nName: ${currentUser.firstName} ${currentUser.lastName}\nE-Mail: ${currentUser.email}\nBundesland: ${currentUser.state}`);
+// Инициализация навигации при загрузке
+function initializeNavigation() {
+  console.log('Initializing navigation...');
+  
+  // Ждем загрузки DOM и DB
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(updateNavigation, 300);
+    });
+  } else {
+    setTimeout(updateNavigation, 300);
+  }
+  
+  // Слушаем изменения статуса авторизации
+  if (window.supabase) {
+    window.supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event);
+      setTimeout(updateNavigation, 200);
+    });
+  }
 }
 
-function logout() {
-  localStorage.removeItem('currentUser');
-  window.location.href = 'index.html';
+// Запускаем инициализацию
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeNavigation);
+} else {
+    console.log('Navigation updated for guest');
+       console.log('User logged out');
+       // Обновляем навигацию
+       setTimeout(() => {
+         updateNavigation();
+         window.location.href = 'index.html';
+       }, 300);
+  initializeNavigation();
 }
-
-
-
-// Navigation beim Laden der Seite aktualisieren
-document.addEventListener('DOMContentLoaded', updateNavigation);

@@ -7,6 +7,15 @@ if (navbar) {
     if (!ticking) {
       window.requestAnimationFrame(function() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Добавляем класс scrolled для эффекта
+        if (scrollTop > 50) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+        
+        // Скрываем/показываем навигацию при скролле
         if (scrollTop > lastScrollTop && scrollTop > 100) {
           navbar.style.top = "-80px";
         } else {
@@ -70,66 +79,102 @@ function hashStringToInt(str) {
   return h >>> 0;
 }
 
-function renderOffers(options = { count: 6 }) {
+async function renderOffers(options = { count: 6 }) {
   const container = document.getElementById('angebote-grid');
   if (!container) return;
-  const path = (location && location.pathname) ? location.pathname : '/';
-  const seed = hashStringToInt(path + (location.search || '') + (location.hash || ''));
-  const shuffled = seededShuffle(offersData, seed);
-  const count = Math.min(options.count || 6, shuffled.length);
-  let html = '';
-  for (let i = 0; i < count; i++) {
-    const o = shuffled[i];
-    html += `
-      <div class="col-lg-4 col-md-6 mb-4">
-        <div class="angebot-card">
-          <img src="${o.img.startsWith('http') ? o.img : 'img/' + o.img}" loading="lazy" class="card-img-top" alt="${o.title}">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">${o.title}</h5>
-            <p class="card-text">${o.text}</p>
-            <button class="btn mt-auto" data-offer-id="${o.id}">Details ansehen</button>
+  
+  try {
+    const tours = await DB.getTours();
+    
+    if (!tours || tours.length === 0) {
+      container.innerHTML = '<p class="text-center">Keine Angebote verfügbar</p>';
+      return;
+    }
+    
+    const count = Math.min(options.count || 6, tours.length);
+    let html = '';
+    
+    for (let i = 0; i < count; i++) {
+      const t = tours[i];
+      const imgUrl = t.img || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop';
+      const price = t.price ? `€${t.price}` : 'Preis auf Anfrage';
+      
+      html += `
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="angebot-card">
+            <img src="${imgUrl}" loading="lazy" class="card-img-top" alt="${t.title}">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">${t.title}</h5>
+              <p class="card-text">${t.description || t.destination}</p>
+              <div class="d-flex justify-content-between align-items-center mt-auto">
+                <span class="fw-bold text-primary">${price}</span>
+                <button class="btn btn-primary" data-tour-id="${t.tour_id}">Buchen</button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    `;
-  }
-  container.innerHTML = html;
-  container.querySelectorAll('button[data-offer-id]').forEach(btn => {
-    btn.addEventListener('click', function(ev) {
-      ev.preventDefault();
-      showOfferDetails(this.getAttribute('data-offer-id'));
+      `;
+    }
+    container.innerHTML = html;
+    
+    container.querySelectorAll('button[data-tour-id]').forEach(btn => {
+      btn.addEventListener('click', async function(ev) {
+        ev.preventDefault();
+        const tourId = this.getAttribute('data-tour-id');
+        const user = await DB.getUser();
+        if (!user) {
+          new bootstrap.Modal(document.getElementById('loginModal')).show();
+          return;
+        }
+        try {
+          await DB.createBooking(tourId);
+          alert('✅ Buchung erfolgreich!');
+        } catch (error) {
+          alert('❌ Fehler: ' + error.message);
+        }
+      });
     });
-  });
+  } catch (error) {
+    console.error('Error loading tours:', error);
+    container.innerHTML = '<p class="text-center">Fehler beim Laden der Angebote</p>';
+  }
 }
 
 let currentBookingOffer = null;
 
-function showOfferDetails(offerId) {
-  const offer = offersData.find(o => o.id === offerId);
-  if (!offer) return;
-  currentBookingOffer = offer;
-  const modal = document.getElementById('offerDetailsModal');
-  if (!modal) return;
-  modal.querySelector('#offerModalImage').src = offer.img.startsWith('http') ? offer.img : 'img/' + offer.img;
-  modal.querySelector('#offerModalTitle').textContent = offer.title;
-  modal.querySelector('#offerModalLongText').textContent = offer.longText;
-  modal.querySelector('#offerModalPrice').textContent = offer.price;
-  modal.querySelector('#offerModalDuration').textContent = offer.duration;
-  
-  const bookBtn = modal.querySelector('#offerModalBook');
-  bookBtn.onclick = function() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser) {
+async function showOfferDetails(offerId) {
+  try {
+    const offers = await DB.getOffers();
+    const offer = offers.find(o => o.id === offerId);
+    if (!offer) return;
+    
+    currentBookingOffer = offer;
+    const modal = document.getElementById('offerDetailsModal');
+    if (!modal) return;
+    
+    modal.querySelector('#offerModalImage').src = offer.image_url;
+    modal.querySelector('#offerModalTitle').textContent = offer.title;
+    modal.querySelector('#offerModalLongText').textContent = offer.description;
+    modal.querySelector('#offerModalPrice').textContent = offer.price;
+    modal.querySelector('#offerModalDuration').textContent = offer.duration;
+    
+    const bookBtn = modal.querySelector('#offerModalBook');
+    bookBtn.onclick = async function() {
+      const user = await DB.getUser();
+      if (!user) {
+        bootstrap.Modal.getInstance(modal).hide();
+        new bootstrap.Modal(document.getElementById('loginModal')).show();
+        return;
+      }
       bootstrap.Modal.getInstance(modal).hide();
-      new bootstrap.Modal(document.getElementById('loginModal')).show();
-      return;
+      openBookingModal(offer);
+    };
+    
+    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+      new bootstrap.Modal(modal).show();
     }
-    bootstrap.Modal.getInstance(modal).hide();
-    openBookingModal(offer);
-  };
-  
-  if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-    new bootstrap.Modal(modal).show();
+  } catch (error) {
+    console.error('Error loading offer details:', error);
   }
 }
 
@@ -279,125 +324,71 @@ document.querySelectorAll('img').forEach(img => {
   if (img.complete) img.classList.add('loaded');
 });
 
-let reiseendePicker = null;
-let reisebeginnPicker = null;
-
-function calculateDuration() {
-  const beginn = reisebeginnPicker?.selectedDates[0];
-  const ende = reiseendePicker?.selectedDates[0];
-  if (beginn && ende && ende >= beginn) {
-    const diff = Math.ceil((ende - beginn) / (1000 * 60 * 60 * 24));
-    const dauerInput = document.getElementById('dauer-input');
-    const unitBtn = document.getElementById('dauer-unit');
-    const unit = unitBtn?.getAttribute('data-selected') || 'tage';
+const searchBtn = document.querySelector('.btn-search');
+if (searchBtn) {
+  searchBtn.addEventListener('click', function() {
+    const destination = document.getElementById('destination-search')?.value;
+    const abflug = document.getElementById('abflughafen')?.value;
+    const personen = document.getElementById('personen')?.value;
+    const datum = document.getElementById('reisedatum')?.value;
     
-    if (unit === 'wochen') {
-      dauerInput.value = Math.round(diff / 7);
-    } else if (unit === 'monate') {
-      dauerInput.value = Math.round(diff / 30);
-    } else {
-      dauerInput.value = diff;
+    if (!destination) {
+      alert('Bitte geben Sie ein Reiseziel ein');
+      return;
     }
-  }
-}
-
-function calculateEndDate() {
-  const beginn = reisebeginnPicker?.selectedDates[0];
-  const dauerInput = document.getElementById('dauer-input');
-  const dauer = parseInt(dauerInput?.value);
-  const unitBtn = document.getElementById('dauer-unit');
-  const unit = unitBtn?.getAttribute('data-selected') || 'tage';
-  
-  if (beginn && dauer > 0) {
-    let days = dauer;
-    if (unit === 'wochen') days = dauer * 7;
-    else if (unit === 'monate') days = dauer * 30;
     
-    const ende = new Date(beginn);
-    ende.setDate(ende.getDate() + days);
-    reiseendePicker?.setDate(ende);
-  }
-}
-
-if (typeof flatpickr === 'function') {
-  reisebeginnPicker = flatpickr("#reisebeginn", {
-    dateFormat: "d.m.Y",
-    locale: "de",
-    minDate: "today",
-    onChange: function(selectedDates, dateStr) {
-      if (reiseendePicker) reiseendePicker.set('minDate', dateStr);
-      const dauerInput = document.getElementById('dauer-input');
-      if (dauerInput?.value) calculateEndDate();
-      else calculateDuration();
-    }
-  });
-  reiseendePicker = flatpickr("#reiseende", {
-    dateFormat: "d.m.Y",
-    locale: "de",
-    minDate: "today",
-    onChange: calculateDuration
-  });
-  
-  const dauerInput = document.getElementById('dauer-input');
-  if (dauerInput) {
-    dauerInput.addEventListener('input', calculateEndDate);
-  }
-}
-
-document.querySelectorAll('.dropdown-item').forEach(item => {
-  item.addEventListener('click', function(e) {
-    e.preventDefault();
-    const value = this.getAttribute('data-value');
-    const button = document.getElementById('dauer-unit');
-    if (button) {
-      button.textContent = this.textContent;
-      button.setAttribute('data-selected', value);
-      calculateDuration();
-    }
-  });
-});
-
-const resetBtn = document.querySelector('.btn-reset');
-if (resetBtn) {
-  resetBtn.addEventListener('click', function() {
-    document.querySelectorAll('.search-row input').forEach(input => input.value = '');
-    if (typeof flatpickr === 'function') flatpickr("#reisebeginn").clear();
-    if (reiseendePicker) reiseendePicker.clear();
-    const button = document.getElementById('dauer-unit');
-    if (button) {
-      button.textContent = 'Tage';
-      button.setAttribute('data-selected', 'tage');
-    }
+    const params = new URLSearchParams();
+    if (destination) params.set('destination', destination);
+    if (abflug) params.set('airport', abflug);
+    if (datum) params.set('date', datum);
+    
+    window.location.href = 'angebote.html?' + params.toString();
   });
 }
 
-const destinationsDB = [
-  'Barcelona, Spanien', 'Berlin, Deutschland', 'Bali, Indonesien',
-  'Dubai, VAE', 'Edinburgh, Schottland', 'Kapstadt, Südafrika',
-  'Kyoto, Japan', 'Lissabon, Portugal', 'Malediven',
-  'Marrakesch, Marokko', 'New York, USA', 'Paris, Frankreich',
-  'Santorini, Griechenland', 'Sydney, Australien', 'Thailand',
-  'Vancouver, Kanada', 'Wien, Österreich', 'Island', 'Rom, Italien',
-  'London, Großbritannien', 'Tokio, Japan', 'Amsterdam, Niederlande',
-  'Hotel Adlon Berlin, Deutschland', 'Hotel Sacher Wien, Österreich',
-  'Ritz Paris, Frankreich', 'Burj Al Arab Dubai, VAE',
-  'Marina Bay Sands Singapur', 'Hilton Barcelona, Spanien',
-  'Marriott London, Großbritannien', 'Sheraton New York, USA',
-  'Hyatt Regency Tokio, Japan', 'InterContinental Sydney, Australien',
-  'Four Seasons Bali, Indonesien', 'Waldorf Astoria Amsterdam, Niederlande',
-  'Grand Hyatt Dubai, VAE', 'Park Hyatt Paris, Frankreich',
-  'Mandarin Oriental Bangkok, Thailand', 'The Peninsula Hongkong',
-  'Atlantis The Palm Dubai, VAE', 'Belmond Hotel Caruso Amalfi, Italien',
-  'Aman Tokio, Japan', 'The Savoy London, Großbritannien',
-  'Hotel Arts Barcelona, Spanien', 'The Plaza New York, USA',
-  'Raffles Singapur', 'Sofitel Legend Metropole Hanoi, Vietnam',
-  'Fairmont Banff Springs Kanada', 'Shangri-La Paris, Frankreich'
+const destinations = [
+  {city: 'Paris', country: 'Frankreich'}, {city: 'Marseille', country: 'Frankreich'}, {city: 'Lyon', country: 'Frankreich'}, {city: 'Nizza', country: 'Frankreich'},
+  {city: 'London', country: 'Großbritannien'}, {city: 'Edinburgh', country: 'Großbritannien'}, {city: 'Manchester', country: 'Großbritannien'},
+  {city: 'Rom', country: 'Italien'}, {city: 'Venedig', country: 'Italien'}, {city: 'Florenz', country: 'Italien'}, {city: 'Mailand', country: 'Italien'}, {city: 'Neapel', country: 'Italien'},
+  {city: 'Barcelona', country: 'Spanien'}, {city: 'Madrid', country: 'Spanien'}, {city: 'Valencia', country: 'Spanien'}, {city: 'Sevilla', country: 'Spanien'}, {city: 'Malaga', country: 'Spanien'}, {city: 'Ibiza', country: 'Spanien'}, {city: 'Palma', country: 'Spanien'},
+  {city: 'Amsterdam', country: 'Niederlande'}, {city: 'Rotterdam', country: 'Niederlande'},
+  {city: 'Berlin', country: 'Deutschland'}, {city: 'München', country: 'Deutschland'}, {city: 'Hamburg', country: 'Deutschland'}, {city: 'Frankfurt', country: 'Deutschland'}, {city: 'Köln', country: 'Deutschland'},
+  {city: 'Wien', country: 'Österreich'}, {city: 'Salzburg', country: 'Österreich'}, {city: 'Innsbruck', country: 'Österreich'},
+  {city: 'Prag', country: 'Tschechien'}, {city: 'Budapest', country: 'Ungarn'}, {city: 'Krakau', country: 'Polen'}, {city: 'Warschau', country: 'Polen'},
+  {city: 'Lissabon', country: 'Portugal'}, {city: 'Porto', country: 'Portugal'},
+  {city: 'Athen', country: 'Griechenland'}, {city: 'Santorini', country: 'Griechenland'}, {city: 'Mykonos', country: 'Griechenland'}, {city: 'Kreta', country: 'Griechenland'}, {city: 'Rhodos', country: 'Griechenland'}, {city: 'Korfu', country: 'Griechenland'},
+  {city: 'Istanbul', country: 'Türkei'}, {city: 'Antalya', country: 'Türkei'}, {city: 'Bodrum', country: 'Türkei'}, {city: 'Izmir', country: 'Türkei'},
+  {city: 'Dubai', country: 'VAE'}, {city: 'Abu Dhabi', country: 'VAE'},
+  {city: 'Bangkok', country: 'Thailand'}, {city: 'Phuket', country: 'Thailand'}, {city: 'Krabi', country: 'Thailand'},
+  {city: 'Tokio', country: 'Japan'}, {city: 'Kyoto', country: 'Japan'}, {city: 'Osaka', country: 'Japan'},
+  {city: 'New York', country: 'USA'}, {city: 'Los Angeles', country: 'USA'}, {city: 'Miami', country: 'USA'}, {city: 'San Francisco', country: 'USA'}, {city: 'Las Vegas', country: 'USA'}, {city: 'Chicago', country: 'USA'}, {city: 'Boston', country: 'USA'}, {city: 'Washington', country: 'USA'},
+  {city: 'Cancun', country: 'Mexiko'}, {city: 'Mexiko-Stadt', country: 'Mexiko'}, {city: 'Acapulco', country: 'Mexiko'},
+  {city: 'Rio de Janeiro', country: 'Brasilien'}, {city: 'Buenos Aires', country: 'Argentinien'},
+  {city: 'Sydney', country: 'Australien'}, {city: 'Melbourne', country: 'Australien'},
+  {city: 'Bali', country: 'Indonesien'}, {city: 'Jakarta', country: 'Indonesien'},
+  {city: 'Singapur', country: 'Singapur'}, {city: 'Hongkong', country: 'China'}, {city: 'Shanghai', country: 'China'}, {city: 'Peking', country: 'China'},
+  {city: 'Malediven', country: 'Malediven'}, {city: 'Mauritius', country: 'Mauritius'}, {city: 'Seychellen', country: 'Seychellen'},
+  {city: 'Sansibar', country: 'Tansania'}, {city: 'Kapstadt', country: 'Südafrika'}, {city: 'Marrakesch', country: 'Marokko'}, {city: 'Kairo', country: 'Ägypten'}, {city: 'Hurghada', country: 'Ägypten'},
+  {city: 'Reykjavik', country: 'Island'}, {city: 'Oslo', country: 'Norwegen'}, {city: 'Stockholm', country: 'Schweden'}, {city: 'Kopenhagen', country: 'Dänemark'},
+  {city: 'Moskau', country: 'Russland'}, {city: 'St. Petersburg', country: 'Russland'},
+  {city: 'Dubrovnik', country: 'Kroatien'}, {city: 'Split', country: 'Kroatien'},
+  {city: 'Brüssel', country: 'Belgien'}, {city: 'Zürich', country: 'Schweiz'}, {city: 'Genf', country: 'Schweiz'},
+  {city: 'Dublin', country: 'Irland'}, {city: 'Zypern', country: 'Zypern'}, {city: 'Malta', country: 'Malta'},
+  {city: 'Toronto', country: 'Kanada'}, {city: 'Vancouver', country: 'Kanada'}, {city: 'Montreal', country: 'Kanada'},
+  {city: 'Seoul', country: 'Südkorea'}, {city: 'Mumbai', country: 'Indien'}, {city: 'Delhi', country: 'Indien'}, {city: 'Goa', country: 'Indien'},
+  {city: 'Hanoi', country: 'Vietnam'}, {city: 'Ho Chi Minh', country: 'Vietnam'}, {city: 'Manila', country: 'Philippinen'},
+  {city: 'Havanna', country: 'Kuba'}, {city: 'Punta Cana', country: 'Dominikanische Republik'}
 ];
+
+const destinationsDB = destinations.map(d => d.city + ', ' + d.country);
 
 function initAutocomplete() {
   const input = document.getElementById('destination-search');
   const list = document.getElementById('autocomplete-list');
   if (!input || !list) return;
+  
+  const allDestinations = destinationsDB;
+  
   input.addEventListener('input', function() {
     const value = this.value.toLowerCase();
     list.innerHTML = '';
@@ -405,23 +396,11 @@ function initAutocomplete() {
       list.style.display = 'none';
       return;
     }
-    const matches = destinationsDB.filter(item => item.toLowerCase().includes(value)).slice(0, 8);
+    const matches = allDestinations.filter(item => item.toLowerCase().includes(value)).slice(0, 8);
     if (matches.length > 0) {
       matches.forEach(match => {
         const div = document.createElement('div');
-        const isHotel = match.toLowerCase().includes('hotel') || match.toLowerCase().includes('resort') || 
-                        match.toLowerCase().includes('marriott') || match.toLowerCase().includes('hilton') ||
-                        match.toLowerCase().includes('hyatt') || match.toLowerCase().includes('sheraton') ||
-                        match.toLowerCase().includes('ritz') || match.toLowerCase().includes('burj') ||
-                        match.toLowerCase().includes('marina bay') || match.toLowerCase().includes('four seasons') ||
-                        match.toLowerCase().includes('waldorf') || match.toLowerCase().includes('grand') ||
-                        match.toLowerCase().includes('park hyatt') || match.toLowerCase().includes('mandarin') ||
-                        match.toLowerCase().includes('peninsula') || match.toLowerCase().includes('atlantis') ||
-                        match.toLowerCase().includes('belmond') || match.toLowerCase().includes('aman') ||
-                        match.toLowerCase().includes('savoy') || match.toLowerCase().includes('plaza') ||
-                        match.toLowerCase().includes('raffles') || match.toLowerCase().includes('sofitel') ||
-                        match.toLowerCase().includes('fairmont') || match.toLowerCase().includes('shangri');
-        div.className = isHotel ? 'autocomplete-item hotel-item' : 'autocomplete-item city-item';
+        div.className = 'autocomplete-item city-item';
         div.textContent = match;
         div.addEventListener('click', function() {
           input.value = match;
@@ -440,135 +419,260 @@ function initAutocomplete() {
 }
 
 function initMainReviews() {
-  const mainReviews = JSON.parse(localStorage.getItem('mainReviews') || '[]');
   const stars = document.querySelectorAll('.rating-input-main i');
   let selectedRating = 0;
   
-  stars.forEach(star => {
-    star.onclick = () => {
-      selectedRating = parseInt(star.getAttribute('data-rating'));
+  stars.forEach((star, index) => {
+    star.addEventListener('mouseenter', () => {
+      stars.forEach((s, i) => {
+        s.className = i <= index ? 'bi bi-star-fill text-warning active' : 'bi bi-star';
+      });
+    });
+    
+    star.addEventListener('click', () => {
+      selectedRating = index + 1;
       stars.forEach((s, i) => {
         s.className = i < selectedRating ? 'bi bi-star-fill text-warning' : 'bi bi-star';
       });
-    };
+    });
   });
   
-  document.getElementById('submitReviewMain').onclick = () => {
+  document.querySelector('.rating-input-main')?.addEventListener('mouseleave', () => {
+    stars.forEach((s, i) => {
+      s.className = i < selectedRating ? 'bi bi-star-fill text-warning' : 'bi bi-star';
+    });
+  });
+  
+  document.getElementById('submitReviewMain')?.addEventListener('click', async () => {
     const name = document.getElementById('reviewName').value.trim();
     const text = document.getElementById('reviewTextMain').value.trim();
-    if (selectedRating === 0) return alert('Bitte wählen Sie eine Bewertung');
-    if (!name) return alert('Bitte geben Sie Ihren Namen ein');
-    if (!text) return alert('Bitte schreiben Sie eine Bewertung');
     
-    mainReviews.push({ rating: selectedRating, name, text, date: new Date().toLocaleDateString('de-DE') });
-    localStorage.setItem('mainReviews', JSON.stringify(mainReviews));
+    if (selectedRating === 0) {
+      alert('⭐ Bitte wählen Sie eine Bewertung');
+      return;
+    }
+    if (!name) {
+      alert('👤 Bitte geben Sie Ihren Namen ein');
+      return;
+    }
+    if (!text) {
+      alert('✍️ Bitte schreiben Sie eine Bewertung');
+      return;
+    }
     
-    document.getElementById('reviewName').value = '';
-    document.getElementById('reviewTextMain').value = '';
-    selectedRating = 0;
-    stars.forEach(s => s.className = 'bi bi-star');
-    displayMainReviews();
-  };
+    try {
+      await DB.createReview('general', selectedRating, text, name);
+      
+      document.getElementById('reviewName').value = '';
+      document.getElementById('reviewTextMain').value = '';
+      selectedRating = 0;
+      stars.forEach(s => s.className = 'bi bi-star');
+      
+      alert('✅ Vielen Dank für Ihre Bewertung!');
+      displayMainReviews();
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      alert('❌ Fehler beim Senden der Bewertung');
+    }
+  });
   
   displayMainReviews();
 }
 
-function displayMainReviews() {
-  const reviews = JSON.parse(localStorage.getItem('mainReviews') || '[]');
+async function displayMainReviews() {
   const listEl = document.getElementById('reviewsListMain');
+  if (!listEl) return;
   
-  if (reviews.length === 0) {
-    listEl.innerHTML = '<p class="text-center text-muted">Noch keine Bewertungen vorhanden</p>';
-    return;
-  }
-  
-  listEl.innerHTML = reviews.slice().reverse().map(r => `
-    <div class="card mb-3">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-start">
-          <div>
-            <h6 class="mb-1">${r.name}</h6>
-            <div class="text-warning mb-2">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+  try {
+    const { data: reviews, error } = await window.supabase
+      .from('reviews')
+      .select('*')
+      .eq('offer_id', 'general')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    if (!reviews || reviews.length === 0) {
+      listEl.innerHTML = '<p class="text-center text-muted">Noch keine Bewertungen vorhanden</p>';
+      return;
+    }
+    
+    listEl.innerHTML = reviews.map(r => `
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h6 class="mb-1">${r.title || 'Anonym'}</h6>
+              <div class="text-warning mb-2">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+            </div>
+            <small class="text-muted">${new Date(r.created_at).toLocaleDateString('de-DE')}</small>
           </div>
-          <small class="text-muted">${r.date}</small>
+          <p class="mb-0">${r.comment}</p>
         </div>
-        <p class="mb-0">${r.text}</p>
       </div>
-    </div>
-  `).join('');
+    `).join('');
+  } catch (error) {
+    console.error('Error loading reviews:', error);
+    listEl.innerHTML = '<p class="text-center text-muted">Fehler beim Laden</p>';
+  }
+}
+
+// Инициализация профиля
+function initProfileHandlers() {
+  document.getElementById('editProfileBtn')?.addEventListener('click', function() {
+    document.getElementById('profileView').style.display = 'none';
+    document.getElementById('profileEdit').style.display = 'block';
+    this.style.display = 'none';
+  });
+  
+  document.getElementById('cancelEditBtn')?.addEventListener('click', function() {
+    document.getElementById('profileView').style.display = 'block';
+    document.getElementById('profileEdit').style.display = 'none';
+    document.getElementById('editProfileBtn').style.display = 'block';
+  });
+  
+  document.getElementById('profileEditForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    try {
+      await DB.updateProfile({
+        firstname: document.getElementById('editFirstName').value,
+        lastname: document.getElementById('editLastName').value,
+        address: document.getElementById('editAddress').value,
+        date_of_birth: document.getElementById('editBirthDate').value || null
+      });
+      
+      alert('✅ Profil erfolgreich aktualisiert!');
+      showProfile(); // Neu laden
+    } catch (error) {
+      alert('❌ Fehler beim Speichern: ' + error.message);
+    }
+  });
+  
+  document.getElementById('changePasswordBtn')?.addEventListener('click', function() {
+    const newPassword = prompt('Neues Passwort eingeben (mindestens 6 Zeichen):');
+    if (newPassword && newPassword.length >= 6) {
+      DB.changePassword(newPassword)
+        .then(() => alert('✅ Passwort erfolgreich geändert!'))
+        .catch(error => alert('❌ Fehler: ' + error.message));
+    } else if (newPassword) {
+      alert('❌ Passwort muss mindestens 6 Zeichen haben');
+    }
+  });
+  
+  document.getElementById('resetPasswordBtn')?.addEventListener('click', async function() {
+    try {
+      const user = await DB.getUser();
+      if (user) {
+        await DB.resetPassword(user.email);
+        alert('✅ Passwort-Reset E-Mail gesendet!');
+      }
+    } catch (error) {
+      alert('❌ Fehler: ' + error.message);
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  // Добавляем анимацию появления элементов
+  const animateOnScroll = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '0';
+        entry.target.style.transform = 'translateY(30px)';
+        entry.target.style.transition = 'all 0.6s ease';
+        setTimeout(() => {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }, 100);
+        animateOnScroll.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  document.querySelectorAll('.angebot-card, .service-card, .reiseziel-item').forEach(el => {
+    animateOnScroll.observe(el);
+  });
+  
   initAutocomplete();
   initDestinationFilters();
   renderOffers();
   renderDestinations();
   initModals();
+  initMainReviews();
+  updateNavigation();
+  
+  const today = new Date().toISOString().split('T')[0];
+  const dateInput = document.getElementById('reisedatum');
+  if (dateInput) dateInput.min = today;
+  
+  // Добавляем плавное появление hero секции
+  const heroContent = document.querySelector('.hero-content');
+  if (heroContent) {
+    heroContent.style.opacity = '0';
+    heroContent.style.transform = 'translateY(50px)';
+    setTimeout(() => {
+      heroContent.style.transition = 'all 1s ease';
+      heroContent.style.opacity = '1';
+      heroContent.style.transform = 'translateY(0)';
+    }, 200);
+  }
+  
+  document.getElementById('showProfile')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    showProfile();
+  });
+  
+  document.getElementById('navLogout')?.addEventListener('click', async function(e) {
+    e.preventDefault();
+    await DB.signOut();
+    updateNavigation();
+    
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification success';
+    toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Erfolgreich abgemeldet!';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 100);
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  });
 });
 
 function initModals() {
-  document.getElementById('loginForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    const konten = JSON.parse(localStorage.getItem('konten') || '[]');
-    const konto = konten.find(k => k.email === email && k.password === password);
-    
-    if (konto) {
-      localStorage.setItem('currentUser', JSON.stringify(konto));
-      bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
-      updateNavigation();
-      alert('✅ Erfolgreich angemeldet!');
-    } else {
-      alert('❌ E-Mail oder Passwort falsch!');
-    }
-  });
-
-  document.getElementById('registerForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const konto = {
-      id: Date.now(),
-      firstName: document.getElementById('regFirstName').value,
-      lastName: document.getElementById('regLastName').value,
-      email: document.getElementById('regEmail').value,
-      password: document.getElementById('regPassword').value,
-      state: document.getElementById('regState').value,
-      role: 'user',
-      datum: new Date().toLocaleString('de-DE')
-    };
-    
-    let konten = JSON.parse(localStorage.getItem('konten') || '[]');
-    konten.push(konto);
-    localStorage.setItem('konten', JSON.stringify(konten));
-    
-    bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
-    alert('✅ Konto erfolgreich erstellt!');
-    this.reset();
-  });
-
-  document.getElementById('bookingForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser || !currentBookingOffer) return;
-    
-    const buchung = {
-      id: Date.now(),
-      angebot: currentBookingOffer.title,
-      preis: currentBookingOffer.price,
-      dauer: currentBookingOffer.duration,
-      reisedatum: document.getElementById('bookingDate').value,
-      personen: document.getElementById('bookingPersons').value,
-      telefon: document.getElementById('bookingPhone').value,
-      buchungsdatum: new Date().toLocaleString('de-DE'),
-      status: 'Bestätigt'
-    };
-    
-    let buchungen = JSON.parse(localStorage.getItem('buchungen_' + currentUser.email) || '[]');
-    buchungen.push(buchung);
-    localStorage.setItem('buchungen_' + currentUser.email, JSON.stringify(buchungen));
-    
-    bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();
-    alert('✅ Buchung erfolgreich!');
-    this.reset();
-  });
+  // Только обработчики для переключения видимости пароля
+  const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+  const toggleRegPassword = document.getElementById('toggleRegPassword');
+  
+  if (toggleLoginPassword) {
+    toggleLoginPassword.addEventListener('click', function() {
+      const input = document.getElementById('loginPassword');
+      const icon = this.querySelector('i');
+      if (input && icon) {
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.className = 'bi bi-eye-slash';
+        } else {
+          input.type = 'password';
+          icon.className = 'bi bi-eye';
+        }
+      }
+    });
+  }
+  
+  if (toggleRegPassword) {
+    toggleRegPassword.addEventListener('click', function() {
+      const input = document.getElementById('regPassword');
+      const icon = this.querySelector('i');
+      if (input && icon) {
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.className = 'bi bi-eye-slash';
+        } else {
+          input.type = 'password';
+          icon.className = 'bi bi-eye';
+        }
+      }
+    });
+  }
 }

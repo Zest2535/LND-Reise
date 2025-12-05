@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alle Angebote - LND-Reisen</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styleIndex.css">
+  <link rel="stylesheet" href="animations.css">
+  <style>
+    body { 
+      padding-top: 76px;
+      background: linear-gradient(180deg, #f8f9ff 0%, #ffffff 100%);
+    }
+    .offer-item {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      border: none;
+      border-radius: 24px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      position: relative;
+    }
+    .offer-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+      opacity: 0;
+      transition: opacity 0.4s;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .offer-item:hover::before {
+      opacity: 1;
+    }
+    .offer-item:hover {
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(102, 126, 234, 0.25);
+    }
+    .offer-img {
+      height: 220px;
+      object-fit: cover;
+      width: 100%;
+      transition: transform 0.6s ease;
+    }
+    .offer-item:hover .offer-img {
+      transform: scale(1.1);
+    }
+    .price-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 30px;
+      font-weight: 800;
+      font-size: 1.3rem;
+      box-shadow: 0 8px 25px rgba(238, 90, 111, 0.4);
+      z-index: 2;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .filter-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2.5rem;
+      border-radius: 24px;
+      margin-bottom: 2rem;
+      box-shadow: 0 15px 50px rgba(102, 126, 234, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+    .filter-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .filter-section > .row {
+      position: relative;
+      z-index: 5;
+    }
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .filter-section label {
+      color: white;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 5;
+    }
+    .filter-section .form-control,
+    .filter-section .form-select {
+      border: none;
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 10;
+      background: white;
+    }
+    .filter-section .form-control:focus,
+    .filter-section .form-select:focus {
+      box-shadow: 0 6px 20px rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+      z-index: 20;
+    }
+    .filter-section .form-range {
+      height: 8px;
+    }
+    .filter-section .form-range::-webkit-slider-thumb {
+      width: 24px;
+      height: 24px;
+      background: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    #priceValue {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .filter-section .btn-light {
+      background: white;
+      border: none;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      position: relative;
+      z-index: 10;
+    }
+    .filter-section .btn-light:hover {
+      background: #f8f9fa;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .results-count {
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+      padding: 1.2rem 2rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15);
+      border: 2px solid rgba(102, 126, 234, 0.1);
+    }
+    h1 {
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 3rem !important;
+    }
+    .offer-item .p-3 {
+      position: relative;
+      z-index: 2;
+    }
+    .offer-item h5 {
+      font-weight: 700;
+      color: #2d3748;
+    }
+    .offer-item .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: none;
+      border-radius: 12px;
+      padding: 0.6rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    .offer-item .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    .country-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-primary" href="index.html">LND-Reisen</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Startseite</a></li>
+          <li class="nav-item"><a class="nav-link active" href="angebote.html">Alle Angebote</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-5">
+    <h1 class="text-center mb-4" style="font-size: 3rem;"><i class="bi bi-airplane-engines me-2"></i>Entdecke die Welt</h1>
+    <p class="text-center text-muted mb-5" style="font-size: 1.2rem;">100 handverlesene Reiseziele warten auf dich</p>
+    
+    <div class="filter-section">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label fw-semibold"><i class="bi bi-cash me-2"></i>Max. Preis</label>
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <button class="btn btn-sm btn-light" onclick="adjustPrice(-500)">-500€</button>
+            <button class="btn btn-sm btn-light" onclick="adjustPrice(-100)">-100€</button>
+            <button class="btn btn-sm btn-light" onclick="adjustPrice(100)">+100€</button>
+            <button class="btn btn-sm btn-light" onclick="adjustPrice(500)">+500€</button>
+          </div>
+          <input type="range" class="form-range" id="priceFilter" min="0" max="3000" value="3000" step="50">
+          <div class="text-center mt-2"><span id="priceValue">3000</span>€</div>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold"><i class="bi bi-airplane-fill me-2"></i>Abflughafen</label>
+          <select class="form-select" id="airportFilter">
+            <option value="">Alle</option>
+            <option value="Wien">Wien</option>
+            <option value="Salzburg">Salzburg</option>
+            <option value="Innsbruck">Innsbruck</option>
+            <option value="Graz">Graz</option>
+            <option value="Linz">Linz</option>
+            <option value="Klagenfurt">Klagenfurt</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold"><i class="bi bi-globe me-2"></i>Ziel</label>
+          <input type="text" class="form-control" id="destinationFilter" placeholder="Suchen...">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold"><i class="bi bi-funnel me-2"></i>Sortieren</label>
+          <select class="form-select" id="sortFilter">
+            <option value="price-asc">Preis aufsteigend</option>
+            <option value="price-desc">Preis absteigend</option>
+            <option value="date-asc">Datum aufsteigend</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-count">
+      <h5 class="mb-0"><i class="bi bi-list-check me-2 text-primary"></i><span id="resultsCount">0</span> Angebote gefunden</h5>
+    </div>
+    <div class="row" id="offersContainer"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const destinations = [
+      {city: 'Paris', country: 'Frankreich'}, {city: 'Marseille', country: 'Frankreich'}, {city: 'Lyon', country: 'Frankreich'}, {city: 'Nizza', country: 'Frankreich'},
+      {city: 'London', country: 'Großbritannien'}, {city: 'Edinburgh', country: 'Großbritannien'}, {city: 'Manchester', country: 'Großbritannien'},
+      {city: 'Rom', country: 'Italien'}, {city: 'Venedig', country: 'Italien'}, {city: 'Florenz', country: 'Italien'}, {city: 'Mailand', country: 'Italien'}, {city: 'Neapel', country: 'Italien'},
+      {city: 'Barcelona', country: 'Spanien'}, {city: 'Madrid', country: 'Spanien'}, {city: 'Valencia', country: 'Spanien'}, {city: 'Sevilla', country: 'Spanien'}, {city: 'Malaga', country: 'Spanien'}, {city: 'Ibiza', country: 'Spanien'}, {city: 'Palma', country: 'Spanien'},
+      {city: 'Amsterdam', country: 'Niederlande'}, {city: 'Rotterdam', country: 'Niederlande'},
+      {city: 'Berlin', country: 'Deutschland'}, {city: 'München', country: 'Deutschland'}, {city: 'Hamburg', country: 'Deutschland'}, {city: 'Frankfurt', country: 'Deutschland'}, {city: 'Köln', country: 'Deutschland'},
+      {city: 'Wien', country: 'Österreich'}, {city: 'Salzburg', country: 'Österreich'}, {city: 'Innsbruck', country: 'Österreich'},
+      {city: 'Prag', country: 'Tschechien'}, {city: 'Budapest', country: 'Ungarn'}, {city: 'Krakau', country: 'Polen'}, {city: 'Warschau', country: 'Polen'},
+      {city: 'Lissabon', country: 'Portugal'}, {city: 'Porto', country: 'Portugal'},
+      {city: 'Athen', country: 'Griechenland'}, {city: 'Santorini', country: 'Griechenland'}, {city: 'Mykonos', country: 'Griechenland'}, {city: 'Kreta', country: 'Griechenland'}, {city: 'Rhodos', country: 'Griechenland'}, {city: 'Korfu', country: 'Griechenland'},
+      {city: 'Istanbul', country: 'Türkei'}, {city: 'Antalya', country: 'Türkei'}, {city: 'Bodrum', country: 'Türkei'}, {city: 'Izmir', country: 'Türkei'},
+      {city: 'Dubai', country: 'VAE'}, {city: 'Abu Dhabi', country: 'VAE'},
+      {city: 'Bangkok', country: 'Thailand'}, {city: 'Phuket', country: 'Thailand'}, {city: 'Krabi', country: 'Thailand'},
+      {city: 'Tokio', country: 'Japan'}, {city: 'Kyoto', country: 'Japan'}, {city: 'Osaka', country: 'Japan'},
+      {city: 'New York', country: 'USA'}, {city: 'Los Angeles', country: 'USA'}, {city: 'Miami', country: 'USA'}, {city: 'San Francisco', country: 'USA'}, {city: 'Las Vegas', country: 'USA'}, {city: 'Chicago', country: 'USA'}, {city: 'Boston', country: 'USA'}, {city: 'Washington', country: 'USA'},
+      {city: 'Cancun', country: 'Mexiko'}, {city: 'Mexiko-Stadt', country: 'Mexiko'}, {city: 'Acapulco', country: 'Mexiko'},
+      {city: 'Rio de Janeiro', country: 'Brasilien'}, {city: 'Buenos Aires', country: 'Argentinien'},
+      {city: 'Sydney', country: 'Australien'}, {city: 'Melbourne', country: 'Australien'},
+      {city: 'Bali', country: 'Indonesien'}, {city: 'Jakarta', country: 'Indonesien'},
+      {city: 'Singapur', country: 'Singapur'}, {city: 'Hongkong', country: 'China'}, {city: 'Shanghai', country: 'China'}, {city: 'Peking', country: 'China'},
+      {city: 'Malediven', country: 'Malediven'}, {city: 'Mauritius', country: 'Mauritius'}, {city: 'Seychellen', country: 'Seychellen'},
+      {city: 'Sansibar', country: 'Tansania'}, {city: 'Kapstadt', country: 'Südafrika'}, {city: 'Marrakesch', country: 'Marokko'}, {city: 'Kairo', country: 'Ägypten'}, {city: 'Hurghada', country: 'Ägypten'},
+      {city: 'Reykjavik', country: 'Island'}, {city: 'Oslo', country: 'Norwegen'}, {city: 'Stockholm', country: 'Schweden'}, {city: 'Kopenhagen', country: 'Dänemark'},
+      {city: 'Moskau', country: 'Russland'}, {city: 'St. Petersburg', country: 'Russland'},
+      {city: 'Dubrovnik', country: 'Kroatien'}, {city: 'Split', country: 'Kroatien'},
+      {city: 'Brüssel', country: 'Belgien'}, {city: 'Zürich', country: 'Schweiz'}, {city: 'Genf', country: 'Schweiz'},
+      {city: 'Dublin', country: 'Irland'}, {city: 'Zypern', country: 'Zypern'}, {city: 'Malta', country: 'Malta'},
+      {city: 'Toronto', country: 'Kanada'}, {city: 'Vancouver', country: 'Kanada'}, {city: 'Montreal', country: 'Kanada'},
+      {city: 'Seoul', country: 'Südkorea'}, {city: 'Mumbai', country: 'Indien'}, {city: 'Delhi', country: 'Indien'}, {city: 'Goa', country: 'Indien'},
+      {city: 'Hanoi', country: 'Vietnam'}, {city: 'Ho Chi Minh', country: 'Vietnam'}, {city: 'Manila', country: 'Philippinen'},
+      {city: 'Havanna', country: 'Kuba'}, {city: 'Punta Cana', country: 'Dominikanische Republik'}
+    ];
+
+    const airports = ['Wien', 'Salzburg', 'Innsbruck', 'Graz', 'Linz', 'Klagenfurt'];
+    
+    function getImageForDestination(destination) {
+      return `https://picsum.photos/seed/${encodeURIComponent(destination)}/800/600`;
+    }
+    
+    function getImageForDestinationOld(destination) {
+      const cityImages = {
+        'Paris': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=600&fit=crop',
+        'London': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=600&fit=crop',
+        'Rom': 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&h=600&fit=crop',
+        'Barcelona': 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop',
+        'Amsterdam': 'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&h=600&fit=crop',
+        'Berlin': 'https://images.unsplash.com/photo-1560969184-10fe8719e047?w=800&h=600&fit=crop',
+        'Wien': 'https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=800&h=600&fit=crop',
+        'Prag': 'https://images.unsplash.com/photo-1541849546-216549ae216d?w=800&h=600&fit=crop',
+        'Budapest': 'https://images.unsplash.com/photo-1541963058-d5c01eec0b5d?w=800&h=600&fit=crop',
+        'Krakau': 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=800&h=600&fit=crop',
+        'Lissabon': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop',
+        'Madrid': 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&h=600&fit=crop',
+        'Athen': 'https://images.unsplash.com/photo-1555993539-1732b0258235?w=800&h=600&fit=crop',
+        'Istanbul': 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&h=600&fit=crop',
+        'Dubai': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&h=600&fit=crop',
+        'Bangkok': 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800&h=600&fit=crop',
+        'Tokio': 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop',
+        'New York': 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&h=600&fit=crop',
+        'Los Angeles': 'https://images.unsplash.com/photo-1534190239940-9ba8944ea261?w=800&h=600&fit=crop',
+        'Miami': 'https://images.unsplash.com/photo-1506966953602-c20cc11f75e3?w=800&h=600&fit=crop',
+        'Cancun': 'https://images.unsplash.com/photo-1569003339405-ea396a5a8a90?w=800&h=600&fit=crop',
+        'Rio de Janeiro': 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800&h=600&fit=crop',
+        'Buenos Aires': 'https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=800&h=600&fit=crop',
+        'Sydney': 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800&h=600&fit=crop',
+        'Melbourne': 'https://images.unsplash.com/photo-1514395462725-fb4566210144?w=800&h=600&fit=crop',
+        'Bali': 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&h=600&fit=crop',
+        'Singapur': 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&h=600&fit=crop',
+        'Hongkong': 'https://images.unsplash.com/photo-1536599018102-9f803c140fc1?w=800&h=600&fit=crop',
+        'Malediven': 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&h=600&fit=crop',
+        'Mauritius': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop',
+        'Seychellen': 'https://images.unsplash.com/photo-1589197331516-7c2b62009d48?w=800&h=600&fit=crop',
+        'Sansibar': 'https://images.unsplash.com/photo-1568632234157-ce7aecd03d0d?w=800&h=600&fit=crop',
+        'Kapstadt': 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=800&h=600&fit=crop',
+        'Marrakesch': 'https://images.unsplash.com/photo-1597212618440-806262de4f6b?w=800&h=600&fit=crop',
+        'Kairo': 'https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=800&h=600&fit=crop',
+        'Jerusalem': 'https://images.unsplash.com/photo-1544484810-86e3c90e2d75?w=800&h=600&fit=crop',
+        'Reykjavik': 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=800&h=600&fit=crop',
+        'Oslo': 'https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=800&h=600&fit=crop',
+        'Stockholm': 'https://images.unsplash.com/photo-1509356843151-3e7d96241e11?w=800&h=600&fit=crop',
+        'Kopenhagen': 'https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=800&h=600&fit=crop',
+        'Helsinki': 'https://images.unsplash.com/photo-1565008576549-57569a49371d?w=800&h=600&fit=crop',
+        'Tallinn': 'https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=800&h=600&fit=crop',
+        'Riga': 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&h=600&fit=crop',
+        'Warschau': 'https://images.unsplash.com/photo-1601823984263-b87b59798b70?w=800&h=600&fit=crop',
+        'Moskau': 'https://images.unsplash.com/photo-1513326738677-b964603b136d?w=800&h=600&fit=crop',
+        'St. Petersburg': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop',
+        'Dubrovnik': 'https://images.unsplash.com/photo-1555990538-c3d7a0fd6b8f?w=800&h=600&fit=crop',
+        'Split': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop',
+        'Santorini': 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=800&h=600&fit=crop',
+        'Mykonos': 'https://images.unsplash.com/photo-1601581987809-a874a81309c9?w=800&h=600&fit=crop',
+        'Venedig': 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=800&h=600&fit=crop',
+        'Florenz': 'https://images.unsplash.com/photo-1541017097010-9c8f1b48f3b0?w=800&h=600&fit=crop',
+        'Neapel': 'https://images.unsplash.com/photo-1543429258-f9a0c8a4b7e5?w=800&h=600&fit=crop',
+        'Mailand': 'https://images.unsplash.com/photo-1513581166391-887a96ddeafd?w=800&h=600&fit=crop',
+        'Nizza': 'https://images.unsplash.com/photo-1565530916786-035e6c7c6d7e?w=800&h=600&fit=crop',
+        'Marseille': 'https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?w=800&h=600&fit=crop',
+        'Lyon': 'https://images.unsplash.com/photo-1524396309943-e03f5249f002?w=800&h=600&fit=crop',
+        'Brüssel': 'https://images.unsplash.com/photo-1559564484-e48bf5f6c69b?w=800&h=600&fit=crop',
+        'Zürich': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+        'Genf': 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&h=600&fit=crop',
+        'Edinburgh': 'https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?w=800&h=600&fit=crop',
+        'Dublin': 'https://images.unsplash.com/photo-1549918864-48ac978761a4?w=800&h=600&fit=crop',
+        'Porto': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop',
+        'Valencia': 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop',
+        'Sevilla': 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=800&h=600&fit=crop',
+        'Malaga': 'https://images.unsplash.com/photo-1562883676-8c7feb83f09b?w=800&h=600&fit=crop',
+        'Ibiza': 'https://images.unsplash.com/photo-1558862107-d49ef2a04d72?w=800&h=600&fit=crop',
+        'Palma': 'https://images.unsplash.com/photo-1562883676-8c7feb83f09b?w=800&h=600&fit=crop',
+        'Kreta': 'https://images.unsplash.com/photo-1601581987809-a874a81309c9?w=800&h=600&fit=crop',
+        'Rhodos': 'https://images.unsplash.com/photo-1601581987809-a874a81309c9?w=800&h=600&fit=crop',
+        'Korfu': 'https://images.unsplash.com/photo-1601581987809-a874a81309c9?w=800&h=600&fit=crop',
+        'Zypern': 'https://images.unsplash.com/photo-1601581987809-a874a81309c9?w=800&h=600&fit=crop',
+        'Malta': 'https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?w=800&h=600&fit=crop',
+        'Tunis': 'https://images.unsplash.com/photo-1568632234157-ce7aecd03d0d?w=800&h=600&fit=crop',
+        'Agadir': 'https://images.unsplash.com/photo-1568632234157-ce7aecd03d0d?w=800&h=600&fit=crop',
+        'Hurghada': 'https://images.unsplash.com/photo-1568632234157-ce7aecd03d0d?w=800&h=600&fit=crop',
+        'Sharm El Sheikh': 'https://images.unsplash.com/photo-1568632234157-ce7aecd03d0d?w=800&h=600&fit=crop',
+        'Tel Aviv': 'https://images.unsplash.com/photo-1544484810-86e3c90e2d75?w=800&h=600&fit=crop',
+        'Amman': 'https://images.unsplash.com/photo-1544484810-86e3c90e2d75?w=800&h=600&fit=crop',
+        'Beirut': 'https://images.unsplash.com/photo-1544484810-86e3c90e2d75?w=800&h=600&fit=crop',
+        'Antalya': 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&h=600&fit=crop',
+        'Bodrum': 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&h=600&fit=crop',
+        'Izmir': 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&h=600&fit=crop',
+        'Phuket': 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=800&h=600&fit=crop',
+        'Krabi': 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=800&h=600&fit=crop',
+        'Hanoi': 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop',
+        'Ho Chi Minh': 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop',
+        'Kuala Lumpur': 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&h=600&fit=crop',
+        'Jakarta': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop',
+        'Manila': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop',
+        'Seoul': 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=800&h=600&fit=crop',
+        'Shanghai': 'https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?w=800&h=600&fit=crop',
+        'Peking': 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&h=600&fit=crop',
+        'Mumbai': 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=800&h=600&fit=crop',
+        'Delhi': 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800&h=600&fit=crop',
+        'Goa': 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800&h=600&fit=crop',
+        'Colombo': 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop',
+        'Kathmandu': 'https://images.unsplash.com/photo-1558799401-1dcba79834c2?w=800&h=600&fit=crop',
+        'Machu Picchu': 'https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=800&h=600&fit=crop',
+        'Cusco': 'https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=800&h=600&fit=crop',
+        'Lima': 'https://images.unsplash.com/photo-1531968455001-5c5272a41129?w=800&h=600&fit=crop',
+        'Quito': 'https://images.unsplash.com/photo-1531968455001-5c5272a41129?w=800&h=600&fit=crop',
+        'Cartagena': 'https://images.unsplash.com/photo-1568632234157-ce7aecd03d0d?w=800&h=600&fit=crop',
+        'Havanna': 'https://images.unsplash.com/photo-1518544866330-4e716499f800?w=800&h=600&fit=crop',
+        'Punta Cana': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop',
+        'Montego Bay': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop',
+        'Nassau': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop',
+        'San Francisco': 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800&h=600&fit=crop',
+        'Las Vegas': 'https://images.unsplash.com/photo-1605833556294-ea5c7a74f57d?w=800&h=600&fit=crop',
+        'Chicago': 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&h=600&fit=crop',
+        'Boston': 'https://images.unsplash.com/photo-1554755393-b5e4c6e6c5b7?w=800&h=600&fit=crop',
+        'Washington': 'https://images.unsplash.com/photo-1617581629397-a72507c3de9e?w=800&h=600&fit=crop',
+        'Toronto': 'https://images.unsplash.com/photo-1517935706615-2717063c2225?w=800&h=600&fit=crop',
+        'Vancouver': 'https://images.unsplash.com/photo-1559511260-66a654ae982a?w=800&h=600&fit=crop',
+        'Montreal': 'https://images.unsplash.com/photo-1519659528534-7fd733a832a0?w=800&h=600&fit=crop',
+        'Mexiko-Stadt': 'https://images.unsplash.com/photo-1518659526054-e6c2e224d5e1?w=800&h=600&fit=crop',
+        'Acapulco': 'https://images.unsplash.com/photo-1569003339405-ea396a5a8a90?w=800&h=600&fit=crop'
+      };
+      return cityImages[destination] || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&h=600&fit=crop';
+    }
+
+    function generateOffers() {
+      const offers = [];
+      for (let i = 0; i < 100; i++) {
+        const dest = destinations[Math.floor(Math.random() * destinations.length)];
+        const airport = airports[Math.floor(Math.random() * airports.length)];
+        const price = Math.floor(Math.random() * (2800 - 199 + 1)) + 199;
+        const days = Math.floor(Math.random() * 13) + 3;
+        const daysOffset = Math.floor(Math.random() * 180) + 1;
+        const departureDate = new Date();
+        departureDate.setDate(departureDate.getDate() + daysOffset);
+        const img = getImageForDestination(dest.city);
+        
+        offers.push({
+          id: i + 1,
+          city: dest.city,
+          country: dest.country,
+          destination: dest.city + ', ' + dest.country,
+          airport,
+          price,
+          days,
+          departureDate: departureDate.toLocaleDateString('de-DE'),
+          departureDateObj: departureDate,
+          img
+        });
+      }
+      return offers;
+    }
+
+    let allOffers = generateOffers();
+    let filteredOffers = [...allOffers];
+
+    function renderOffers(offers) {
+      const container = document.getElementById('offersContainer');
+      container.innerHTML = offers.map(offer => `
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+          <div class="offer-item">
+            <div style="position: relative;">
+              <img src="${offer.img}" class="offer-img" alt="${offer.destination}">
+              <div class="price-badge">${offer.price}€</div>
+            </div>
+            <div class="p-3">
+              <h5 class="mb-2"><i class="bi bi-geo-alt-fill me-1" style="color: #667eea;"></i>${offer.city}</h5>
+              <span class="country-badge"><i class="bi bi-flag me-1"></i>${offer.country}</span>
+              <p class="mb-1 text-muted"><i class="bi bi-airplane-fill me-2"></i>Ab ${offer.airport}</p>
+              <p class="mb-1 text-muted"><i class="bi bi-calendar-event me-2"></i>${offer.departureDate}</p>
+              <p class="mb-2 text-muted"><i class="bi bi-clock me-2"></i>${offer.days} Tage</p>
+              <button class="btn btn-primary w-100 btn-sm" onclick="bookOffer(${offer.id})">
+                <i class="bi bi-cart-plus me-2"></i>Buchen
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function applyFilters() {
+      const maxPrice = parseInt(document.getElementById('priceFilter').value);
+      const airport = document.getElementById('airportFilter').value;
+      const searchTerm = document.getElementById('destinationFilter').value.toLowerCase();
+      const sort = document.getElementById('sortFilter').value;
+
+      filteredOffers = allOffers.filter(offer => {
+        const priceMatch = offer.price <= maxPrice;
+        const airportMatch = !airport || offer.airport === airport;
+        const destMatch = !searchTerm || 
+                         offer.city.toLowerCase().includes(searchTerm) || 
+                         offer.country.toLowerCase().includes(searchTerm);
+        return priceMatch && airportMatch && destMatch;
+      });
+
+      if (sort === 'price-asc') {
+        filteredOffers.sort((a, b) => a.price - b.price);
+      } else if (sort === 'price-desc') {
+        filteredOffers.sort((a, b) => b.price - a.price);
+      } else if (sort === 'date-asc') {
+        filteredOffers.sort((a, b) => a.departureDateObj - b.departureDateObj);
+      }
+
+      renderOffers(filteredOffers);
+      document.getElementById('resultsCount').textContent = filteredOffers.length;
+    }
+
+    function bookOffer(id) {
+      const offer = allOffers.find(o => o.id === id);
+      alert(`Buchung für ${offer.destination} ab ${offer.airport} am ${offer.departureDate} für ${offer.price}€`);
+    }
+
+    function adjustPrice(amount) {
+      const priceFilter = document.getElementById('priceFilter');
+      let newValue = parseInt(priceFilter.value) + amount;
+      if (newValue < 0) newValue = 0;
+      if (newValue > 3000) newValue = 3000;
+      priceFilter.value = newValue;
+      document.getElementById('priceValue').textContent = newValue;
+      applyFilters();
+    }
+
+    document.getElementById('priceFilter').addEventListener('input', function() {
+      document.getElementById('priceValue').textContent = this.value;
+      applyFilters();
+    });
+
+    document.getElementById('airportFilter').addEventListener('change', applyFilters);
+    document.getElementById('destinationFilter').addEventListener('input', applyFilters);
+    document.getElementById('sortFilter').addEventListener('change', applyFilters);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchDest = urlParams.get('destination');
+    const searchAirport = urlParams.get('airport');
+    
+    if (searchDest) {
+      document.getElementById('destinationFilter').value = searchDest;
+    }
+    if (searchAirport) {
+      const airportMap = {
+        'VIE': 'Wien',
+        'SZG': 'Salzburg',
+        'INN': 'Innsbruck',
+        'GRZ': 'Graz',
+        'LNZ': 'Linz',
+        'KLU': 'Klagenfurt'
+      };
+      document.getElementById('airportFilter').value = airportMap[searchAirport] || searchAirport;
+    }
+    
+    if (searchDest || searchAirport) {
+      applyFilters();
+    } else {
+      renderOffers(allOffers);
+      document.getElementById('resultsCount').textContent = allOffers.length;
+    }
+  </script>
+</body>
+</html>
