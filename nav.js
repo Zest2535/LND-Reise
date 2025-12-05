@@ -47,6 +47,7 @@ async function updateNavigation() {
     navUser.style.display = 'none';
   }
 }
+  console.log('Navigation updated for user:', fullName);
 
 // Функция выхода
 async function logout() {
@@ -87,5 +88,12 @@ function initializeNavigation() {
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initializeNavigation);
 } else {
+    console.log('Navigation updated for guest');
+       console.log('User logged out');
+       // Обновляем навигацию
+       setTimeout(() => {
+         updateNavigation();
+         window.location.href = 'index.html';
+       }, 300);
   initializeNavigation();
 }

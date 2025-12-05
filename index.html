@@ -753,6 +753,23 @@
 
   <!-- Авторизация и формы логин/регистр -->
   <script>
+     // Инициализация проверки сессии при загрузке страницы
+     window.addEventListener('load', async function() {
+       console.log('Page loaded, checking session...');
+     
+       // Ждем инициализации DB
+       let attempts = 0;
+       while (!window.DB && attempts < 100) {
+         await new Promise(r => setTimeout(r, 50));
+         attempts++;
+       }
+     
+       if (window.DB && typeof updateNavigation === 'function') {
+         console.log('Calling updateNavigation from load event');
+         await updateNavigation();
+       }
+     });
+   
     // Обработка логин формы
     document.addEventListener('DOMContentLoaded', function() {
       const loginForm = document.getElementById('loginForm');
@@ -762,15 +779,54 @@
           
           const email = document.getElementById('loginEmail').value.trim();
           const password = document.getElementById('loginPassword').value;
-          
-          try {
-            await window.DB.signIn(email, password);
-            alert('✅ Erfolgreich angemeldet!');
-            const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-            if (loginModal) loginModal.hide();
-            await updateNavigation();
-          } catch (error) {
-            alert('❌ Anmeldung fehlgeschlagen: ' + error.message);
+           const submitBtn = this.querySelector('button[type="submit"]');
+         
+           if (!email || !password) {
+             alert('❌ Bitte füllen Sie alle Felder aus');
+             return;
+           }
+         
+           try {
+             // Отключаем кнопку отправки
+             submitBtn.disabled = true;
+             submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Anmeldung...';
+           
+             // Ждем инициализации DB
+             let attempts = 0;
+             while (!window.DB && attempts < 50) {
+               await new Promise(r => setTimeout(r, 100));
+               attempts++;
+             }
+           
+             if (!window.DB) throw new Error('Datenbankverbindung nicht hergestellt');
+           
+             await window.DB.signIn(email, password);
+           console.log('User logged in successfully');
+           
+           // Закрываем модальное окно
+           const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+           if (loginModal) loginModal.hide();
+           
+           // Очищаем форму
+           loginForm.reset();
+           submitBtn.disabled = false;
+           submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Anmelden';
+           
+           // Обновляем навигацию с задержкой
+           setTimeout(async () => {
+             if (typeof updateNavigation === 'function') {
+               await updateNavigation();
+             }
+             alert('✅ Erfolgreich angemeldet!');
+           }, 500);
+           
+           } catch (error) {
+             console.error('Login error:', error);
+             alert('❌ Anmeldung fehlgeschlagen: ' + (error.message || 'Unbekannter Fehler'));
+           } finally {
+             // Восстанавливаем кнопку
+             submitBtn.disabled = false;
+             submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Anmelden';
           }
         });
       }
@@ -786,21 +842,61 @@
           const passwordConfirm = document.getElementById('regPasswordConfirm').value;
           const firstname = document.getElementById('regFirstName').value.trim();
           const lastname = document.getElementById('regLastName').value.trim();
+           const submitBtn = this.querySelector('button[type="submit"]');
+         
+           // Валидация
+           if (!email || !password || !firstname || !lastname) {
+             alert('❌ Bitte füllen Sie alle Felder aus');
+             return;
+           }
           
           if (password !== passwordConfirm) {
             alert('❌ Passwörter stimmen nicht überein');
             return;
           }
+         
+           if (password.length < 6) {
+             alert('❌ Passwort muss mindestens 6 Zeichen haben');
+             return;
+           }
           
           try {
+             // Отключаем кнопку отправки
+             submitBtn.disabled = true;
+             submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Registrierung...';
+           
+             // Ждем инициализации DB
+             let attempts = 0;
+             while (!window.DB && attempts < 50) {
+               await new Promise(r => setTimeout(r, 100));
+               attempts++;
+             }
+           
+             if (!window.DB) throw new Error('Datenbankverbindung nicht hergestellt');
+           
             await window.DB.signUp(email, password, firstname, lastname);
-            alert('✅ Konto erfolgreich erstellt! Bitte melden Sie sich an.');
+           
+             // Закрываем модальное окно регистрации
             const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
             if (registerModal) registerModal.hide();
+           
+             // Очищаем форму
+             registerForm.reset();
+           
+             // Показываем модальное окно логина
+             setTimeout(() => {
             const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
             loginModal.show();
-          } catch (error) {
-            alert('❌ Registrierung fehlgeschlagen: ' + error.message);
+               alert('✅ Konto erfolgreich erstellt! Bitte melden Sie sich an.');
+             }, 300);
+           
+           } catch (error) {
+             console.error('Registration error:', error);
+             alert('❌ Registrierung fehlgeschlagen: ' + (error.message || 'Unbekannter Fehler'));
+           } finally {
+             // Восстанавливаем кнопку
+             submitBtn.disabled = false;
+             submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Jetzt registrieren';
           }
         });
       }
