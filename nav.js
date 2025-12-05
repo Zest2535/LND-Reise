@@ -41,9 +41,11 @@ async function showProfile() {
 async function logout() {
   try {
     await window.DB.signOut();
-    updateNavigation();
   } catch (error) {
     console.error('Logout error:', error);
+  } finally {
+    // Принудительная перезагрузка страницы для очистки состояния
+    window.location.replace('index.html');
   }
 }
 
