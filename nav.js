@@ -4,7 +4,8 @@ async function updateNavigation() {
   const navUser = document.getElementById('navUser');
   const navUserName = document.getElementById('navUserName');
   
-  if (!navLogin || !navRegister || !navUser || !window.DB) return;
+  if (!navLogin || !navRegister || !navUser) return;
+  if (!window.DB) return;
   
   try {
     const user = await window.DB.getUser();
@@ -23,7 +24,6 @@ async function updateNavigation() {
       navUser.style.display = 'none';
     }
   } catch (error) {
-    console.error('Navigation error:', error);
     navLogin.style.display = 'block';
     navRegister.style.display = 'block';
     navUser.style.display = 'none';
@@ -31,31 +31,20 @@ async function updateNavigation() {
 }
 
 async function showProfile() {
-  if (typeof window.showProfile === 'function') {
-    window.showProfile();
-  } else {
-    window.location.href = 'profil.html';
-  }
+  window.location.href = 'profil.html';
 }
 
 async function logout() {
   if (confirm('Möchten Sie sich wirklich abmelden?')) {
     try {
       await window.DB.signOut();
-      window.location.replace('index.html');
+      window.location.href = 'index.html';
     } catch (error) {
-      console.error('Logout error:', error);
-      window.location.replace('index.html');
+      window.location.href = 'index.html';
     }
   }
 }
 
-
-
-// Проверка сессии при загрузке
-let checkInterval = setInterval(() => {
-  if (window.DB && typeof window.DB.getUser === 'function') {
-    updateNavigation();
-    clearInterval(checkInterval);
-  }
-}, 100);
+setTimeout(() => {
+  if (window.DB) updateNavigation();
+}, 500);

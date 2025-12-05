@@ -659,14 +659,14 @@
       }
     }
     
-  </script>
-  <script src="nav.js"></script>
-  <script>
-    // Слушатель изменений авторизации
+    
     supabase.auth.onAuthStateChange((event, session) => {
-      updateNavigation();
+      setTimeout(() => {
+        if (typeof updateNavigation === 'function') updateNavigation();
+      }, 100);
     });
   </script>
+  <script src="nav.js"></script>
   <script src="index.js"></script>
 
 
