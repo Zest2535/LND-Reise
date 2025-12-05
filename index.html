@@ -659,6 +659,13 @@
       }
     }
     
+    // Слушатель авторизации
+    supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth:', event);
+      setTimeout(() => {
+        if (typeof updateNavigation === 'function') updateNavigation();
+      }, 100);
+    });
   </script>
   <script src="nav.js"></script>
   <script src="index.js"></script>

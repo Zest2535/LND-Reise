@@ -1,29 +1,12 @@
-// Zentrale Authentifizierungs-Logik
-window.authReady = false;
-
-function initAuth() {
-  if (!window.supabase || !window.DB) {
-    setTimeout(initAuth, 100);
-    return;
-  }
-  
-  window.authReady = true;
-  updateNavigation();
-  
-  // Auth State Listener
-  window.supabase.auth.onAuthStateChange((event, session) => {
-    console.log('Auth changed:', event);
-    updateNavigation();
-  });
-}
-
+// Простая система навигации
 async function updateNavigation() {
   const navLogin = document.getElementById('navLogin');
   const navRegister = document.getElementById('navRegister');
   const navUser = document.getElementById('navUser');
   const navUserName = document.getElementById('navUserName');
   
-  if (!navLogin || !navRegister || !navUser || !window.DB) return;
+  if (!navLogin || !navRegister || !navUser) return;
+  if (!window.DB) return;
   
   try {
     const user = await window.DB.getUser();
@@ -51,11 +34,15 @@ async function updateNavigation() {
 async function logout() {
   if (confirm('Möchten Sie sich wirklich abmelden?')) {
     await window.DB.signOut();
-    window.location.reload();
+    window.location.href = 'index.html';
   }
 }
 
-
-
-// Start
-initAuth();
+// Ждем загрузки и обновляем
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(updateNavigation, 500);
+  });
+} else {
+  setTimeout(updateNavigation, 500);
+}
