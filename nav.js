@@ -4,7 +4,7 @@ async function updateNavigation() {
   const navUser = document.getElementById('navUser');
   const navUserName = document.getElementById('navUserName');
   
-  if (!navLogin || !navRegister || !navUser) return;
+  if (!navLogin || !navRegister || !navUser || !window.DB) return;
   
   try {
     const user = await window.DB.getUser();
@@ -23,7 +23,6 @@ async function updateNavigation() {
       navUser.style.display = 'none';
     }
   } catch (error) {
-    console.error('Navigation update error:', error);
     navLogin.style.display = 'block';
     navRegister.style.display = 'block';
     navUser.style.display = 'none';
@@ -52,18 +51,10 @@ async function logout() {
 
 
 
-// Navigation beim Laden der Seite aktualisieren
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(updateNavigation, 500);
-  });
-} else {
-  setTimeout(updateNavigation, 500);
-}
-
-// Обновление при изменении видимости страницы
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) {
-    setTimeout(updateNavigation, 300);
+// Проверка сессии при загрузке
+setInterval(() => {
+  if (window.DB && typeof window.DB.getUser === 'function') {
+    updateNavigation();
+    clearInterval(this);
   }
-});
+}, 100);
