@@ -20,11 +20,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Flatpickr for date picker -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 
   <!-- Eigene Styles -->
   <link rel="stylesheet" href="styleIndex.css">
+  <link rel="stylesheet" href="animations.css">
 </head>
 
 <body>
@@ -43,35 +43,43 @@
             <a class="nav-link active" aria-current="page" href="index.html">Startseite</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#angebote">Angebote</a>
+            <a class="nav-link" href="#angebote">Top-Angebote</a>
           </li>
-           <li class="nav-item">
+          <li class="nav-item">
+            <a class="nav-link" href="angebote.html">Alle Angebote</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="#reiseziele">Reiseziele</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" id="navRegister">
             <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#registerModal">Registrieren</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" id="navLogin">
             <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Anmelden</a>
+          </li>
+          <li class="nav-item dropdown" id="navUser" style="display: none;">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle"></i> <span id="navUserName"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person me-2"></i>Mein Profil</a></li>
+              <li><a class="dropdown-item" href="#" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i>Abmelden</a></li>
+            </ul>
           </li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- 🔹 HERO VIDEO -->
-  <header class="hero">
-    <video class="hero-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1600&q=80">
-      <source src="https://cdn.bunny.net/videos/travel_4k.mp4" type="video/mp4">
-      <source src="https://vod-progressive.akamaized.net/exp=1698480000~acl=%2Fvimeo-prod-skyfire-std-us%2F01%2F4482%2F14%2F371817311%2F1541905641.mp4~hmac=8f876f12c7f6c4c4d5c6e8c5d4c4b4a2/vimeo-prod-skyfire-std-us/01/4482/14/371817311/1541905641.mp4" type="video/mp4">
-    </video>
+  <!-- 🔹 HERO -->
+  <header class="hero" style="background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1920&q=80');">
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <div class="container">
         <div class="hero-text text-center">
-          <h1 class="display-4 fw-bold">Ihr Tor zur Welt</h1>
-          <p class="lead my-4">Entdecken Sie mit uns unvergessliche Reiseziele – komfortabel, zuverlässig und persönlich.</p>
-          <a href="formular.html" class="btn btn-primary btn-lg mt-3">Jetzt Traumreise planen</a>
+          <h1 class="display-4 fw-bold animate-fade-in">Ihr Tor zur Welt</h1>
+          <p class="lead my-4 animate-fade-in-delay">Entdecken Sie mit uns unvergessliche Reiseziele – komfortabel, zuverlässig und persönlich.</p>
+          <a href="#angebote" class="btn btn-primary btn-lg mt-3 animate-fade-in-delay-2">Jetzt Traumreise planen</a>
         </div>
       </div>
     </div>
@@ -85,60 +93,34 @@
           <div class="search-row">
             <div class="field input-pill" style="position: relative;">
               <i class="bi bi-search"></i>
-              <input type="text" class="form-control" id="destination-search" placeholder="Reiseziel, Hotel, Ort,..." autocomplete="off">
+              <input type="text" class="form-control" id="destination-search" placeholder="Reiseziel, Ort,..." autocomplete="off">
               <div id="autocomplete-list" class="autocomplete-list"></div>
             </div>
 
-            <div class="abflug-date-group">
-              <div class="field input-pill">
-                <i class="bi bi-airplane-fill"></i>
-                <select class="form-control" id="abflughafen">
-                  <option value="">Abflughafen wählen</option>
-                  <option value="VIE">Wien (VIE)</option>
-                  <option value="SZG">Salzburg (SZG)</option>
-                  <option value="INN">Innsbruck (INN)</option>
-                  <option value="GRZ">Graz (GRZ)</option>
-                  <option value="LNZ">Linz (LNZ)</option>
-                  <option value="KLU">Klagenfurt (KLU)</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="field input-pill duration-field">
-              <i class="bi bi-clock"></i>
-              <input type="number" class="form-control" id="dauer-input" min="1" max="30" placeholder="1">
-              <div class="dropdown">
-                <button class="btn dropdown-toggle duration-unit" type="button" id="dauer-unit" data-bs-toggle="dropdown" aria-expanded="false">
-                  Tage
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dauer-unit">
-                  <li><a class="dropdown-item" href="#" data-value="tage">Tage</a></li>
-                  <li><a class="dropdown-item" href="#" data-value="wochen">Wochen</a></li>
-                  <li><a class="dropdown-item" href="#" data-value="monate">Monate</a></li>
-                </ul>
-              </div>
+            <div class="field input-pill">
+              <i class="bi bi-airplane-fill"></i>
+              <select class="form-control" id="abflughafen" aria-label="Abflughafen">
+                <option value="">Abflughafen</option>
+                <option value="VIE">Wien</option>
+                <option value="SZG">Salzburg</option>
+                <option value="INN">Innsbruck</option>
+                <option value="GRZ">Graz</option>
+                <option value="LNZ">Linz</option>
+                <option value="KLU">Klagenfurt</option>
+              </select>
             </div>
 
             <div class="field input-pill">
               <i class="bi bi-people"></i>
-              <input type="text" class="form-control" placeholder="Reisende">
+              <input type="number" class="form-control" id="personen" min="1" max="10" value="2" aria-label="Anzahl Reisende">
             </div>
 
-            <div class="date-group">
-              <div class="field input-pill">
-                <i class="bi bi-calendar-event"></i>
-                <input type="text" class="form-control" id="reisebeginn" placeholder="Reisebeginn">
-              </div>
-              <div class="field input-pill">
-                <i class="bi bi-calendar-check"></i>
-                <input type="text" class="form-control" id="reiseende" placeholder="Reiseende">
-              </div>
+            <div class="field input-pill">
+              <i class="bi bi-calendar-event"></i>
+              <input type="date" class="form-control" id="reisedatum" aria-label="Reisedatum">
             </div>
 
-            <div class="button-group">
-              <button class="btn btn-reset">Zurücksetzen</button>
-              <button class="btn btn-search">Suchen</button>
-            </div>
+            <button class="btn btn-search" aria-label="Reise suchen"><i class="bi bi-search me-2"></i>Suchen</button>
           </div>
         </div>
       </div>
@@ -148,22 +130,32 @@
   <!-- 🔹 LOGIN MODAL -->
   <div class="modal fade" id="loginModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Anmelden</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold"><i class="bi bi-box-arrow-in-right me-2 text-primary"></i>Anmelden</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
         </div>
-        <div class="modal-body">
-          <form id="loginForm">
+        <div class="modal-body px-4 pb-4">
+          <form id="loginForm" novalidate>
             <div class="mb-3">
-              <label class="form-label">E-Mail</label>
-              <input type="email" id="loginEmail" class="form-control" required>
+              <label class="form-label fw-semibold"><i class="bi bi-envelope me-2"></i>E-Mail</label>
+              <input type="email" id="loginEmail" class="form-control form-control-lg" placeholder="ihre@email.com" required>
+              <div class="invalid-feedback">Bitte geben Sie eine gültige E-Mail ein</div>
             </div>
             <div class="mb-3">
-              <label class="form-label">Passwort</label>
-              <input type="password" id="loginPassword" class="form-control" required>
+              <label class="form-label fw-semibold"><i class="bi bi-lock me-2"></i>Passwort</label>
+              <div class="input-group">
+                <input type="password" id="loginPassword" class="form-control form-control-lg" placeholder="••••••••" required minlength="6">
+                <button class="btn btn-outline-secondary" type="button" id="toggleLoginPassword">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+              <div class="invalid-feedback">Passwort muss mindestens 6 Zeichen haben</div>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Anmelden</button>
+            <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+              <i class="bi bi-check-circle me-2"></i>Anmelden
+            </button>
+            <p class="text-center mt-3 mb-0 text-muted">Noch kein Konto? <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal" data-bs-dismiss="modal" class="text-primary fw-semibold">Jetzt registrieren</a></p>
           </form>
         </div>
       </div>
@@ -172,43 +164,59 @@
 
   <!-- 🔹 REGISTER MODAL -->
   <div class="modal fade" id="registerModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Registrieren</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold"><i class="bi bi-person-plus me-2 text-primary"></i>Konto erstellen</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
         </div>
-        <div class="modal-body">
-          <form id="registerForm">
+        <div class="modal-body px-4 pb-4">
+          <form id="registerForm" novalidate>
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label class="form-label">Vorname</label>
-                <input type="text" id="regFirstName" class="form-control" required>
+                <label class="form-label fw-semibold"><i class="bi bi-person me-2"></i>Vorname</label>
+                <input type="text" id="regFirstName" class="form-control form-control-lg" placeholder="Max" required minlength="2">
+                <div class="invalid-feedback">Vorname muss mindestens 2 Zeichen haben</div>
               </div>
               <div class="col-md-6 mb-3">
-                <label class="form-label">Nachname</label>
-                <input type="text" id="regLastName" class="form-control" required>
+                <label class="form-label fw-semibold"><i class="bi bi-person me-2"></i>Nachname</label>
+                <input type="text" id="regLastName" class="form-control form-control-lg" placeholder="Mustermann" required minlength="2">
+                <div class="invalid-feedback">Nachname muss mindestens 2 Zeichen haben</div>
               </div>
             </div>
             <div class="mb-3">
-              <label class="form-label">E-Mail</label>
-              <input type="email" id="regEmail" class="form-control" required>
+              <label class="form-label fw-semibold"><i class="bi bi-envelope me-2"></i>E-Mail</label>
+              <input type="email" id="regEmail" class="form-control form-control-lg" placeholder="max@beispiel.com" required>
+              <div class="invalid-feedback">Bitte geben Sie eine gültige E-Mail ein</div>
             </div>
             <div class="mb-3">
-              <label class="form-label">Passwort</label>
-              <input type="password" id="regPassword" class="form-control" required minlength="6">
+              <label class="form-label fw-semibold"><i class="bi bi-lock me-2"></i>Passwort</label>
+              <div class="input-group">
+                <input type="password" id="regPassword" class="form-control form-control-lg" placeholder="Mindestens 6 Zeichen" required minlength="6">
+                <button class="btn btn-outline-secondary" type="button" id="toggleRegPassword">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+              <div class="invalid-feedback">Passwort muss mindestens 6 Zeichen haben</div>
+              <div class="form-text"><i class="bi bi-info-circle me-1"></i>Verwenden Sie Buchstaben, Zahlen und Sonderzeichen</div>
             </div>
             <div class="mb-3">
-              <label class="form-label">Bundesland</label>
-              <select id="regState" class="form-control" required>
-                <option value="">Bitte wählen...</option>
-                <option>Oberösterreich</option>
-                <option>Niederösterreich</option>
-                <option>Wien</option>
-                <option>Tirol</option>
-              </select>
+              <label class="form-label fw-semibold"><i class="bi bi-lock-fill me-2"></i>Passwort bestätigen</label>
+              <input type="password" id="regPasswordConfirm" class="form-control form-control-lg" placeholder="Passwort wiederholen" required minlength="6">
+              <div class="invalid-feedback">Passwörter stimmen nicht überein</div>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Registrieren</button>
+
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="regAgree" required>
+              <label class="form-check-label" for="regAgree">
+                Ich akzeptiere die <a href="#" class="text-primary">AGB</a> und <a href="#" class="text-primary">Datenschutzerklärung</a>
+              </label>
+              <div class="invalid-feedback">Sie müssen den Bedingungen zustimmen</div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+              <i class="bi bi-check-circle me-2"></i>Jetzt registrieren
+            </button>
+            <p class="text-center mt-3 mb-0 text-muted">Bereits registriert? <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal" class="text-primary fw-semibold">Jetzt anmelden</a></p>
           </form>
         </div>
       </div>
@@ -401,6 +409,107 @@
     </div>
   </div>
 
+  <!-- 🔹 PROFIL MODAL -->
+  <div class="modal fade" id="profileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 bg-primary text-white">
+          <h5 class="modal-title fw-bold"><i class="bi bi-person-circle me-2"></i>Mein Profil</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="row">
+            <div class="col-md-4 text-center mb-4">
+              <div class="avatar-large bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" id="profileAvatar" style="width: 100px; height: 100px; font-size: 2.5rem;"></div>
+              <h5 class="fw-bold" id="profileFullName"></h5>
+              <p class="text-muted" id="profileEmail"></p>
+            </div>
+            <div class="col-md-8">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0">Persönliche Informationen</h6>
+                <button class="btn btn-sm btn-outline-primary" id="editProfileBtn">
+                  <i class="bi bi-pencil me-1"></i>Bearbeiten
+                </button>
+              </div>
+              
+              <div id="profileView">
+                <div class="row g-3 mb-4">
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Vorname</small>
+                      <div class="fw-semibold" id="profileFirstName"></div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Nachname</small>
+                      <div class="fw-semibold" id="profileLastName"></div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Telefon</small>
+                      <div class="fw-semibold" id="profilePhone">Nicht angegeben</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Registriert seit</small>
+                      <div class="fw-semibold" id="profileDatum"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="profileEdit" style="display: none;">
+                <form id="profileEditForm">
+                  <div class="row g-3 mb-3">
+                    <div class="col-6">
+                      <label class="form-label">Vorname</label>
+                      <input type="text" class="form-control" id="editFirstName" required>
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Nachname</label>
+                      <input type="text" class="form-control" id="editLastName" required>
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Telefon</label>
+                      <input type="tel" class="form-control" id="editPhone">
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Geburtsdatum</label>
+                      <input type="date" class="form-control" id="editBirthDate">
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label">Adresse</label>
+                      <textarea class="form-control" id="editAddress" rows="2"></textarea>
+                    </div>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn">Abbrechen</button>
+                  </div>
+                </form>
+              </div>
+              
+              <div class="d-flex gap-2 mb-4">
+                <button class="btn btn-outline-warning btn-sm" id="changePasswordBtn">
+                  <i class="bi bi-key me-1"></i>Passwort ändern
+                </button>
+                <button class="btn btn-outline-info btn-sm" id="resetPasswordBtn">
+                  <i class="bi bi-arrow-clockwise me-1"></i>Passwort zurücksetzen
+                </button>
+              </div>
+              
+              <h6 class="fw-bold mb-3">Meine Buchungen</h6>
+              <div id="profileBuchungen"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 🔹 BEWERTUNGEN -->
   <section id="bewertungen" class="py-5 bg-light">
     <div class="container">
@@ -455,10 +564,349 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
-  <!-- Flatpickr JS -->
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr" crossorigin="anonymous"></script>
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- Инициализация Supabase и DB -->
+  <script>
+    // Инициализация Supabase
+    const SUPABASE_URL = 'https://ycvmtybwfxqzefkhosgs.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inljdm10eWJ3ZnhxemVma2hvc2dzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzEzNDcwMjAsImV4cCI6MjA0NjkyMzAyMH0.J-UVLrvUe82c2HL6MUQOuoMXz_dI2VqN9K5lxwOj-KY';
+    
+    window.supabase = window.supabase || {};
+    if (typeof supabase !== 'undefined' && supabase.createClient) {
+      window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+    
+    // Инициализация DB объекта
+    window.DB = {
+      async getUser() {
+        try {
+          const { data: { user } } = await window.supabase.auth.getUser();
+          return user;
+        } catch (error) {
+          console.error('Error getting user:', error);
+          return null;
+        }
+      },
+      
+      async getUserProfile() {
+        try {
+          const user = await this.getUser();
+          if (!user) return null;
+          
+          const { data, error } = await window.supabase
+            .from('customers')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+          
+          if (error && error.code !== 'PGRST116') throw error;
+          return data || null;
+        } catch (error) {
+          console.error('Error getting profile:', error);
+          return null;
+        }
+      },
+      
+      async signUp(email, password, firstname, lastname) {
+        try {
+          const { data: authData, error: authError } = await window.supabase.auth.signUp({
+            email,
+            password
+          });
+          
+          if (authError) throw authError;
+          
+          // Создаем профиль
+          const { data: profileData, error: profileError } = await window.supabase
+            .from('customers')
+            .insert({
+              id: authData.user.id,
+              email,
+              firstname,
+              lastname
+            });
+          
+          if (profileError) throw profileError;
+          return { authData, profileData };
+        } catch (error) {
+          console.error('Sign up error:', error);
+          throw error;
+        }
+      },
+      
+      async signIn(email, password) {
+        try {
+          const { data, error } = await window.supabase.auth.signInWithPassword({
+            email,
+            password
+          });
+          
+          if (error) throw error;
+          return data;
+        } catch (error) {
+          console.error('Sign in error:', error);
+          throw error;
+        }
+      },
+      
+      async signOut() {
+        try {
+          const { error } = await window.supabase.auth.signOut();
+          if (error) throw error;
+        } catch (error) {
+          console.error('Sign out error:', error);
+          throw error;
+        }
+      },
+      
+      async getTours() {
+        try {
+          const { data, error } = await window.supabase
+            .from('tours')
+            .select('*')
+            .limit(10);
+          
+          if (error) throw error;
+          return data || [];
+        } catch (error) {
+          console.error('Error getting tours:', error);
+          return [];
+        }
+      },
+      
+      async getOffers() {
+        return this.getTours();
+      },
+      
+      async createBooking(tourId, status = 'pending') {
+        try {
+          const profile = await this.getUserProfile();
+          if (!profile) throw new Error('Not authenticated');
+          
+          const { data, error } = await window.supabase.from('bookings').insert({
+            client_id: profile.id,
+            tour_id: tourId,
+            status: status
+          });
+          
+          if (error) throw error;
+          return data;
+        } catch (error) {
+          console.error('Booking error:', error);
+          throw error;
+        }
+      },
+      
+      async getUserBookings() {
+        try {
+          const profile = await this.getUserProfile();
+          if (!profile) return [];
+          
+          const { data, error } = await window.supabase
+            .from('bookings')
+            .select('*, tours(title, price, destination, start_date, end_date)')
+            .eq('client_id', profile.id);
+          
+          if (error) throw error;
+          return data || [];
+        } catch (error) {
+          console.error('Error getting bookings:', error);
+          return [];
+        }
+      },
+      
+      async updateProfile(profileData) {
+        try {
+          const profile = await this.getUserProfile();
+          if (!profile) throw new Error('Not authenticated');
+          
+          const { data, error } = await window.supabase
+            .from('customers')
+            .update(profileData)
+            .eq('id', profile.id);
+          
+          if (error) throw error;
+          return data;
+        } catch (error) {
+          console.error('Profile update error:', error);
+          throw error;
+        }
+      }
+    };
+    
+    console.log('DB initialized');
+    
+    // Слушаем изменения авторизации
+    if (window.supabase && window.supabase.auth) {
+      window.supabase.auth.onAuthStateChange((event, session) => {
+        console.log('Auth state changed:', event);
+        setTimeout(() => {
+          if (typeof updateNavigation === 'function') {
+            updateNavigation();
+          }
+        }, 200);
+      });
+    }
+  </script>
 
+  <!-- Авторизация и формы логин/регистр -->
+  <script>
+     // Инициализация проверки сессии при загрузке страницы
+     window.addEventListener('load', async function() {
+       console.log('Page loaded, checking session...');
+     
+       // Ждем инициализации DB
+       let attempts = 0;
+       while (!window.DB && attempts < 100) {
+         await new Promise(r => setTimeout(r, 50));
+         attempts++;
+       }
+     
+       if (window.DB && typeof updateNavigation === 'function') {
+         console.log('Calling updateNavigation from load event');
+         await updateNavigation();
+       }
+     });
+   
+    // Обработка логин формы
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginForm = document.getElementById('loginForm');
+      if (loginForm) {
+        loginForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          const email = document.getElementById('loginEmail').value.trim();
+          const password = document.getElementById('loginPassword').value;
+           const submitBtn = this.querySelector('button[type="submit"]');
+         
+           if (!email || !password) {
+             alert('❌ Bitte füllen Sie alle Felder aus');
+             return;
+           }
+         
+           try {
+             // Отключаем кнопку отправки
+             submitBtn.disabled = true;
+             submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Anmeldung...';
+           
+             // Ждем инициализации DB
+             let attempts = 0;
+             while (!window.DB && attempts < 50) {
+               await new Promise(r => setTimeout(r, 100));
+               attempts++;
+             }
+           
+             if (!window.DB) throw new Error('Datenbankverbindung nicht hergestellt');
+           
+             await window.DB.signIn(email, password);
+           console.log('User logged in successfully');
+           
+           // Закрываем модальное окно
+           const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+           if (loginModal) loginModal.hide();
+           
+           // Очищаем форму
+           loginForm.reset();
+           submitBtn.disabled = false;
+           submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Anmelden';
+           
+           // Обновляем навигацию с задержкой
+           setTimeout(async () => {
+             if (typeof updateNavigation === 'function') {
+               await updateNavigation();
+             }
+             alert('✅ Erfolgreich angemeldet!');
+           }, 500);
+           
+           } catch (error) {
+             console.error('Login error:', error);
+             alert('❌ Anmeldung fehlgeschlagen: ' + (error.message || 'Unbekannter Fehler'));
+           } finally {
+             // Восстанавливаем кнопку
+             submitBtn.disabled = false;
+             submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Anmelden';
+          }
+        });
+      }
+      
+      // Обработка регистрации
+      const registerForm = document.getElementById('registerForm');
+      if (registerForm) {
+        registerForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          const email = document.getElementById('regEmail').value.trim();
+          const password = document.getElementById('regPassword').value;
+          const passwordConfirm = document.getElementById('regPasswordConfirm').value;
+          const firstname = document.getElementById('regFirstName').value.trim();
+          const lastname = document.getElementById('regLastName').value.trim();
+           const submitBtn = this.querySelector('button[type="submit"]');
+         
+           // Валидация
+           if (!email || !password || !firstname || !lastname) {
+             alert('❌ Bitte füllen Sie alle Felder aus');
+             return;
+           }
+          
+          if (password !== passwordConfirm) {
+            alert('❌ Passwörter stimmen nicht überein');
+            return;
+          }
+         
+           if (password.length < 6) {
+             alert('❌ Passwort muss mindestens 6 Zeichen haben');
+             return;
+           }
+          
+          try {
+             // Отключаем кнопку отправки
+             submitBtn.disabled = true;
+             submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Registrierung...';
+           
+             // Ждем инициализации DB
+             let attempts = 0;
+             while (!window.DB && attempts < 50) {
+               await new Promise(r => setTimeout(r, 100));
+               attempts++;
+             }
+           
+             if (!window.DB) throw new Error('Datenbankverbindung nicht hergestellt');
+           
+            await window.DB.signUp(email, password, firstname, lastname);
+           
+             // Закрываем модальное окно регистрации
+            const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+            if (registerModal) registerModal.hide();
+           
+             // Очищаем форму
+             registerForm.reset();
+           
+             // Показываем модальное окно логина
+             setTimeout(() => {
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+               alert('✅ Konto erfolgreich erstellt! Bitte melden Sie sich an.');
+             }, 300);
+           
+           } catch (error) {
+             console.error('Registration error:', error);
+             alert('❌ Registrierung fehlgeschlagen: ' + (error.message || 'Unbekannter Fehler'));
+           } finally {
+             // Восстанавливаем кнопку
+             submitBtn.disabled = false;
+             submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Jetzt registrieren';
+          }
+        });
+      }
+    });
+  </script>
+  
+  <!-- Навигация -->
   <script src="nav.js"></script>
+  
+  <!-- Основной скрипт -->
   <script src="index.js"></script>
 
 
