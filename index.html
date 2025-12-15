@@ -46,10 +46,10 @@
             <a class="nav-link" href="#angebote">Top-Angebote</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="angebote.html">Alle Angebote</a>
+            <a class="nav-link" href="#reiseziele">Reiseziele</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#reiseziele">Reiseziele</a>
+            <a class="nav-link" href="angebote.html">Alle Angebote</a>
           </li>
           <li class="nav-item" id="navRegister">
             <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#registerModal">Registrieren</a>
@@ -62,7 +62,7 @@
               <i class="bi bi-person-circle"></i> <span id="navUserName"></span>
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person me-2"></i>Mein Profil</a></li>
+              <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal" onclick="loadProfile()"><i class="bi bi-person me-2"></i>Mein Profil</a></li>
               <li><a class="dropdown-item" href="#" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i>Abmelden</a></li>
             </ul>
           </li>
@@ -458,6 +458,12 @@
                       <div class="fw-semibold" id="profileDatum"></div>
                     </div>
                   </div>
+                  <div class="col-12">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Adresse</small>
+                      <div class="fw-semibold" id="profileAddress">Nicht angegeben</div>
+                    </div>
+                  </div>
                 </div>
               </div>
               
@@ -485,20 +491,11 @@
                       <textarea class="form-control" id="editAddress" rows="2"></textarea>
                     </div>
                   </div>
-                  <div class="d-flex gap-2">
+                  <div class="d-flex gap-2 mb-3">
                     <button type="submit" class="btn btn-primary">Speichern</button>
                     <button type="button" class="btn btn-secondary" id="cancelEditBtn">Abbrechen</button>
                   </div>
                 </form>
-              </div>
-              
-              <div class="d-flex gap-2 mb-4">
-                <button class="btn btn-outline-warning btn-sm" id="changePasswordBtn">
-                  <i class="bi bi-key me-1"></i>Passwort ändern
-                </button>
-                <button class="btn btn-outline-info btn-sm" id="resetPasswordBtn">
-                  <i class="bi bi-arrow-clockwise me-1"></i>Passwort zurücksetzen
-                </button>
               </div>
               
               <h6 class="fw-bold mb-3">Meine Buchungen</h6>
@@ -564,191 +561,65 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
-  <!-- Supabase JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   
-  <!-- Инициализация Supabase и DB -->
   <script>
-    // Инициализация Supabase
-    const SUPABASE_URL = 'https://ycvmtybwfxqzefkhosgs.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inljdm10eWJ3ZnhxemVma2hvc2dzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzEzNDcwMjAsImV4cCI6MjA0NjkyMzAyMH0.J-UVLrvUe82c2HL6MUQOuoMXz_dI2VqN9K5lxwOj-KY';
+    // Простая система без базы данных
     
-    window.supabase = window.supabase || {};
-    if (typeof supabase !== 'undefined' && supabase.createClient) {
-      window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    }
-    
-    // Инициализация DB объекта
     window.DB = {
       async getUser() {
-        try {
-          const { data: { user } } = await window.supabase.auth.getUser();
-          return user;
-        } catch (error) {
-          console.error('Error getting user:', error);
-          return null;
-        }
+        const user = localStorage.getItem('currentUser');
+        return user ? JSON.parse(user) : null;
       },
       
       async getUserProfile() {
-        try {
-          const user = await this.getUser();
-          if (!user) return null;
-          
-          const { data, error } = await window.supabase
-            .from('customers')
-            .select('*')
-            .eq('id', user.id)
-            .single();
-          
-          if (error && error.code !== 'PGRST116') throw error;
-          return data || null;
-        } catch (error) {
-          console.error('Error getting profile:', error);
-          return null;
-        }
+        return this.getUser();
       },
       
       async signUp(email, password, firstname, lastname) {
-        try {
-          const { data: authData, error: authError } = await window.supabase.auth.signUp({
-            email,
-            password
-          });
-          
-          if (authError) throw authError;
-          
-          // Создаем профиль
-          const { data: profileData, error: profileError } = await window.supabase
-            .from('customers')
-            .insert({
-              id: authData.user.id,
-              email,
-              firstname,
-              lastname
-            });
-          
-          if (profileError) throw profileError;
-          return { authData, profileData };
-        } catch (error) {
-          console.error('Sign up error:', error);
-          throw error;
-        }
+        const user = { email, firstname, lastname, created_at: new Date().toISOString() };
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        localStorage.setItem('user_' + email, JSON.stringify(user));
+        return { user };
       },
       
       async signIn(email, password) {
-        try {
-          const { data, error } = await window.supabase.auth.signInWithPassword({
-            email,
-            password
-          });
-          
-          if (error) throw error;
-          return data;
-        } catch (error) {
-          console.error('Sign in error:', error);
-          throw error;
-        }
+        const savedUser = localStorage.getItem('user_' + email);
+        const user = savedUser ? JSON.parse(savedUser) : { email };
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        return { user };
       },
       
       async signOut() {
-        try {
-          const { error } = await window.supabase.auth.signOut();
-          if (error) throw error;
-        } catch (error) {
-          console.error('Sign out error:', error);
-          throw error;
-        }
+        localStorage.removeItem('currentUser');
       },
       
       async getTours() {
-        try {
-          const { data, error } = await window.supabase
-            .from('tours')
-            .select('*')
-            .limit(10);
-          
-          if (error) throw error;
-          return data || [];
-        } catch (error) {
-          console.error('Error getting tours:', error);
-          return [];
-        }
+        return [];
       },
       
-      async getOffers() {
-        return this.getTours();
-      },
+
       
-      async createBooking(tourId, status = 'pending') {
-        try {
-          const profile = await this.getUserProfile();
-          if (!profile) throw new Error('Not authenticated');
-          
-          const { data, error } = await window.supabase.from('bookings').insert({
-            client_id: profile.id,
-            tour_id: tourId,
-            status: status
-          });
-          
-          if (error) throw error;
-          return data;
-        } catch (error) {
-          console.error('Booking error:', error);
-          throw error;
-        }
+      async createBooking(tourId) {
+        return { success: true };
       },
       
       async getUserBookings() {
-        try {
-          const profile = await this.getUserProfile();
-          if (!profile) return [];
-          
-          const { data, error } = await window.supabase
-            .from('bookings')
-            .select('*, tours(title, price, destination, start_date, end_date)')
-            .eq('client_id', profile.id);
-          
-          if (error) throw error;
-          return data || [];
-        } catch (error) {
-          console.error('Error getting bookings:', error);
-          return [];
-        }
+        return [];
       },
       
       async updateProfile(profileData) {
-        try {
-          const profile = await this.getUserProfile();
-          if (!profile) throw new Error('Not authenticated');
-          
-          const { data, error } = await window.supabase
-            .from('customers')
-            .update(profileData)
-            .eq('id', profile.id);
-          
-          if (error) throw error;
-          return data;
-        } catch (error) {
-          console.error('Profile update error:', error);
-          throw error;
+        const user = await this.getUser();
+        if (user) {
+          Object.assign(user, profileData);
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          if (user.email) {
+            localStorage.setItem('user_' + user.email, JSON.stringify(user));
+          }
         }
+        return user;
       }
     };
-    
-    console.log('DB initialized');
-    
-    // Слушаем изменения авторизации
-    if (window.supabase && window.supabase.auth) {
-      window.supabase.auth.onAuthStateChange((event, session) => {
-        console.log('Auth state changed:', event);
-        setTimeout(() => {
-          if (typeof updateNavigation === 'function') {
-            updateNavigation();
-          }
-        }, 200);
-      });
-    }
   </script>
 
   <!-- Авторизация и формы логин/регистр -->
@@ -883,11 +754,12 @@
              // Очищаем форму
              registerForm.reset();
            
-             // Показываем модальное окно логина
-             setTimeout(() => {
-            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-            loginModal.show();
-               alert('✅ Konto erfolgreich erstellt! Bitte melden Sie sich an.');
+             // Обновляем навигацию
+             setTimeout(async () => {
+               if (typeof updateNavigation === 'function') {
+                 await updateNavigation();
+               }
+               alert('✅ Konto erfolgreich erstellt!');
              }, 300);
            
            } catch (error) {
@@ -900,6 +772,60 @@
           }
         });
       }
+    });
+  </script>
+  
+  <!-- Профиль -->
+  <script>
+    async function loadProfile() {
+      const user = await window.DB.getUser();
+      if (!user) return;
+      
+      const initials = (user.firstname?.charAt(0) || 'U') + (user.lastname?.charAt(0) || 'U');
+      document.getElementById('profileAvatar').textContent = initials;
+      document.getElementById('profileFullName').textContent = (user.firstname || '') + ' ' + (user.lastname || '');
+      document.getElementById('profileEmail').textContent = user.email || '';
+      document.getElementById('profileFirstName').textContent = user.firstname || '';
+      document.getElementById('profileLastName').textContent = user.lastname || '';
+      document.getElementById('profilePhone').textContent = user.phone || 'Nicht angegeben';
+      document.getElementById('profileAddress').textContent = user.address || 'Nicht angegeben';
+      document.getElementById('profileDatum').textContent = user.created_at ? new Date(user.created_at).toLocaleDateString('de-DE') : 'Heute';
+      
+      const buchungen = await window.DB.getUserBookings();
+      document.getElementById('profileBuchungen').innerHTML = buchungen.length ? buchungen.map(b => `<div class="p-2 bg-light rounded mb-2"><strong>${b.title || 'Buchung'}</strong></div>`).join('') : '<p class="text-muted">Noch keine Buchungen</p>';
+    }
+    
+    document.getElementById('editProfileBtn')?.addEventListener('click', function() {
+      document.getElementById('profileView').style.display = 'none';
+      document.getElementById('profileEdit').style.display = 'block';
+      this.style.display = 'none';
+      const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      document.getElementById('editFirstName').value = user.firstname || '';
+      document.getElementById('editLastName').value = user.lastname || '';
+      document.getElementById('editPhone').value = user.phone || '';
+      document.getElementById('editAddress').value = user.address || '';
+    });
+    
+    document.getElementById('cancelEditBtn')?.addEventListener('click', function() {
+      document.getElementById('profileView').style.display = 'block';
+      document.getElementById('profileEdit').style.display = 'none';
+      document.getElementById('editProfileBtn').style.display = 'inline-block';
+    });
+    
+    document.getElementById('profileEditForm')?.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      await window.DB.updateProfile({
+        firstname: document.getElementById('editFirstName').value,
+        lastname: document.getElementById('editLastName').value,
+        phone: document.getElementById('editPhone').value,
+        address: document.getElementById('editAddress').value
+      });
+      document.getElementById('profileView').style.display = 'block';
+      document.getElementById('profileEdit').style.display = 'none';
+      document.getElementById('editProfileBtn').style.display = 'inline-block';
+      loadProfile();
+      await updateNavigation();
+      alert('✅ Profil aktualisiert!');
     });
   </script>
   

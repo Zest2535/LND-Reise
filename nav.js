@@ -1,19 +1,18 @@
-// Система навигации - обновление статуса пользователя
+// Обновление навигации
 async function updateNavigation() {
+  console.log('updateNavigation called');
   const navLogin = document.getElementById('navLogin');
   const navRegister = document.getElementById('navRegister');
   const navUser = document.getElementById('navUser');
   const navUserName = document.getElementById('navUserName');
   
-  // Проверяем наличие элементов
   if (!navLogin || !navRegister || !navUser) {
-    console.warn('Navigation elements not found');
+    console.log('Nav elements not found');
     return;
   }
-  
-  // Проверяем наличие window.DB
   if (!window.DB) {
-    console.warn('DB not initialized yet');
+    console.log('DB not ready, retrying...');
+    setTimeout(updateNavigation, 200);
     return;
   }
   
@@ -22,78 +21,44 @@ async function updateNavigation() {
     console.log('Current user:', user);
     
     if (user) {
-      // Пользователь авторизован
-      const profile = await window.DB.getUserProfile();
-      console.log('User profile:', profile);
-      
       navLogin.style.display = 'none';
       navRegister.style.display = 'none';
       navUser.style.display = 'block';
-      
-      if (navUserName && profile) {
-        const fullName = `${profile.firstname || ''} ${profile.lastname || ''}`.trim();
-        navUserName.textContent = fullName || 'Пользователь';
+      if (navUserName) {
+        navUserName.textContent = (user.firstname || '') + ' ' + (user.lastname || '');
       }
+      console.log('User navigation updated');
     } else {
-      // Пользователь не авторизован
       navLogin.style.display = 'block';
       navRegister.style.display = 'block';
       navUser.style.display = 'none';
+      console.log('Guest navigation updated');
     }
   } catch (error) {
-    console.error('Error updating navigation:', error);
+    console.error('Nav error:', error);
     navLogin.style.display = 'block';
     navRegister.style.display = 'block';
     navUser.style.display = 'none';
   }
 }
-  console.log('Navigation updated for user:', fullName);
 
-// Функция выхода
+// Выход
 async function logout() {
   if (confirm('Möchten Sie sich wirklich abmelden?')) {
     try {
       await window.DB.signOut();
-      window.location.href = 'index.html';
     } catch (error) {
       console.error('Logout error:', error);
-      alert('Fehler beim Abmelden');
     }
+    window.location.href = 'index.html';
   }
 }
 
-// Инициализация навигации при загрузке
-function initializeNavigation() {
-  console.log('Initializing navigation...');
-  
-  // Ждем загрузки DOM и DB
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(updateNavigation, 300);
-    });
-  } else {
-    setTimeout(updateNavigation, 300);
-  }
-  
-  // Слушаем изменения статуса авторизации
-  if (window.supabase) {
-    window.supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event);
-      setTimeout(updateNavigation, 200);
-    });
-  }
-}
-
-// Запускаем инициализацию
+// Запуск при загрузке
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeNavigation);
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(updateNavigation, 100);
+  });
 } else {
-    console.log('Navigation updated for guest');
-       console.log('User logged out');
-       // Обновляем навигацию
-       setTimeout(() => {
-         updateNavigation();
-         window.location.href = 'index.html';
-       }, 300);
-  initializeNavigation();
+  setTimeout(updateNavigation, 100);
 }

@@ -72,87 +72,103 @@
       50% { transform: scale(1.05); }
     }
     .filter-section {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 2.5rem;
-      border-radius: 24px;
+      background: white;
+      padding: 0;
+      border-radius: 16px;
       margin-bottom: 2rem;
-      box-shadow: 0 15px 50px rgba(102, 126, 234, 0.35);
-      position: relative;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
       overflow: hidden;
     }
-    .filter-section::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      animation: rotate 20s linear infinite;
-      pointer-events: none;
-      z-index: 1;
-    }
-    .filter-section > .row {
-      position: relative;
-      z-index: 5;
-    }
-    @keyframes rotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    .filter-section label {
-      color: white;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      position: relative;
-      z-index: 5;
-    }
-    .filter-section .form-control,
-    .filter-section .form-select {
-      border: none;
-      border-radius: 12px;
-      padding: 0.75rem 1rem;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-      position: relative;
-      z-index: 10;
+    .search-box-wrapper {
       background: white;
+      border-radius: 16px;
+      overflow: hidden;
     }
-    .filter-section .form-control:focus,
-    .filter-section .form-select:focus {
-      box-shadow: 0 6px 20px rgba(255,255,255,0.3);
-      transform: translateY(-2px);
-      z-index: 20;
+    .search-field {
+      padding: 1.25rem 1.5rem;
+      border-right: 1px solid #e9ecef;
+      height: 100%;
+      transition: background 0.2s;
     }
-    .filter-section .form-range {
-      height: 8px;
-    }
-    .filter-section .form-range::-webkit-slider-thumb {
-      width: 24px;
-      height: 24px;
-      background: white;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-    #priceValue {
-      color: white;
-      font-size: 1.5rem;
-      font-weight: 700;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    .filter-section .btn-light {
-      background: white;
-      border: none;
-      font-weight: 600;
-      padding: 0.4rem 0.8rem;
-      border-radius: 8px;
-      transition: all 0.2s ease;
-      position: relative;
-      z-index: 10;
-    }
-    .filter-section .btn-light:hover {
+    .search-field:hover {
       background: #f8f9fa;
+    }
+    .col-lg-1 .search-field,
+    .col-md-12:last-child .search-field {
+      border-right: none;
+    }
+    .search-field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #667eea;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .search-field .form-control,
+    .search-field .form-select {
+      border: none;
+      padding: 0.5rem 0;
+      font-size: 1rem;
+      font-weight: 500;
+      background: transparent;
+      box-shadow: none;
+      cursor: pointer;
+    }
+    .search-field .form-control:focus,
+    .search-field .form-select:focus {
+      outline: none;
+      box-shadow: none;
+      background: transparent;
+    }
+    .search-field .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23667eea' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.5rem center;
+      background-size: 16px;
+      padding-right: 2rem;
+    }
+    .search-field .form-select option {
+      padding: 1rem;
+      font-size: 1rem;
+      background: white;
+      color: #2d3748;
+    }
+    .search-field .form-select option:hover {
+      background: #f8f9fa;
+    }
+    .search-field-btn {
+      padding: 1.25rem 1.5rem;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+    .btn-search {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      height: 50px;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-search:hover {
+      background: linear-gradient(135deg, #764ba2, #667eea);
       transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    @media (max-width: 991px) {
+      .search-field {
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+      }
+      .col-md-12:last-child .search-field {
+        border-bottom: none;
+      }
     }
     .results-count {
       background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
@@ -162,13 +178,19 @@
       box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15);
       border: 2px solid rgba(102, 126, 234, 0.1);
     }
-    h1 {
+    .hero-header h1 {
       font-weight: 800;
       background: linear-gradient(135deg, #667eea, #764ba2);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 3rem !important;
+      text-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
+    }
+    .hero-header .badge {
+      font-size: 0.9rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 20px;
+      font-weight: 600;
     }
     .offer-item .p-3 {
       position: relative;
@@ -191,6 +213,28 @@
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     }
+
+    /* Make detail button more prominent */
+    .offer-item .btn-details {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1rem;
+      border-radius: 10px;
+      background: white;
+      color: #3b3b98;
+      border: 2px solid rgba(102,126,234,0.12);
+      font-weight: 700;
+      box-shadow: 0 6px 18px rgba(59,59,152,0.06);
+      transition: all 0.28s ease;
+    }
+    .offer-item .btn-details i { font-size: 1.05rem; }
+    .offer-item .btn-details:hover {
+      transform: translateY(-4px);
+      background: linear-gradient(135deg, #f7f9ff, #eef2ff);
+      box-shadow: 0 12px 30px rgba(59,59,152,0.12);
+    }
     .country-badge {
       display: inline-block;
       background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
@@ -200,6 +244,29 @@
       font-size: 0.75rem;
       font-weight: 600;
       margin-top: 0.5rem;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    * {
+      scroll-behavior: smooth;
+    }
+    .modal-body {
+      scroll-behavior: smooth;
+    }
+    .modal-body::-webkit-scrollbar {
+      width: 8px;
+    }
+    .modal-body::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    .modal-body::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 10px;
+    }
+    .modal-body::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #764ba2, #667eea);
     }
   </style>
 </head>
@@ -212,53 +279,488 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="index.html">Startseite</a></li>
-          <li class="nav-item"><a class="nav-link active" href="angebote.html">Alle Angebote</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Startseite</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="index.html#angebote">Top-Angebote</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="index.html#reiseziele">Reiseziele</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="angebote.html">Alle Angebote</a>
+          </li>
+          <li class="nav-item" id="navRegister">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#registerModal">Registrieren</a>
+          </li>
+          <li class="nav-item" id="navLogin">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Anmelden</a>
+          </li>
+          <li class="nav-item dropdown" id="navUser" style="display: none;">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle"></i> <span id="navUserName"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal" onclick="loadProfile()"><i class="bi bi-person me-2"></i>Mein Profil</a></li>
+              <li><a class="dropdown-item" href="#" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i>Abmelden</a></li>
+            </ul>
+          </li>
+
         </ul>
       </div>
     </div>
   </nav>
 
+  <!-- LOGIN MODAL -->
+  <div class="modal fade" id="loginModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold"><i class="bi bi-box-arrow-in-right me-2 text-primary"></i>Anmelden</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body px-4 pb-4">
+          <form id="loginForm">
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="bi bi-envelope me-2"></i>E-Mail</label>
+              <input type="email" id="loginEmail" class="form-control form-control-lg" placeholder="ihre@email.com" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="bi bi-lock me-2"></i>Passwort</label>
+              <input type="password" id="loginPassword" class="form-control form-control-lg" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+              <i class="bi bi-check-circle me-2"></i>Anmelden
+            </button>
+            <p class="text-center mt-3 mb-0 text-muted">Noch kein Konto? <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal" data-bs-dismiss="modal" class="text-primary fw-semibold">Jetzt registrieren</a></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTER MODAL -->
+  <div class="modal fade" id="registerModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold"><i class="bi bi-person-plus me-2 text-primary"></i>Konto erstellen</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body px-4 pb-4">
+          <form id="registerForm">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold"><i class="bi bi-person me-2"></i>Vorname</label>
+                <input type="text" id="regFirstName" class="form-control form-control-lg" placeholder="Max" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold"><i class="bi bi-person me-2"></i>Nachname</label>
+                <input type="text" id="regLastName" class="form-control form-control-lg" placeholder="Mustermann" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="bi bi-envelope me-2"></i>E-Mail</label>
+              <input type="email" id="regEmail" class="form-control form-control-lg" placeholder="max@beispiel.com" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="bi bi-lock me-2"></i>Passwort</label>
+              <input type="password" id="regPassword" class="form-control form-control-lg" placeholder="Mindestens 6 Zeichen" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="bi bi-lock-fill me-2"></i>Passwort bestätigen</label>
+              <input type="password" id="regPasswordConfirm" class="form-control form-control-lg" placeholder="Passwort wiederholen" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+              <i class="bi bi-check-circle me-2"></i>Jetzt registrieren
+            </button>
+            <p class="text-center mt-3 mb-0 text-muted">Bereits registriert? <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal" class="text-primary fw-semibold">Jetzt anmelden</a></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OFFER DETAIL MODAL -->
+  <div class="modal fade" id="offerDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden;">
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-3 bg-white rounded-circle p-3 shadow" style="z-index: 1050; opacity: 1;" data-bs-dismiss="modal"></button>
+        <div class="modal-body p-0">
+          <div class="row g-0">
+            <div class="col-lg-6">
+              <div class="position-relative" style="height: 100%; min-height: 500px;">
+                <img id="detailImage" src="" class="w-100 h-100" style="object-fit: cover;" alt="Reiseziel">
+                <div class="position-absolute bottom-0 start-0 w-100 p-4" style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                  <h2 class="text-white fw-bold mb-1" id="detailCity"></h2>
+                  <p class="text-white mb-0 fs-5"><i class="bi bi-geo-alt-fill me-2"></i><span id="detailCountry"></span></p>
+                </div>
+                <div class="position-absolute top-0 end-0 m-3">
+                  <span class="badge" style="background: linear-gradient(135deg, #ff6b6b, #ee5a6f); font-size: 1.5rem; padding: 0.8rem 1.5rem; border-radius: 20px; box-shadow: 0 8px 25px rgba(238, 90, 111, 0.4);">
+                    <span id="detailPrice"></span>€
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="p-5" style="height: 100%; overflow-y: auto; max-height: 600px; scroll-behavior: smooth;">
+                <div class="mb-4">
+                  <span class="badge bg-success mb-3" style="font-size: 0.9rem; padding: 0.5rem 1rem;">✓ Verfügbar</span>
+                  <h5 class="text-muted mb-3">ab <span id="detailPrice2" class="text-dark fw-bold"></span>€ pro Person</h5>
+                </div>
+
+                <div class="row g-3 mb-4">
+                  <div class="col-6">
+                    <div class="p-3 rounded" style="background: linear-gradient(135deg, #667eea15, #764ba215); border-left: 4px solid #667eea;">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-airplane-fill fs-3 me-3" style="color: #667eea;"></i>
+                        <div>
+                          <small class="text-muted d-block">Abflug von</small>
+                          <strong id="detailAirport"></strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 rounded" style="background: linear-gradient(135deg, #f093fb15, #f5576c15); border-left: 4px solid #f093fb;">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-calendar-event fs-3 me-3" style="color: #f093fb;"></i>
+                        <div>
+                          <small class="text-muted d-block">Reisedatum</small>
+                          <strong id="detailDate"></strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 rounded" style="background: linear-gradient(135deg, #4facfe15, #00f2fe15); border-left: 4px solid #4facfe;">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-clock-fill fs-3 me-3" style="color: #4facfe;"></i>
+                        <div>
+                          <small class="text-muted d-block">Reisedauer</small>
+                          <strong><span id="detailDays"></span> Tage</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 rounded" style="background: linear-gradient(135deg, #43e97b15, #38f9d715); border-left: 4px solid #43e97b;">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-star-fill fs-3 me-3" style="color: #43e97b;"></i>
+                        <div>
+                          <small class="text-muted d-block">Bewertung</small>
+                          <strong><span id="detailRating"></span> / 5.0</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <h6 class="fw-bold mb-3 d-flex align-items-center">
+                    <span class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                      <i class="bi bi-info-circle"></i>
+                    </span>
+                    Reisebeschreibung
+                  </h6>
+                  <p class="text-muted" style="line-height: 1.8;" id="detailDescription"></p>
+                </div>
+
+                <div class="mb-4 p-4 rounded" style="background: linear-gradient(135deg, #667eea10, #764ba210);">
+                  <h6 class="fw-bold mb-3 d-flex align-items-center">
+                    <span class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                      <i class="bi bi-check-lg"></i>
+                    </span>
+                    Inklusivleistungen
+                  </h6>
+                  <div class="row g-2">
+                    <div class="col-6">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span>Hin- & Rückflug</span>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span>Hotel mit Frühstück</span>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span>Flughafentransfer</span>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span>Reiseversicherung</span>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span>24/7 Support</span>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span>Reiseführer</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                  <button class="btn btn-lg" id="bookOfferBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 1rem; font-weight: 600; border-radius: 12px; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);">
+                    <i class="bi bi-cart-plus me-2"></i>Jetzt buchen - <span id="detailPrice3"></span>€
+                  </button>
+                  <button class="btn btn-outline-secondary btn-lg" style="border-radius: 12px; padding: 1rem; font-weight: 600;">
+                    <i class="bi bi-heart me-2"></i>Auf Merkliste
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOOKING MODAL -->
+  <div class="modal fade" id="bookingModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 50px rgba(0,0,0,0.2);">
+        <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 20px 20px 0 0; padding: 1.5rem;">
+          <h5 class="modal-title fw-bold"><i class="bi bi-cart-check me-2"></i>Buchung: <span id="bookingOfferTitle"></span></h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" style="padding: 2rem;">
+          <div class="mb-4 p-4" style="background: linear-gradient(135deg, #667eea15, #764ba215); border-radius: 15px; border-left: 4px solid #667eea;">
+            <label class="form-label fw-bold mb-3" style="color: #667eea; font-size: 1.1rem;"><i class="bi bi-people-fill me-2"></i>Anzahl Personen</label>
+            <select class="form-select form-select-lg" id="personCount" onchange="updatePersonCount()" style="border: 2px solid #667eea; border-radius: 10px; font-weight: 600;">
+              <option value="1">👤 1 Person</option>
+              <option value="2">👥 2 Personen</option>
+              <option value="3">👨‍👩‍👦 3 Personen</option>
+              <option value="4">👨‍👩‍👧‍👦 4 Personen</option>
+              <option value="5">👪 5 Personen</option>
+            </select>
+          </div>
+          <div id="personsContainer"></div>
+          <div class="alert" style="background: linear-gradient(135deg, #43e97b15, #38f9d715); border: 2px solid #43e97b; border-radius: 15px; padding: 1.5rem;">
+            <h5 class="mb-0" style="color: #2d3748;"><i class="bi bi-cash-stack me-2" style="color: #43e97b;"></i><strong>Gesamtpreis:</strong> <span id="bookingTotalPrice" style="color: #43e97b; font-size: 1.5rem; font-weight: 800;"></span>€</h5>
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 1.5rem; border-top: 2px solid #f0f0f0;">
+          <button class="btn btn-secondary btn-lg" data-bs-dismiss="modal" style="border-radius: 10px; padding: 0.75rem 2rem;"><i class="bi bi-x-circle me-2"></i>Abbrechen</button>
+          <button class="btn btn-lg" onclick="proceedToPayment()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; padding: 0.75rem 2rem; font-weight: 600;"><i class="bi bi-arrow-right-circle me-2"></i>Weiter zur Zahlung</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT MODAL -->
+  <div class="modal fade" id="paymentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 50px rgba(0,0,0,0.2);">
+        <div class="modal-header text-white" style="background: linear-gradient(135deg, #43e97b, #38f9d7); border-radius: 20px 20px 0 0; padding: 1.5rem;">
+          <h5 class="modal-title fw-bold"><i class="bi bi-credit-card me-2"></i>Zahlung</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" style="padding: 2rem;">
+          <h6 class="mb-4" style="color: #2d3748; font-size: 1.1rem;"><i class="bi bi-wallet2 me-2"></i>Zahlungsmethode wählen:</h6>
+          <div class="form-check mb-3 p-4 border-0" style="background: linear-gradient(135deg, #667eea15, #764ba215); border-radius: 15px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+            <input class="form-check-input" type="radio" name="paymentMethod" value="card" id="payCard" style="width: 20px; height: 20px; cursor: pointer;">
+            <label class="form-check-label" for="payCard" style="cursor: pointer; font-size: 1.1rem; font-weight: 600; margin-left: 10px;">
+              <i class="bi bi-credit-card-2-front me-2" style="font-size: 1.3rem; color: #667eea;"></i>Kreditkarte
+            </label>
+          </div>
+          <div class="form-check mb-3 p-4 border-0" style="background: linear-gradient(135deg, #f093fb15, #f5576c15); border-radius: 15px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+            <input class="form-check-input" type="radio" name="paymentMethod" value="paypal" id="payPaypal" style="width: 20px; height: 20px; cursor: pointer;">
+            <label class="form-check-label" for="payPaypal" style="cursor: pointer; font-size: 1.1rem; font-weight: 600; margin-left: 10px;">
+              <i class="bi bi-paypal me-2" style="font-size: 1.3rem; color: #f093fb;"></i>PayPal
+            </label>
+          </div>
+          <div class="form-check mb-3 p-4 border-0" style="background: linear-gradient(135deg, #4facfe15, #00f2fe15); border-radius: 15px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+            <input class="form-check-input" type="radio" name="paymentMethod" value="bank" id="payBank" style="width: 20px; height: 20px; cursor: pointer;">
+            <label class="form-check-label" for="payBank" style="cursor: pointer; font-size: 1.1rem; font-weight: 600; margin-left: 10px;">
+              <i class="bi bi-bank me-2" style="font-size: 1.3rem; color: #4facfe;"></i>Überweisung
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 1.5rem; border-top: 2px solid #f0f0f0;">
+          <button class="btn btn-secondary btn-lg" data-bs-dismiss="modal" style="border-radius: 10px; padding: 0.75rem 2rem;"><i class="bi bi-arrow-left-circle me-2"></i>Zurück</button>
+          <button class="btn btn-lg" onclick="completePayment()" style="background: linear-gradient(135deg, #43e97b, #38f9d7); color: white; border: none; border-radius: 10px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(67, 233, 123, 0.3);"><i class="bi bi-check-circle me-2"></i>Jetzt bezahlen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE MODAL -->
+  <div class="modal fade" id="profileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 bg-primary text-white">
+          <h5 class="modal-title fw-bold"><i class="bi bi-person-circle me-2"></i>Mein Profil</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="row">
+            <div class="col-md-4 text-center mb-4">
+              <div class="avatar-large bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" id="profileAvatar" style="width: 100px; height: 100px; font-size: 2.5rem;"></div>
+              <h5 class="fw-bold" id="profileFullName"></h5>
+              <p class="text-muted" id="profileEmail"></p>
+            </div>
+            <div class="col-md-8">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0">Persönliche Informationen</h6>
+                <button class="btn btn-sm btn-outline-primary" id="editProfileBtn">
+                  <i class="bi bi-pencil me-1"></i>Bearbeiten
+                </button>
+              </div>
+              
+              <div id="profileView">
+                <div class="row g-3 mb-4">
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Vorname</small>
+                      <div class="fw-semibold" id="profileFirstName"></div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Nachname</small>
+                      <div class="fw-semibold" id="profileLastName"></div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Telefon</small>
+                      <div class="fw-semibold" id="profilePhone">Nicht angegeben</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Registriert seit</small>
+                      <div class="fw-semibold" id="profileDatum"></div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="p-3 bg-light rounded">
+                      <small class="text-muted">Adresse</small>
+                      <div class="fw-semibold" id="profileAddress">Nicht angegeben</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="profileEdit" style="display: none;">
+                <form id="profileEditForm">
+                  <div class="row g-3 mb-3">
+                    <div class="col-6">
+                      <label class="form-label">Vorname</label>
+                      <input type="text" class="form-control" id="editFirstName" required>
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Nachname</label>
+                      <input type="text" class="form-control" id="editLastName" required>
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Telefon</label>
+                      <input type="tel" class="form-control" id="editPhone">
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Geburtsdatum</label>
+                      <input type="date" class="form-control" id="editBirthDate">
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label">Adresse</label>
+                      <textarea class="form-control" id="editAddress" rows="2"></textarea>
+                    </div>
+                  </div>
+                  <div class="d-flex gap-2 mb-3">
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn">Abbrechen</button>
+                  </div>
+                </form>
+              </div>
+              
+              <h6 class="fw-bold mb-3">Meine Buchungen</h6>
+              <div id="profileBuchungen"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="container my-5">
-    <h1 class="text-center mb-4" style="font-size: 3rem;"><i class="bi bi-airplane-engines me-2"></i>Entdecke die Welt</h1>
-    <p class="text-center text-muted mb-5" style="font-size: 1.2rem;">100 handverlesene Reiseziele warten auf dich</p>
+    <div class="hero-header text-center mb-5">
+      <h1 class="display-3 fw-bold mb-3">
+        <i class="bi bi-globe-americas me-3"></i>Traumreisen weltweit
+      </h1>
+      <p class="lead text-muted mb-2">Entdecke über 200 exklusive Reiseziele auf allen Kontinenten</p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <span class="badge bg-primary">✈️ Direktflüge</span>
+        <span class="badge bg-success">🏨 Top Hotels</span>
+        <span class="badge bg-info">💰 Beste Preise</span>
+        <span class="badge bg-warning text-dark">⭐ Geprüfte Qualität</span>
+      </div>
+    </div>
     
     <div class="filter-section">
-      <div class="row g-3">
-        <div class="col-md-3">
-          <label class="form-label fw-semibold"><i class="bi bi-cash me-2"></i>Max. Preis</label>
-          <div class="d-flex align-items-center gap-2 mb-2">
-            <button class="btn btn-sm btn-light" onclick="adjustPrice(-500)">-500€</button>
-            <button class="btn btn-sm btn-light" onclick="adjustPrice(-100)">-100€</button>
-            <button class="btn btn-sm btn-light" onclick="adjustPrice(100)">+100€</button>
-            <button class="btn btn-sm btn-light" onclick="adjustPrice(500)">+500€</button>
+      <div class="search-box-wrapper">
+        <div class="row g-0">
+          <div class="col-lg-3 col-md-6">
+            <div class="search-field">
+              <label><i class="bi bi-geo-alt-fill"></i> Wohin?</label>
+              <input type="text" class="form-control" id="destinationFilter" placeholder="Reiseziel eingeben">
+            </div>
           </div>
-          <input type="range" class="form-range" id="priceFilter" min="0" max="3000" value="3000" step="50">
-          <div class="text-center mt-2"><span id="priceValue">3000</span>€</div>
-        </div>
-        <div class="col-md-3">
-          <label class="form-label fw-semibold"><i class="bi bi-airplane-fill me-2"></i>Abflughafen</label>
-          <select class="form-select" id="airportFilter">
-            <option value="">Alle</option>
-            <option value="Wien">Wien</option>
-            <option value="Salzburg">Salzburg</option>
-            <option value="Innsbruck">Innsbruck</option>
-            <option value="Graz">Graz</option>
-            <option value="Linz">Linz</option>
-            <option value="Klagenfurt">Klagenfurt</option>
-          </select>
-        </div>
-        <div class="col-md-3">
-          <label class="form-label fw-semibold"><i class="bi bi-globe me-2"></i>Ziel</label>
-          <input type="text" class="form-control" id="destinationFilter" placeholder="Suchen...">
-        </div>
-        <div class="col-md-3">
-          <label class="form-label fw-semibold"><i class="bi bi-funnel me-2"></i>Sortieren</label>
-          <select class="form-select" id="sortFilter">
-            <option value="price-asc">Preis aufsteigend</option>
-            <option value="price-desc">Preis absteigend</option>
-            <option value="date-asc">Datum aufsteigend</option>
-          </select>
+          <div class="col-lg-2 col-md-6">
+            <div class="search-field">
+              <label><i class="bi bi-airplane-fill"></i> Von</label>
+              <select class="form-select" id="airportFilter">
+                <option value="">🌍 Alle Flughäfen</option>
+                <option value="Wien">✈️ Wien (VIE)</option>
+                <option value="Salzburg">✈️ Salzburg (SZG)</option>
+                <option value="Innsbruck">✈️ Innsbruck (INN)</option>
+                <option value="Graz">✈️ Graz (GRZ)</option>
+                <option value="Linz">✈️ Linz (LNZ)</option>
+                <option value="Klagenfurt">✈️ Klagenfurt (KLU)</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-4">
+            <div class="search-field">
+              <label><i class="bi bi-cash"></i> Min. Preis</label>
+              <input type="number" class="form-control" id="minPrice" placeholder="0" min="0" value="0">
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-4">
+            <div class="search-field">
+              <label><i class="bi bi-cash-stack"></i> Max. Preis</label>
+              <input type="number" class="form-control" id="maxPrice" placeholder="5000" max="10000" value="5000">
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-4">
+            <div class="search-field">
+              <label><i class="bi bi-sort-down"></i> Sortieren</label>
+              <select class="form-select" id="sortFilter">
+                <option value="price-asc">💰 Preis aufsteigend</option>
+                <option value="price-desc">💎 Preis absteigend</option>
+                <option value="date-asc">📅 Datum aufsteigend</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-lg-1 col-md-12">
+            <div class="search-field-btn">
+              <button class="btn btn-search w-100" onclick="applyFilters()"><i class="bi bi-search"></i></button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -272,47 +774,113 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const destinations = [
-      {city: 'Paris', country: 'Frankreich'}, {city: 'Marseille', country: 'Frankreich'}, {city: 'Lyon', country: 'Frankreich'}, {city: 'Nizza', country: 'Frankreich'},
-      {city: 'London', country: 'Großbritannien'}, {city: 'Edinburgh', country: 'Großbritannien'}, {city: 'Manchester', country: 'Großbritannien'},
-      {city: 'Rom', country: 'Italien'}, {city: 'Venedig', country: 'Italien'}, {city: 'Florenz', country: 'Italien'}, {city: 'Mailand', country: 'Italien'}, {city: 'Neapel', country: 'Italien'},
-      {city: 'Barcelona', country: 'Spanien'}, {city: 'Madrid', country: 'Spanien'}, {city: 'Valencia', country: 'Spanien'}, {city: 'Sevilla', country: 'Spanien'}, {city: 'Malaga', country: 'Spanien'}, {city: 'Ibiza', country: 'Spanien'}, {city: 'Palma', country: 'Spanien'},
-      {city: 'Amsterdam', country: 'Niederlande'}, {city: 'Rotterdam', country: 'Niederlande'},
-      {city: 'Berlin', country: 'Deutschland'}, {city: 'München', country: 'Deutschland'}, {city: 'Hamburg', country: 'Deutschland'}, {city: 'Frankfurt', country: 'Deutschland'}, {city: 'Köln', country: 'Deutschland'},
-      {city: 'Wien', country: 'Österreich'}, {city: 'Salzburg', country: 'Österreich'}, {city: 'Innsbruck', country: 'Österreich'},
-      {city: 'Prag', country: 'Tschechien'}, {city: 'Budapest', country: 'Ungarn'}, {city: 'Krakau', country: 'Polen'}, {city: 'Warschau', country: 'Polen'},
-      {city: 'Lissabon', country: 'Portugal'}, {city: 'Porto', country: 'Portugal'},
-      {city: 'Athen', country: 'Griechenland'}, {city: 'Santorini', country: 'Griechenland'}, {city: 'Mykonos', country: 'Griechenland'}, {city: 'Kreta', country: 'Griechenland'}, {city: 'Rhodos', country: 'Griechenland'}, {city: 'Korfu', country: 'Griechenland'},
-      {city: 'Istanbul', country: 'Türkei'}, {city: 'Antalya', country: 'Türkei'}, {city: 'Bodrum', country: 'Türkei'}, {city: 'Izmir', country: 'Türkei'},
-      {city: 'Dubai', country: 'VAE'}, {city: 'Abu Dhabi', country: 'VAE'},
-      {city: 'Bangkok', country: 'Thailand'}, {city: 'Phuket', country: 'Thailand'}, {city: 'Krabi', country: 'Thailand'},
-      {city: 'Tokio', country: 'Japan'}, {city: 'Kyoto', country: 'Japan'}, {city: 'Osaka', country: 'Japan'},
-      {city: 'New York', country: 'USA'}, {city: 'Los Angeles', country: 'USA'}, {city: 'Miami', country: 'USA'}, {city: 'San Francisco', country: 'USA'}, {city: 'Las Vegas', country: 'USA'}, {city: 'Chicago', country: 'USA'}, {city: 'Boston', country: 'USA'}, {city: 'Washington', country: 'USA'},
-      {city: 'Cancun', country: 'Mexiko'}, {city: 'Mexiko-Stadt', country: 'Mexiko'}, {city: 'Acapulco', country: 'Mexiko'},
-      {city: 'Rio de Janeiro', country: 'Brasilien'}, {city: 'Buenos Aires', country: 'Argentinien'},
-      {city: 'Sydney', country: 'Australien'}, {city: 'Melbourne', country: 'Australien'},
-      {city: 'Bali', country: 'Indonesien'}, {city: 'Jakarta', country: 'Indonesien'},
-      {city: 'Singapur', country: 'Singapur'}, {city: 'Hongkong', country: 'China'}, {city: 'Shanghai', country: 'China'}, {city: 'Peking', country: 'China'},
+      {city: 'Paris', country: 'Frankreich'}, {city: 'Marseille', country: 'Frankreich'}, {city: 'Lyon', country: 'Frankreich'}, {city: 'Nizza', country: 'Frankreich'}, {city: 'Bordeaux', country: 'Frankreich'}, {city: 'Toulouse', country: 'Frankreich'},
+      {city: 'London', country: 'Großbritannien'}, {city: 'Edinburgh', country: 'Großbritannien'}, {city: 'Manchester', country: 'Großbritannien'}, {city: 'Liverpool', country: 'Großbritannien'}, {city: 'Glasgow', country: 'Großbritannien'},
+      {city: 'Rom', country: 'Italien'}, {city: 'Venedig', country: 'Italien'}, {city: 'Florenz', country: 'Italien'}, {city: 'Mailand', country: 'Italien'}, {city: 'Neapel', country: 'Italien'}, {city: 'Turin', country: 'Italien'}, {city: 'Bologna', country: 'Italien'}, {city: 'Verona', country: 'Italien'},
+      {city: 'Barcelona', country: 'Spanien'}, {city: 'Madrid', country: 'Spanien'}, {city: 'Valencia', country: 'Spanien'}, {city: 'Sevilla', country: 'Spanien'}, {city: 'Malaga', country: 'Spanien'}, {city: 'Ibiza', country: 'Spanien'}, {city: 'Palma', country: 'Spanien'}, {city: 'Granada', country: 'Spanien'}, {city: 'Bilbao', country: 'Spanien'},
+      {city: 'Amsterdam', country: 'Niederlande'}, {city: 'Rotterdam', country: 'Niederlande'}, {city: 'Den Haag', country: 'Niederlande'}, {city: 'Utrecht', country: 'Niederlande'},
+      {city: 'Berlin', country: 'Deutschland'}, {city: 'München', country: 'Deutschland'}, {city: 'Hamburg', country: 'Deutschland'}, {city: 'Frankfurt', country: 'Deutschland'}, {city: 'Köln', country: 'Deutschland'}, {city: 'Dresden', country: 'Deutschland'}, {city: 'Stuttgart', country: 'Deutschland'},
+      {city: 'Wien', country: 'Österreich'}, {city: 'Salzburg', country: 'Österreich'}, {city: 'Innsbruck', country: 'Österreich'}, {city: 'Graz', country: 'Österreich'},
+      {city: 'Prag', country: 'Tschechien'}, {city: 'Brünn', country: 'Tschechien'}, {city: 'Budapest', country: 'Ungarn'}, {city: 'Krakau', country: 'Polen'}, {city: 'Warschau', country: 'Polen'}, {city: 'Danzig', country: 'Polen'},
+      {city: 'Lissabon', country: 'Portugal'}, {city: 'Porto', country: 'Portugal'}, {city: 'Faro', country: 'Portugal'}, {city: 'Lagos', country: 'Portugal'},
+      {city: 'Athen', country: 'Griechenland'}, {city: 'Santorini', country: 'Griechenland'}, {city: 'Mykonos', country: 'Griechenland'}, {city: 'Kreta', country: 'Griechenland'}, {city: 'Rhodos', country: 'Griechenland'}, {city: 'Korfu', country: 'Griechenland'}, {city: 'Thessaloniki', country: 'Griechenland'},
+      {city: 'Istanbul', country: 'Türkei'}, {city: 'Antalya', country: 'Türkei'}, {city: 'Bodrum', country: 'Türkei'}, {city: 'Izmir', country: 'Türkei'}, {city: 'Alanya', country: 'Türkei'}, {city: 'Side', country: 'Türkei'},
+      {city: 'Dubai', country: 'VAE'}, {city: 'Abu Dhabi', country: 'VAE'}, {city: 'Sharjah', country: 'VAE'},
+      {city: 'Bangkok', country: 'Thailand'}, {city: 'Phuket', country: 'Thailand'}, {city: 'Krabi', country: 'Thailand'}, {city: 'Chiang Mai', country: 'Thailand'}, {city: 'Koh Samui', country: 'Thailand'}, {city: 'Pattaya', country: 'Thailand'},
+      {city: 'Tokio', country: 'Japan'}, {city: 'Kyoto', country: 'Japan'}, {city: 'Osaka', country: 'Japan'}, {city: 'Hiroshima', country: 'Japan'}, {city: 'Nara', country: 'Japan'},
+      {city: 'New York', country: 'USA'}, {city: 'Los Angeles', country: 'USA'}, {city: 'Miami', country: 'USA'}, {city: 'San Francisco', country: 'USA'}, {city: 'Las Vegas', country: 'USA'}, {city: 'Chicago', country: 'USA'}, {city: 'Boston', country: 'USA'}, {city: 'Washington', country: 'USA'}, {city: 'Seattle', country: 'USA'}, {city: 'Orlando', country: 'USA'}, {city: 'San Diego', country: 'USA'},
+      {city: 'Cancun', country: 'Mexiko'}, {city: 'Mexiko-Stadt', country: 'Mexiko'}, {city: 'Acapulco', country: 'Mexiko'}, {city: 'Playa del Carmen', country: 'Mexiko'}, {city: 'Tulum', country: 'Mexiko'},
+      {city: 'Rio de Janeiro', country: 'Brasilien'}, {city: 'São Paulo', country: 'Brasilien'}, {city: 'Salvador', country: 'Brasilien'}, {city: 'Buenos Aires', country: 'Argentinien'}, {city: 'Lima', country: 'Peru'}, {city: 'Bogotá', country: 'Kolumbien'}, {city: 'Santiago', country: 'Chile'},
+      {city: 'Sydney', country: 'Australien'}, {city: 'Melbourne', country: 'Australien'}, {city: 'Brisbane', country: 'Australien'}, {city: 'Perth', country: 'Australien'}, {city: 'Auckland', country: 'Neuseeland'}, {city: 'Wellington', country: 'Neuseeland'},
+      {city: 'Bali', country: 'Indonesien'}, {city: 'Jakarta', country: 'Indonesien'}, {city: 'Lombok', country: 'Indonesien'},
+      {city: 'Singapur', country: 'Singapur'}, {city: 'Hongkong', country: 'China'}, {city: 'Shanghai', country: 'China'}, {city: 'Peking', country: 'China'}, {city: 'Guangzhou', country: 'China'},
       {city: 'Malediven', country: 'Malediven'}, {city: 'Mauritius', country: 'Mauritius'}, {city: 'Seychellen', country: 'Seychellen'},
-      {city: 'Sansibar', country: 'Tansania'}, {city: 'Kapstadt', country: 'Südafrika'}, {city: 'Marrakesch', country: 'Marokko'}, {city: 'Kairo', country: 'Ägypten'}, {city: 'Hurghada', country: 'Ägypten'},
-      {city: 'Reykjavik', country: 'Island'}, {city: 'Oslo', country: 'Norwegen'}, {city: 'Stockholm', country: 'Schweden'}, {city: 'Kopenhagen', country: 'Dänemark'},
+      {city: 'Sansibar', country: 'Tansania'}, {city: 'Kapstadt', country: 'Südafrika'}, {city: 'Johannesburg', country: 'Südafrika'}, {city: 'Marrakesch', country: 'Marokko'}, {city: 'Casablanca', country: 'Marokko'}, {city: 'Kairo', country: 'Ägypten'}, {city: 'Hurghada', country: 'Ägypten'}, {city: 'Sharm El Sheikh', country: 'Ägypten'},
+      {city: 'Reykjavik', country: 'Island'}, {city: 'Oslo', country: 'Norwegen'}, {city: 'Bergen', country: 'Norwegen'}, {city: 'Stockholm', country: 'Schweden'}, {city: 'Göteborg', country: 'Schweden'}, {city: 'Kopenhagen', country: 'Dänemark'}, {city: 'Helsinki', country: 'Finnland'},
       {city: 'Moskau', country: 'Russland'}, {city: 'St. Petersburg', country: 'Russland'},
-      {city: 'Dubrovnik', country: 'Kroatien'}, {city: 'Split', country: 'Kroatien'},
-      {city: 'Brüssel', country: 'Belgien'}, {city: 'Zürich', country: 'Schweiz'}, {city: 'Genf', country: 'Schweiz'},
-      {city: 'Dublin', country: 'Irland'}, {city: 'Zypern', country: 'Zypern'}, {city: 'Malta', country: 'Malta'},
-      {city: 'Toronto', country: 'Kanada'}, {city: 'Vancouver', country: 'Kanada'}, {city: 'Montreal', country: 'Kanada'},
-      {city: 'Seoul', country: 'Südkorea'}, {city: 'Mumbai', country: 'Indien'}, {city: 'Delhi', country: 'Indien'}, {city: 'Goa', country: 'Indien'},
-      {city: 'Hanoi', country: 'Vietnam'}, {city: 'Ho Chi Minh', country: 'Vietnam'}, {city: 'Manila', country: 'Philippinen'},
-      {city: 'Havanna', country: 'Kuba'}, {city: 'Punta Cana', country: 'Dominikanische Republik'}
+      {city: 'Dubrovnik', country: 'Kroatien'}, {city: 'Split', country: 'Kroatien'}, {city: 'Zagreb', country: 'Kroatien'}, {city: 'Zadar', country: 'Kroatien'},
+      {city: 'Brüssel', country: 'Belgien'}, {city: 'Antwerpen', country: 'Belgien'}, {city: 'Zürich', country: 'Schweiz'}, {city: 'Genf', country: 'Schweiz'}, {city: 'Luzern', country: 'Schweiz'},
+      {city: 'Dublin', country: 'Irland'}, {city: 'Cork', country: 'Irland'}, {city: 'Zypern', country: 'Zypern'}, {city: 'Malta', country: 'Malta'},
+      {city: 'Toronto', country: 'Kanada'}, {city: 'Vancouver', country: 'Kanada'}, {city: 'Montreal', country: 'Kanada'}, {city: 'Quebec', country: 'Kanada'},
+      {city: 'Seoul', country: 'Südkorea'}, {city: 'Busan', country: 'Südkorea'}, {city: 'Mumbai', country: 'Indien'}, {city: 'Delhi', country: 'Indien'}, {city: 'Goa', country: 'Indien'}, {city: 'Jaipur', country: 'Indien'}, {city: 'Agra', country: 'Indien'},
+      {city: 'Hanoi', country: 'Vietnam'}, {city: 'Ho Chi Minh', country: 'Vietnam'}, {city: 'Da Nang', country: 'Vietnam'}, {city: 'Manila', country: 'Philippinen'}, {city: 'Cebu', country: 'Philippinen'},
+      {city: 'Havanna', country: 'Kuba'}, {city: 'Punta Cana', country: 'Dominikanische Republik'}, {city: 'Kingston', country: 'Jamaika'}, {city: 'San Juan', country: 'Puerto Rico'},
+      {city: 'Doha', country: 'Katar'}, {city: 'Muscat', country: 'Oman'}, {city: 'Amman', country: 'Jordanien'}, {city: 'Beirut', country: 'Libanon'}, {city: 'Tel Aviv', country: 'Israel'},
+      {city: 'Kuala Lumpur', country: 'Malaysia'}, {city: 'Penang', country: 'Malaysia'}, {city: 'Colombo', country: 'Sri Lanka'}, {city: 'Kathmandu', country: 'Nepal'}, {city: 'Dhaka', country: 'Bangladesch'}
     ];
 
     const airports = ['Wien', 'Salzburg', 'Innsbruck', 'Graz', 'Linz', 'Klagenfurt'];
     
     function getImageForDestination(destination) {
-      return `https://picsum.photos/seed/${encodeURIComponent(destination)}/800/600`;
+      const images = [
+        'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/2166559/pexels-photo-2166559.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/1371360/pexels-photo-1371360.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/2034335/pexels-photo-2034335.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/1388030/pexels-photo-1388030.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/1388030/pexels-photo-1388030.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/2166553/pexels-photo-2166553.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/1388032/pexels-photo-1388032.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/1388033/pexels-photo-1388033.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/1388034/pexels-photo-1388034.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/2166557/pexels-photo-2166557.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/2166558/pexels-photo-2166558.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/1388035/pexels-photo-1388035.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/2166560/pexels-photo-2166560.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/1388036/pexels-photo-1388036.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/2166561/pexels-photo-2166561.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/1388037/pexels-photo-1388037.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/2166562/pexels-photo-2166562.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/1388038/pexels-photo-1388038.jpeg?auto=compress&cs=tinysrgb&w=800&h=600',
+        'https://images.pexels.com/photos/2166563/pexels-photo-2166563.jpeg?auto=compress&cs=tinysrgb&w=800&h=600'
+      ];
+      const index = Math.abs(destination.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % images.length;
+      return images[index];
     }
     
-    function getImageForDestinationOld(destination) {
+    function getImageForDestinationOLD(destination) {
       const cityImages = {
+        'Bangkok': 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800&h=600&fit=crop',
+        'Phuket': 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=800&h=600&fit=crop',
+        'Krabi': 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&h=600&fit=crop',
+        'Chiang Mai': 'https://images.unsplash.com/photo-1598970434795-0c54fe7c0648?w=800&h=600&fit=crop',
+        'Koh Samui': 'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=800&h=600&fit=crop',
+        'Pattaya': 'https://images.unsplash.com/photo-1598970434795-0c54fe7c0648?w=800&h=600&fit=crop',
+        'Bali': 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&h=600&fit=crop',
+        'Jakarta': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop',
+        'Lombok': 'https://images.unsplash.com/photo-1559628376-f3fe5f782a2e?w=800&h=600&fit=crop',
+        'Dubai': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&h=600&fit=crop',
+        'Abu Dhabi': 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&h=600&fit=crop',
+        'Sharjah': 'https://images.unsplash.com/photo-1580834092045-c8e5c7c5b540?w=800&h=600&fit=crop',
+        'Malediven': 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&h=600&fit=crop',
+        'Mauritius': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop',
+        'Seychellen': 'https://images.unsplash.com/photo-1589197331516-7c2b62009d48?w=800&h=600&fit=crop',
+        'Tokio': 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop',
+        'Kyoto': 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&h=600&fit=crop',
+        'Osaka': 'https://images.unsplash.com/photo-1590559899731-a382839e5549?w=800&h=600&fit=crop',
+        'Hiroshima': 'https://images.unsplash.com/photo-1578469550956-0e16b69c6a3d?w=800&h=600&fit=crop',
+        'Nara': 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&h=600&fit=crop',
+        'Singapur': 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&h=600&fit=crop',
+        'Hongkong': 'https://images.unsplash.com/photo-1536599018102-9f803c140fc1?w=800&h=600&fit=crop',
+        'Shanghai': 'https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?w=800&h=600&fit=crop',
+        'Peking': 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&h=600&fit=crop',
+        'Guangzhou': 'https://images.unsplash.com/photo-1599946347371-68eb71b16afc?w=800&h=600&fit=crop',
+        'Seoul': 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=800&h=600&fit=crop',
+        'Busan': 'https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop',
+        'Hanoi': 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop',
+        'Ho Chi Minh': 'https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop',
+        'Da Nang': 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop',
+        'Manila': 'https://images.unsplash.com/photo-1580625246624-b265a1c5c5c5?w=800&h=600&fit=crop',
+        'Cebu': 'https://images.unsplash.com/photo-1580625246624-b265a1c5c5c5?w=800&h=600&fit=crop',
+        'Kuala Lumpur': 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&h=600&fit=crop',
+        'Penang': 'https://images.unsplash.com/photo-1591696331111-ef9586a5b17a?w=800&h=600&fit=crop',
+        'Mumbai': 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=800&h=600&fit=crop',
+        'Delhi': 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800&h=600&fit=crop',
+        'Goa': 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800&h=600&fit=crop',
+        'Jaipur': 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&h=600&fit=crop',
+        'Agra': 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&h=600&fit=crop',
+        'Colombo': 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop',
+        'Kathmandu': 'https://images.unsplash.com/photo-1558799401-1dcba79834c2?w=800&h=600&fit=crop',
         'Paris': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=600&fit=crop',
         'London': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=600&fit=crop',
         'Rom': 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&h=600&fit=crop',
@@ -367,13 +935,21 @@
         'Florenz': 'https://images.unsplash.com/photo-1541017097010-9c8f1b48f3b0?w=800&h=600&fit=crop',
         'Neapel': 'https://images.unsplash.com/photo-1543429258-f9a0c8a4b7e5?w=800&h=600&fit=crop',
         'Mailand': 'https://images.unsplash.com/photo-1513581166391-887a96ddeafd?w=800&h=600&fit=crop',
+        'Turin': 'https://images.unsplash.com/photo-1605641491183-0c5e9c9d0c3d?w=800&h=600&fit=crop',
+        'Bologna': 'https://images.unsplash.com/photo-1590237172566-22d10e0c5a87?w=800&h=600&fit=crop',
+        'Verona': 'https://images.unsplash.com/photo-1569012871812-f38ee64cd54c?w=800&h=600&fit=crop',
         'Nizza': 'https://images.unsplash.com/photo-1565530916786-035e6c7c6d7e?w=800&h=600&fit=crop',
         'Marseille': 'https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?w=800&h=600&fit=crop',
         'Lyon': 'https://images.unsplash.com/photo-1524396309943-e03f5249f002?w=800&h=600&fit=crop',
+        'Bordeaux': 'https://images.unsplash.com/photo-1556388158-158ea5ccacbd?w=800&h=600&fit=crop',
+        'Toulouse': 'https://images.unsplash.com/photo-1582719366115-f0e5b9a8e7c1?w=800&h=600&fit=crop',
         'Brüssel': 'https://images.unsplash.com/photo-1559564484-e48bf5f6c69b?w=800&h=600&fit=crop',
         'Zürich': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
         'Genf': 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&h=600&fit=crop',
         'Edinburgh': 'https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?w=800&h=600&fit=crop',
+        'Manchester': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=600&fit=crop',
+        'Liverpool': 'https://images.unsplash.com/photo-1546546772-4f7e2c0b8c3c?w=800&h=600&fit=crop',
+        'Glasgow': 'https://images.unsplash.com/photo-1590237172566-22d10e0c5a87?w=800&h=600&fit=crop',
         'Dublin': 'https://images.unsplash.com/photo-1549918864-48ac978761a4?w=800&h=600&fit=crop',
         'Porto': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop',
         'Valencia': 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop',
@@ -381,6 +957,8 @@
         'Malaga': 'https://images.unsplash.com/photo-1562883676-8c7feb83f09b?w=800&h=600&fit=crop',
         'Ibiza': 'https://images.unsplash.com/photo-1558862107-d49ef2a04d72?w=800&h=600&fit=crop',
         'Palma': 'https://images.unsplash.com/photo-1562883676-8c7feb83f09b?w=800&h=600&fit=crop',
+        'Granada': 'https://images.unsplash.com/photo-1560969184-10fe8719e047?w=800&h=600&fit=crop',
+        'Bilbao': 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop',
         'Kreta': 'https://images.unsplash.com/photo-1601581987809-a874a81309c9?w=800&h=600&fit=crop',
         'Rhodos': 'https://images.unsplash.com/photo-1601581987809-a874a81309c9?w=800&h=600&fit=crop',
         'Korfu': 'https://images.unsplash.com/photo-1601581987809-a874a81309c9?w=800&h=600&fit=crop',
@@ -429,14 +1007,63 @@
         'Vancouver': 'https://images.unsplash.com/photo-1559511260-66a654ae982a?w=800&h=600&fit=crop',
         'Montreal': 'https://images.unsplash.com/photo-1519659528534-7fd733a832a0?w=800&h=600&fit=crop',
         'Mexiko-Stadt': 'https://images.unsplash.com/photo-1518659526054-e6c2e224d5e1?w=800&h=600&fit=crop',
-        'Acapulco': 'https://images.unsplash.com/photo-1569003339405-ea396a5a8a90?w=800&h=600&fit=crop'
+        'Acapulco': 'https://images.unsplash.com/photo-1569003339405-ea396a5a8a90?w=800&h=600&fit=crop',
+        'Rotterdam': 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop',
+        'Den Haag': 'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&h=600&fit=crop',
+        'Utrecht': 'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&h=600&fit=crop',
+        'München': 'https://images.unsplash.com/photo-1595867818082-083862f3d630?w=800&h=600&fit=crop',
+        'Hamburg': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop',
+        'Frankfurt': 'https://images.unsplash.com/photo-1564221710304-0b37c8b9d729?w=800&h=600&fit=crop',
+        'Köln': 'https://images.unsplash.com/photo-1513581166391-887a96ddeafd?w=800&h=600&fit=crop',
+        'Dresden': 'https://images.unsplash.com/photo-1599946347371-68eb71b16afc?w=800&h=600&fit=crop',
+        'Stuttgart': 'https://images.unsplash.com/photo-1590237172566-22d10e0c5a87?w=800&h=600&fit=crop',
+        'Salzburg': 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&h=600&fit=crop',
+        'Innsbruck': 'https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&h=600&fit=crop',
+        'Graz': 'https://images.unsplash.com/photo-1590237172566-22d10e0c5a87?w=800&h=600&fit=crop',
+        'Brünn': 'https://images.unsplash.com/photo-1541849546-216549ae216d?w=800&h=600&fit=crop',
+        'Warschau': 'https://images.unsplash.com/photo-1601823984263-b87b59798b70?w=800&h=600&fit=crop',
+        'Danzig': 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=800&h=600&fit=crop',
+        'Faro': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop',
+        'Lagos': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop',
+        'Thessaloniki': 'https://images.unsplash.com/photo-1555993539-1732b0258235?w=800&h=600&fit=crop',
+        'Alanya': 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&h=600&fit=crop',
+        'Side': 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&h=600&fit=crop',
+        'Seattle': 'https://images.unsplash.com/photo-1541561041331-1a31ae9b0d75?w=800&h=600&fit=crop',
+        'Orlando': 'https://images.unsplash.com/photo-1605723517503-3cadb5818a0c?w=800&h=600&fit=crop',
+        'San Diego': 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?w=800&h=600&fit=crop',
+        'Playa del Carmen': 'https://images.unsplash.com/photo-1569003339405-ea396a5a8a90?w=800&h=600&fit=crop',
+        'Tulum': 'https://images.unsplash.com/photo-1569003339405-ea396a5a8a90?w=800&h=600&fit=crop',
+        'São Paulo': 'https://images.unsplash.com/photo-1548963670-aaaa8f73a5e3?w=800&h=600&fit=crop',
+        'Salvador': 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800&h=600&fit=crop',
+        'Lima': 'https://images.unsplash.com/photo-1531968455001-5c5272a41129?w=800&h=600&fit=crop',
+        'Bogotá': 'https://images.unsplash.com/photo-1568632234157-ce7aecd03d0d?w=800&h=600&fit=crop',
+        'Santiago': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop',
+        'Brisbane': 'https://images.unsplash.com/photo-1524293368946-d889fcbfb5e3?w=800&h=600&fit=crop',
+        'Perth': 'https://images.unsplash.com/photo-1513581166391-887a96ddeafd?w=800&h=600&fit=crop',
+        'Auckland': 'https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=800&h=600&fit=crop',
+        'Wellington': 'https://images.unsplash.com/photo-1489171084589-9b5031ebcf9b?w=800&h=600&fit=crop',
+        'Johannesburg': 'https://images.unsplash.com/photo-1577948000111-9c970dfe3743?w=800&h=600&fit=crop',
+        'Casablanca': 'https://images.unsplash.com/photo-1597212618440-806262de4f6b?w=800&h=600&fit=crop',
+        'Bergen': 'https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=800&h=600&fit=crop',
+        'Göteborg': 'https://images.unsplash.com/photo-1509356843151-3e7d96241e11?w=800&h=600&fit=crop',
+        'Zagreb': 'https://images.unsplash.com/photo-1555990538-c3d7a0fd6b8f?w=800&h=600&fit=crop',
+        'Zadar': 'https://images.unsplash.com/photo-1555990538-c3d7a0fd6b8f?w=800&h=600&fit=crop',
+        'Antwerpen': 'https://images.unsplash.com/photo-1559564484-e48bf5f6c69b?w=800&h=600&fit=crop',
+        'Luzern': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+        'Cork': 'https://images.unsplash.com/photo-1549918864-48ac978761a4?w=800&h=600&fit=crop',
+        'Quebec': 'https://images.unsplash.com/photo-1519659528534-7fd733a832a0?w=800&h=600&fit=crop',
+        'Kingston': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop',
+        'San Juan': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop',
+        'Doha': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&h=600&fit=crop',
+        'Muscat': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&h=600&fit=crop',
+        'Dhaka': 'https://images.unsplash.com/photo-1558799401-1dcba79834c2?w=800&h=600&fit=crop'
       };
-      return cityImages[destination] || 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&h=600&fit=crop';
+      return cityImages[destination] || `https://picsum.photos/seed/${encodeURIComponent(destination)}/800/600`;
     }
 
     function generateOffers() {
       const offers = [];
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 200; i++) {
         const dest = destinations[Math.floor(Math.random() * destinations.length)];
         const airport = airports[Math.floor(Math.random() * airports.length)];
         const price = Math.floor(Math.random() * (2800 - 199 + 1)) + 199;
@@ -445,6 +1072,7 @@
         const departureDate = new Date();
         departureDate.setDate(departureDate.getDate() + daysOffset);
         const img = getImageForDestination(dest.city);
+        const rating = (Math.random() * (5.0 - 3.5) + 3.5).toFixed(1);
         
         offers.push({
           id: i + 1,
@@ -456,7 +1084,8 @@
           days,
           departureDate: departureDate.toLocaleDateString('de-DE'),
           departureDateObj: departureDate,
-          img
+          img,
+          rating
         });
       }
       return offers;
@@ -480,9 +1109,14 @@
               <p class="mb-1 text-muted"><i class="bi bi-airplane-fill me-2"></i>Ab ${offer.airport}</p>
               <p class="mb-1 text-muted"><i class="bi bi-calendar-event me-2"></i>${offer.departureDate}</p>
               <p class="mb-2 text-muted"><i class="bi bi-clock me-2"></i>${offer.days} Tage</p>
-              <button class="btn btn-primary w-100 btn-sm" onclick="bookOffer(${offer.id})">
-                <i class="bi bi-cart-plus me-2"></i>Buchen
-              </button>
+              <div class="d-flex gap-2">
+                <button class="btn btn-details w-50 btn-sm" onclick="showOfferDetails(${offer.id})">
+                  <i class="bi bi-info-circle"></i><span class="d-none d-md-inline ms-1">Details</span>
+                </button>
+                <button class="btn btn-primary w-50 btn-sm" onclick="openBookingQuick(${offer.id})">
+                  <i class="bi bi-cart-plus me-1"></i><span class="d-none d-md-inline">Jetzt buchen</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -490,13 +1124,14 @@
     }
 
     function applyFilters() {
-      const maxPrice = parseInt(document.getElementById('priceFilter').value);
+      const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
+      const maxPrice = parseInt(document.getElementById('maxPrice').value) || 3000;
       const airport = document.getElementById('airportFilter').value;
       const searchTerm = document.getElementById('destinationFilter').value.toLowerCase();
       const sort = document.getElementById('sortFilter').value;
 
       filteredOffers = allOffers.filter(offer => {
-        const priceMatch = offer.price <= maxPrice;
+        const priceMatch = offer.price >= minPrice && offer.price <= maxPrice;
         const airportMatch = !airport || offer.airport === airport;
         const destMatch = !searchTerm || 
                          offer.city.toLowerCase().includes(searchTerm) || 
@@ -516,25 +1151,140 @@
       document.getElementById('resultsCount').textContent = filteredOffers.length;
     }
 
-    function bookOffer(id) {
+    // Quick booking: open details modal and prefill booking modal
+    function openBookingQuick(id) {
       const offer = allOffers.find(o => o.id === id);
-      alert(`Buchung für ${offer.destination} ab ${offer.airport} am ${offer.departureDate} für ${offer.price}€`);
+      if (!offer) return alert('Angebot nicht gefunden');
+      showOfferDetails(id);
+      // prefill booking modal values (small delay to ensure details rendered)
+      setTimeout(() => {
+        const price = offer.price;
+        const detailPriceEls = document.querySelectorAll('#detailPrice, #detailPrice2, #detailPrice3');
+        detailPriceEls.forEach(el => { if (el) el.textContent = price; });
+        const bookBtn = document.getElementById('bookOfferBtn');
+        if (bookBtn) bookBtn.onclick = () => {
+          // open booking modal
+          const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+          document.getElementById('bookingOfferTitle').textContent = offer.title || offer.city;
+          document.getElementById('bookingTotalPrice').textContent = price;
+          bookingModal.show();
+        };
+      }, 120);
     }
 
-    function adjustPrice(amount) {
-      const priceFilter = document.getElementById('priceFilter');
-      let newValue = parseInt(priceFilter.value) + amount;
-      if (newValue < 0) newValue = 0;
-      if (newValue > 3000) newValue = 3000;
-      priceFilter.value = newValue;
-      document.getElementById('priceValue').textContent = newValue;
-      applyFilters();
+    function showOfferDetails(id) {
+      const offer = allOffers.find(o => o.id === id);
+      const descriptions = [
+        `Entdecken Sie ${offer.city} - eine Stadt voller Geschichte und Charme. Erleben Sie ${offer.days} unvergessliche Tage mit erstklassigen Hotels, lokaler Küche und kulturellen Highlights.`,
+        `Tauchen Sie ein in die faszinierende Welt von ${offer.city}. Diese ${offer.days}-tägige Reise bietet Ihnen authentische Erlebnisse, moderne Annehmlichkeiten und unvergessliche Momente.`,
+        `${offer.city} erwartet Sie! Genießen Sie ${offer.days} Tage voller Abenteuer, Entspannung und kultureller Entdeckungen in einer der schönsten Destinationen.`,
+        `Erleben Sie die Magie von ${offer.city}. Ihre ${offer.days}-tägige Traumreise umfasst komfortable Unterkünfte, spannende Ausflüge und lokale Gastronomie.`,
+        `Willkommen in ${offer.city}! Diese ${offer.days}-tägige Reise kombiniert Sightseeing, Erholung und authentische Begegnungen mit Land und Leuten.`,
+        `${offer.city} - Ihr nächstes Reiseziel! Freuen Sie sich auf ${offer.days} Tage voller Highlights, von historischen Sehenswürdigkeiten bis zu modernen Attraktionen.`,
+        `Entdecken Sie ${offer.city} auf eine ganz besondere Art. ${offer.days} Tage lang erwarten Sie exklusive Erlebnisse, erstklassiger Service und unvergessliche Eindrücke.`,
+        `Ihre Traumreise nach ${offer.city} beginnt hier! ${offer.days} Tage voller Kultur, Kulinarik und Komfort in einer der faszinierendsten Städte.`,
+        `${offer.city} ruft! Erleben Sie ${offer.days} Tage voller Überraschungen, von versteckten Juwelen bis zu weltbekannten Sehenswürdigkeiten.`,
+        `Lassen Sie sich von ${offer.city} verzaubern. Diese ${offer.days}-tägige Reise bietet die perfekte Mischung aus Abenteuer, Entspannung und kultureller Bereicherung.`
+      ];
+      const descIndex = id % descriptions.length;
+      document.getElementById('detailCity').textContent = offer.city;
+      document.getElementById('detailCountry').textContent = offer.country;
+      document.getElementById('detailImage').src = offer.img;
+      document.getElementById('detailPrice').textContent = offer.price;
+      document.getElementById('detailPrice2').textContent = offer.price;
+      document.getElementById('detailPrice3').textContent = offer.price;
+      document.getElementById('detailAirport').textContent = offer.airport;
+      document.getElementById('detailDate').textContent = offer.departureDate;
+      document.getElementById('detailDays').textContent = offer.days;
+      document.getElementById('detailRating').textContent = offer.rating;
+      document.getElementById('detailDescription').textContent = descriptions[descIndex];
+      document.getElementById('bookOfferBtn').onclick = () => bookOffer(id);
+      new bootstrap.Modal(document.getElementById('offerDetailModal')).show();
+    }
+    
+    let currentBookingOffer = null;
+    
+    window.bookOffer = function(id) {
+      console.log('bookOffer called with id:', id);
+      currentBookingOffer = allOffers.find(o => o.id === id);
+      console.log('Found offer:', currentBookingOffer);
+      
+      if (!currentBookingOffer) {
+        alert('Angebot nicht gefunden!');
+        return;
+      }
+      
+      const detailModal = bootstrap.Modal.getInstance(document.getElementById('offerDetailModal'));
+      if (detailModal) detailModal.hide();
+      
+      setTimeout(() => {
+        const titleEl = document.getElementById('bookingOfferTitle');
+        const totalPriceEl = document.getElementById('bookingTotalPrice');
+        const pricePerPersonEl = document.getElementById('pricePerPerson');
+        const totalPersonsEl = document.getElementById('totalPersons');
+        
+        if (!titleEl || !totalPriceEl) {
+          console.error('Booking modal elements not found');
+          return;
+        }
+        
+        titleEl.textContent = currentBookingOffer.city;
+        totalPriceEl.textContent = currentBookingOffer.price;
+        if (pricePerPersonEl) pricePerPersonEl.textContent = currentBookingOffer.price;
+        if (totalPersonsEl) totalPersonsEl.textContent = '1';
+        
+        const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+        bookingModal.show();
+      }, 300);
+    }
+    
+    window.updatePersonCount = function() {
+      if (!currentBookingOffer) return;
+      const count = parseInt(document.getElementById('personCount').value);
+      const container = document.getElementById('personsContainer');
+      if (!container) return;
+      
+      container.innerHTML = '';
+      for (let i = 1; i <= count; i++) {
+        container.innerHTML += `
+          <div class="card mb-3" style="border: 2px solid #e0e0e0; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+            <div class="card-header text-white" style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 1rem;"><i class="bi bi-person-fill me-2"></i><strong>Person ${i}</strong></div>
+            <div class="card-body" style="padding: 1.5rem;">
+              <div class="row g-3">
+                <div class="col-md-6"><label class="form-label"><small>Vorname</small></label><input type="text" class="form-control form-control-lg" placeholder="Max" required style="border: 2px solid #e0e0e0; border-radius: 10px;"></div>
+                <div class="col-md-6"><label class="form-label"><small>Nachname</small></label><input type="text" class="form-control form-control-lg" placeholder="Mustermann" required style="border: 2px solid #e0e0e0; border-radius: 10px;"></div>
+                <div class="col-md-6"><label class="form-label"><small>Geburtsdatum</small></label><input type="date" class="form-control form-control-lg" required style="border: 2px solid #e0e0e0; border-radius: 10px;"></div>
+                <div class="col-md-6"><label class="form-label"><small>Passnummer</small></label><input type="text" class="form-control form-control-lg" placeholder="P12345678" required style="border: 2px solid #e0e0e0; border-radius: 10px;"></div>
+              </div>
+            </div>
+          </div>`;
+      }
+      const total = currentBookingOffer.price * count;
+      const totalPriceEl = document.getElementById('bookingTotalPrice');
+      const pricePerPersonEl = document.getElementById('pricePerPerson');
+      const totalPersonsEl = document.getElementById('totalPersons');
+      
+      if (totalPriceEl) totalPriceEl.textContent = total;
+      if (pricePerPersonEl) pricePerPersonEl.textContent = currentBookingOffer.price;
+      if (totalPersonsEl) totalPersonsEl.textContent = count;
+    }
+    
+    window.proceedToPayment = function() {
+      bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();
+      setTimeout(() => new bootstrap.Modal(document.getElementById('paymentModal')).show(), 300);
+    }
+    
+    window.completePayment = function() {
+      const method = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+      if (!method) { alert('❌ Bitte Zahlungsmethode wählen'); return; }
+      alert('✅ Zahlung erfolgreich! Buchung abgeschlossen.');
+      bootstrap.Modal.getInstance(document.getElementById('paymentModal')).hide();
     }
 
-    document.getElementById('priceFilter').addEventListener('input', function() {
-      document.getElementById('priceValue').textContent = this.value;
-      applyFilters();
-    });
+
+
+    document.getElementById('minPrice').addEventListener('input', applyFilters);
+    document.getElementById('maxPrice').addEventListener('input', applyFilters);
 
     document.getElementById('airportFilter').addEventListener('change', applyFilters);
     document.getElementById('destinationFilter').addEventListener('input', applyFilters);
@@ -561,10 +1311,197 @@
     
     if (searchDest || searchAirport) {
       applyFilters();
-    } else {
-      renderOffers(allOffers);
-      document.getElementById('resultsCount').textContent = allOffers.length;
     }
+    
+    // Auto-apply filters on page load
+    console.log('Initializing offers, total:', allOffers.length);
+    applyFilters();
+    console.log('Filtered offers:', filteredOffers.length);
+    
+
+  </script>
+  <script>
+    async function loadProfile() {
+      const user = await window.DB.getUser();
+      if (!user) return;
+      const initials = (user.firstname?.charAt(0) || 'U') + (user.lastname?.charAt(0) || 'U');
+      document.getElementById('profileAvatar').textContent = initials;
+      document.getElementById('profileFullName').textContent = (user.firstname || '') + ' ' + (user.lastname || '');
+      document.getElementById('profileEmail').textContent = user.email || '';
+      document.getElementById('profileFirstName').textContent = user.firstname || '';
+      document.getElementById('profileLastName').textContent = user.lastname || '';
+      document.getElementById('profilePhone').textContent = user.phone || 'Nicht angegeben';
+      document.getElementById('profileAddress').textContent = user.address || 'Nicht angegeben';
+      document.getElementById('profileDatum').textContent = user.created_at ? new Date(user.created_at).toLocaleDateString('de-DE') : 'Heute';
+      const buchungen = await window.DB.getUserBookings();
+      document.getElementById('profileBuchungen').innerHTML = buchungen.length ? buchungen.map(b => `<div class="p-2 bg-light rounded mb-2"><strong>${b.title || 'Buchung'}</strong></div>`).join('') : '<p class="text-muted">Noch keine Buchungen</p>';
+    }
+    
+    document.getElementById('editProfileBtn')?.addEventListener('click', function() {
+      document.getElementById('profileView').style.display = 'none';
+      document.getElementById('profileEdit').style.display = 'block';
+      this.style.display = 'none';
+      const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      document.getElementById('editFirstName').value = user.firstname || '';
+      document.getElementById('editLastName').value = user.lastname || '';
+      document.getElementById('editPhone').value = user.phone || '';
+      document.getElementById('editAddress').value = user.address || '';
+    });
+    
+    document.getElementById('cancelEditBtn')?.addEventListener('click', function() {
+      document.getElementById('profileView').style.display = 'block';
+      document.getElementById('profileEdit').style.display = 'none';
+      document.getElementById('editProfileBtn').style.display = 'inline-block';
+    });
+    
+    document.getElementById('profileEditForm')?.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      await window.DB.updateProfile({
+        firstname: document.getElementById('editFirstName').value,
+        lastname: document.getElementById('editLastName').value,
+        phone: document.getElementById('editPhone').value,
+        address: document.getElementById('editAddress').value
+      });
+      document.getElementById('profileView').style.display = 'block';
+      document.getElementById('profileEdit').style.display = 'none';
+      document.getElementById('editProfileBtn').style.display = 'inline-block';
+      loadProfile();
+      if (typeof updateNavigation === 'function') {
+        await updateNavigation();
+      }
+      alert('✅ Profil aktualisiert!');
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('loginForm')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        if (!email || !password) { alert('❌ Bitte füllen Sie alle Felder aus'); return; }
+        await window.DB.signIn(email, password);
+        bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+        this.reset();
+        setTimeout(async () => { 
+          if (typeof updateNavigation === 'function') {
+            await updateNavigation(); 
+          }
+          alert('✅ Erfolgreich angemeldet!'); 
+        }, 500);
+      });
+
+      document.getElementById('registerForm')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPassword').value;
+        const passwordConfirm = document.getElementById('regPasswordConfirm').value;
+        const firstname = document.getElementById('regFirstName').value.trim();
+        const lastname = document.getElementById('regLastName').value.trim();
+        if (!email || !password || !firstname || !lastname) { alert('❌ Bitte füllen Sie alle Felder aus'); return; }
+        if (password !== passwordConfirm) { alert('❌ Passwörter stimmen nicht überein'); return; }
+        if (password.length < 6) { alert('❌ Passwort muss mindestens 6 Zeichen haben'); return; }
+        await window.DB.signUp(email, password, firstname, lastname);
+        bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
+        this.reset();
+        setTimeout(async () => { 
+          if (typeof updateNavigation === 'function') {
+            await updateNavigation(); 
+          }
+          alert('✅ Konto erfolgreich erstellt!'); 
+        }, 300);
+      });
+    });
+
+    window.DB = {
+      async getUser() {
+        const user = localStorage.getItem('currentUser');
+        return user ? JSON.parse(user) : null;
+      },
+      async getUserProfile() {
+        return this.getUser();
+      },
+      async signOut() {
+        localStorage.removeItem('currentUser');
+      },
+      async signUp(email, password, firstname, lastname) {
+        const user = { email, firstname, lastname, created_at: new Date().toISOString() };
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        localStorage.setItem('user_' + email, JSON.stringify(user));
+        return { user };
+      },
+      async signIn(email, password) {
+        const savedUser = localStorage.getItem('user_' + email);
+        const user = savedUser ? JSON.parse(savedUser) : { email };
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        return { user };
+      },
+      async getUserBookings() {
+        return [];
+      },
+      async updateProfile(profileData) {
+        const user = await this.getUser();
+        if (user) {
+          Object.assign(user, profileData);
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          if (user.email) {
+            localStorage.setItem('user_' + user.email, JSON.stringify(user));
+          }
+        }
+        return user;
+      }
+    };
+
+    // Навигация
+    async function updateNavigation() {
+      console.log('updateNavigation called');
+      const navLogin = document.getElementById('navLogin');
+      const navRegister = document.getElementById('navRegister');
+      const navUser = document.getElementById('navUser');
+      const navUserName = document.getElementById('navUserName');
+      
+      if (!navLogin || !navRegister || !navUser) {
+        console.log('Nav elements not found');
+        return;
+      }
+      
+      try {
+        const user = await window.DB.getUser();
+        console.log('Current user:', user);
+        
+        if (user) {
+          navLogin.style.display = 'none';
+          navRegister.style.display = 'none';
+          navUser.style.display = 'block';
+          if (navUserName) {
+            navUserName.textContent = (user.firstname || '') + ' ' + (user.lastname || '');
+          }
+          console.log('User navigation updated');
+        } else {
+          navLogin.style.display = 'block';
+          navRegister.style.display = 'block';
+          navUser.style.display = 'none';
+          console.log('Guest navigation updated');
+        }
+      } catch (error) {
+        console.error('Nav error:', error);
+        navLogin.style.display = 'block';
+        navRegister.style.display = 'block';
+        navUser.style.display = 'none';
+      }
+    }
+
+    async function logout() {
+      if (confirm('Möchten Sie sich wirklich abmelden?')) {
+        try {
+          await window.DB.signOut();
+        } catch (error) {
+          console.error('Logout error:', error);
+        }
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Вызываем сразу
+    updateNavigation();
   </script>
 </body>
 </html>

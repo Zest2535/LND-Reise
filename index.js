@@ -41,14 +41,22 @@ const offersData = [
 ];
 
 const destinationsData = [
-  { id: 'dest-barcelona', title: 'Barcelona', desc: 'Lebendige Kultur, Architektur von Gaudí und sonnige Strände am Mittelmeer.', img: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600&h=400&fit=crop', tags: ['couples','friends'], recommended: ['offer5'] },
-  { id: 'dest-dubai', title: 'Dubai', desc: 'Moderne Metropole mit Wüstenabenteuern, Luxus und ikonischer Skyline.', img: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&h=400&fit=crop', tags: ['solo','friends'], recommended: ['offer6'] },
-  { id: 'dest-bali', title: 'Bali', desc: 'Tropische Insel mit Reisfeldern, spirituellen Tempeln und entspannten Stränden.', img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&h=400&fit=crop', tags: ['family-kids','couples'], recommended: ['offer4'] },
-  { id: 'dest-capetown', title: 'Kapstadt', desc: 'Beeindruckende Küsten, Tafelberg und vielfältige Naturerlebnisse.', img: 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=600&h=400&fit=crop', tags: ['family-no-kids','friends'], recommended: ['offer3'] },
-  { id: 'dest-vancouver', title: 'Vancouver', desc: 'Stadt zwischen Meer und Bergen – ideal für Outdoor‑Aktivitäten und Kultur.', img: 'https://images.unsplash.com/photo-1559511260-66a654ae982a?w=600&h=400&fit=crop', tags: ['solo','couples'], recommended: ['offer6'] },
-  { id: 'dest-sydney', title: 'Sydney', desc: 'Opernhaus, Häfen und sonnige Strände – Australiens vielseitige Metropole.', img: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=600&h=400&fit=crop', tags: ['family-no-kids','friends'], recommended: ['offer5'] },
-  { id: 'dest-marrakech', title: 'Marrakesch', desc: 'Bunte Märkte, historische Paläste und lebendige marokkanische Kultur.', img: 'https://images.unsplash.com/photo-1597212618440-806262de4f6b?w=600&h=400&fit=crop', tags: ['couples','friends'], recommended: ['offer8'] },
-  { id: 'dest-edinburgh', title: 'Edinburgh', desc: 'Geschichte, Schlösser und Festivals in Schottlands charmanter Hauptstadt.', img: 'https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?w=600&h=400&fit=crop', tags: ['solo','couples'], recommended: ['offer6'] }
+  { id: 'dest-paris', title: 'Paris', desc: 'Stadt der Liebe mit Eiffelturm, Louvre und Seine.', img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&h=400&fit=crop', tags: ['couples','friends'] },
+  { id: 'dest-london', title: 'London', desc: 'Big Ben, Buckingham Palace und britische Kultur.', img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600&h=400&fit=crop', tags: ['solo','friends'] },
+  { id: 'dest-rom', title: 'Rom', desc: 'Kolosseum, Vatikan und italienische Geschichte.', img: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&h=400&fit=crop', tags: ['couples','friends'] },
+  { id: 'dest-barcelona', title: 'Barcelona', desc: 'Gaudí-Architektur, Strände und katalanische Kultur.', img: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600&h=400&fit=crop', tags: ['family-no-kids','friends'] },
+  { id: 'dest-dubai', title: 'Dubai', desc: 'Luxus, Wüstensafaris und moderne Wolkenkratzer.', img: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&h=400&fit=crop', tags: ['solo','friends'] },
+  { id: 'dest-bangkok', title: 'Bangkok', desc: 'Tempel, Märkte und thailändische Street Food.', img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=600&h=400&fit=crop', tags: ['family-kids','couples'] },
+  { id: 'dest-newyork', title: 'New York', desc: 'Die Stadt, die niemals schläft – Kultur und Broadway.', img: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&h=400&fit=crop', tags: ['solo','friends'] },
+  { id: 'dest-malediven', title: 'Malediven', desc: 'Luxusresorts und türkisfarbenes Wasser.', img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&h=400&fit=crop', tags: ['couples'] },
+  { id: 'dest-santorini', title: 'Santorini', desc: 'Spektakuläre Sonnenuntergänge über der Caldera.', img: 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=600&h=400&fit=crop', tags: ['couples','friends'] },
+  { id: 'dest-bali', title: 'Bali', desc: 'Reisfelder, Tempel und entspannte Strände.', img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&h=400&fit=crop', tags: ['family-kids','couples'] },
+  { id: 'dest-istanbul', title: 'Istanbul', desc: 'Brücke zwischen Europa und Asien, Moscheen und Basare.', img: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=600&h=400&fit=crop', tags: ['couples','friends'] },
+  { id: 'dest-sydney', title: 'Sydney', desc: 'Opernhaus, Häfen und sonnige Strände.', img: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=600&h=400&fit=crop', tags: ['family-no-kids','friends'] },
+  { id: 'dest-tokio', title: 'Tokio', desc: 'Moderne Metropole mit Tradition und Technologie.', img: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=400&fit=crop', tags: ['solo','couples'] },
+  { id: 'dest-lissabon', title: 'Lissabon', desc: 'Historische Gassen und Fado-Musik.', img: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=600&h=400&fit=crop', tags: ['couples','friends'] },
+  { id: 'dest-prag', title: 'Prag', desc: 'Goldene Stadt mit Karlsbrücke und Altstadt.', img: 'https://images.unsplash.com/photo-1541849546-216549ae216d?w=600&h=400&fit=crop', tags: ['couples','friends'] },
+  { id: 'dest-singapur', title: 'Singapur', desc: 'Moderne Stadtarchitektur und multikulturelle Vielfalt.', img: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=600&h=400&fit=crop', tags: ['solo','friends'] }
 ];
 
 function mulberry32(a) {
@@ -83,61 +91,28 @@ async function renderOffers(options = { count: 6 }) {
   const container = document.getElementById('angebote-grid');
   if (!container) return;
   
-  try {
-    const tours = await DB.getTours();
-    
-    if (!tours || tours.length === 0) {
-      container.innerHTML = '<p class="text-center">Keine Angebote verfügbar</p>';
-      return;
-    }
-    
-    const count = Math.min(options.count || 6, tours.length);
-    let html = '';
-    
-    for (let i = 0; i < count; i++) {
-      const t = tours[i];
-      const imgUrl = t.img || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop';
-      const price = t.price ? `€${t.price}` : 'Preis auf Anfrage';
-      
-      html += `
-        <div class="col-lg-4 col-md-6 mb-4">
-          <div class="angebot-card">
-            <img src="${imgUrl}" loading="lazy" class="card-img-top" alt="${t.title}">
-            <div class="card-body d-flex flex-column">
-              <h5 class="card-title">${t.title}</h5>
-              <p class="card-text">${t.description || t.destination}</p>
-              <div class="d-flex justify-content-between align-items-center mt-auto">
-                <span class="fw-bold text-primary">${price}</span>
-                <button class="btn btn-primary" data-tour-id="${t.tour_id}">Buchen</button>
-              </div>
+  const count = Math.min(options.count || 6, offersData.length);
+  let html = '';
+  
+  for (let i = 0; i < count; i++) {
+    const offer = offersData[i];
+    html += `
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="angebot-card">
+          <img src="${offer.img}" loading="lazy" class="card-img-top" alt="${offer.title}">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">${offer.title}</h5>
+            <p class="card-text">${offer.text}</p>
+            <div class="d-flex justify-content-between align-items-center mt-auto">
+              <span class="fw-bold text-primary">${offer.price}</span>
+              <a href="buchung.html?offer=${offer.id}" class="btn btn-primary">Buchen</a>
             </div>
           </div>
         </div>
-      `;
-    }
-    container.innerHTML = html;
-    
-    container.querySelectorAll('button[data-tour-id]').forEach(btn => {
-      btn.addEventListener('click', async function(ev) {
-        ev.preventDefault();
-        const tourId = this.getAttribute('data-tour-id');
-        const user = await DB.getUser();
-        if (!user) {
-          new bootstrap.Modal(document.getElementById('loginModal')).show();
-          return;
-        }
-        try {
-          await DB.createBooking(tourId);
-          alert('✅ Buchung erfolgreich!');
-        } catch (error) {
-          alert('❌ Fehler: ' + error.message);
-        }
-      });
-    });
-  } catch (error) {
-    console.error('Error loading tours:', error);
-    container.innerHTML = '<p class="text-center">Fehler beim Laden der Angebote</p>';
+      </div>
+    `;
   }
+  container.innerHTML = html;
 }
 
 let currentBookingOffer = null;
@@ -192,7 +167,7 @@ function openBookingModal(offer) {
   new bootstrap.Modal(modal).show();
 }
 
-function renderDestinations(options = { count: 8 }) {
+function renderDestinations(options = { count: 16 }) {
   const container = document.getElementById('reiseziele-grid');
   if (!container) return;
   const path = (location && location.pathname) ? location.pathname : '/';
@@ -228,50 +203,10 @@ function initDestinationClicks() {
 function showDestinationDetails(destId) {
   const data = destinationsData.find(d => d.id === destId);
   if (!data) return;
-  const modal = document.getElementById('destDetailsOffcanvas');
-  if (!modal) return;
-  modal.querySelector('#destOffcanvasImage').src = data.img.startsWith('http') ? data.img : 'img/' + data.img;
-  modal.querySelector('#destOffcanvasTitle').textContent = data.title;
-  modal.querySelector('#destOffcanvasDesc').textContent = data.desc;
-  const tagsEl = modal.querySelector('#destOffcanvasTags');
-  tagsEl.innerHTML = '';
-  const tagLabels = {'family-kids': 'Familie mit Kindern', 'family-no-kids': 'Familie ohne Kinder', 'couples': 'Paare', 'solo': 'Alleinreisende', 'friends': 'Freunde'};
-  (data.tags || []).forEach(t => {
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-sm btn-outline-primary me-2 mb-2';
-    btn.textContent = tagLabels[t] || t;
-    btn.addEventListener('click', function() {
-      const filterBtn = document.querySelector(`.filter-btn[data-filter="${t}"]`);
-      if (filterBtn) filterBtn.click();
-    });
-    tagsEl.appendChild(btn);
-  });
-  const offersEl = modal.querySelector('#destOffcanvasOffers');
-  offersEl.innerHTML = '';
-  (data.recommended || []).forEach(offerId => {
-    const offer = offersData.find(o => o.id === offerId);
-    if (!offer) return;
-    const col = document.createElement('div');
-    col.className = 'col-12';
-    const smallCard = document.createElement('div');
-    smallCard.className = 'd-flex align-items-center gap-2';
-    const thumb = document.createElement('img');
-    thumb.src = offer.img.startsWith('http') ? offer.img : 'img/' + offer.img;
-    thumb.style.width = '80px';
-    thumb.style.height = '60px';
-    thumb.style.objectFit = 'cover';
-    thumb.className = 'rounded';
-    const meta = document.createElement('div');
-    meta.innerHTML = `<strong>${offer.title}</strong><br><small>${offer.price} • ${offer.duration}</small>`;
-    smallCard.appendChild(thumb);
-    smallCard.appendChild(meta);
-    smallCard.addEventListener('click', function() { showOfferDetails(offer.id); });
-    col.appendChild(smallCard);
-    offersEl.appendChild(col);
-  });
-  if (typeof bootstrap !== 'undefined' && bootstrap.Offcanvas) {
-    new bootstrap.Offcanvas(modal).show();
-  }
+  
+  const params = new URLSearchParams();
+  params.set('destination', data.title);
+  window.location.href = 'angebote.html?' + params.toString();
 }
 
 function initDestinationFilters() {
@@ -460,20 +395,17 @@ function initMainReviews() {
       return;
     }
     
-    try {
-      await DB.createReview('general', selectedRating, text, name);
-      
-      document.getElementById('reviewName').value = '';
-      document.getElementById('reviewTextMain').value = '';
-      selectedRating = 0;
-      stars.forEach(s => s.className = 'bi bi-star');
-      
-      alert('✅ Vielen Dank für Ihre Bewertung!');
-      displayMainReviews();
-    } catch (error) {
-      console.error('Error submitting review:', error);
-      alert('❌ Fehler beim Senden der Bewertung');
-    }
+    const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+    reviews.push({ name, text, rating: selectedRating, created_at: new Date().toISOString() });
+    localStorage.setItem('reviews', JSON.stringify(reviews));
+    
+    document.getElementById('reviewName').value = '';
+    document.getElementById('reviewTextMain').value = '';
+    selectedRating = 0;
+    stars.forEach(s => s.className = 'bi bi-star');
+    
+    alert('✅ Vielen Dank für Ihre Bewertung!');
+    displayMainReviews();
   });
   
   displayMainReviews();
@@ -483,38 +415,27 @@ async function displayMainReviews() {
   const listEl = document.getElementById('reviewsListMain');
   if (!listEl) return;
   
-  try {
-    const { data: reviews, error } = await window.supabase
-      .from('reviews')
-      .select('*')
-      .eq('offer_id', 'general')
-      .order('created_at', { ascending: false });
-    
-    if (error) throw error;
-    
-    if (!reviews || reviews.length === 0) {
-      listEl.innerHTML = '<p class="text-center text-muted">Noch keine Bewertungen vorhanden</p>';
-      return;
-    }
-    
-    listEl.innerHTML = reviews.map(r => `
-      <div class="card mb-3">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-start">
-            <div>
-              <h6 class="mb-1">${r.title || 'Anonym'}</h6>
-              <div class="text-warning mb-2">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
-            </div>
-            <small class="text-muted">${new Date(r.created_at).toLocaleDateString('de-DE')}</small>
-          </div>
-          <p class="mb-0">${r.comment}</p>
-        </div>
-      </div>
-    `).join('');
-  } catch (error) {
-    console.error('Error loading reviews:', error);
-    listEl.innerHTML = '<p class="text-center text-muted">Fehler beim Laden</p>';
+  const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+  
+  if (!reviews || reviews.length === 0) {
+    listEl.innerHTML = '<p class="text-center text-muted">Noch keine Bewertungen vorhanden</p>';
+    return;
   }
+  
+  listEl.innerHTML = reviews.map(r => `
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h6 class="mb-1">${r.name || 'Anonym'}</h6>
+            <div class="text-warning mb-2">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+          </div>
+          <small class="text-muted">${new Date(r.created_at).toLocaleDateString('de-DE')}</small>
+        </div>
+        <p class="mb-0">${r.text}</p>
+      </div>
+    </div>
+  `).join('');
 }
 
 // Инициализация профиля
