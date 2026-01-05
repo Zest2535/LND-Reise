@@ -1438,23 +1438,32 @@
 
       document.getElementById('registerForm')?.addEventListener('submit', async function(e) {
         e.preventDefault();
+        console.log('Registration form submitted');
         const email = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPassword').value;
         const passwordConfirm = document.getElementById('regPasswordConfirm').value;
         const firstname = document.getElementById('regFirstName').value.trim();
         const lastname = document.getElementById('regLastName').value.trim();
+        console.log('Form values:', {email, firstname, lastname, passwordLength: password.length});
         if (!email || !password || !firstname || !lastname) { alert('❌ Bitte füllen Sie alle Felder aus'); return; }
         if (password !== passwordConfirm) { alert('❌ Passwörter stimmen nicht überein'); return; }
         if (password.length < 6) { alert('❌ Passwort muss mindestens 6 Zeichen haben'); return; }
-        await window.DB.signUp(email, password, firstname, lastname);
-        bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
-        this.reset();
-        setTimeout(async () => { 
-          if (typeof updateNavigation === 'function') {
-            await updateNavigation(); 
-          }
-          alert('✅ Konto erfolgreich erstellt!'); 
-        }, 300);
+        try {
+          console.log('Calling DB.signUp...');
+          await window.DB.signUp(email, password, firstname, lastname);
+          console.log('DB.signUp completed successfully');
+          bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
+          this.reset();
+          setTimeout(async () => {
+            if (typeof updateNavigation === 'function') {
+              await updateNavigation();
+            }
+            alert('✅ Konto erfolgreich erstellt!');
+          }, 300);
+        } catch (error) {
+          console.error('Registration error:', error);
+          showToast('Registrierung fehlgeschlagen: ' + (error.message || 'Unbekannter Fehler'), 'error');
+        }
       });
     });
 
@@ -1470,9 +1479,12 @@
         localStorage.removeItem('currentUser');
       },
       async signUp(email, password, firstname, lastname) {
+        console.log('DB.signUp called with:', {email, firstname, lastname});
         const user = { email, firstname, lastname, created_at: new Date().toISOString() };
+        console.log('Creating user:', user);
         localStorage.setItem('currentUser', JSON.stringify(user));
         localStorage.setItem('user_' + email, JSON.stringify(user));
+        console.log('User saved to localStorage');
         return { user };
       },
       async signIn(email, password) {
