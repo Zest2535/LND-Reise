@@ -1,3 +1,29 @@
+// Toast notification system
+function showToast(message, type = 'info', duration = 4000) {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+  
+  const icons = {
+    success: 'bi-check-circle-fill',
+    error: 'bi-x-circle-fill',
+    warning: 'bi-exclamation-triangle-fill',
+    info: 'bi-info-circle-fill'
+  };
+  
+  const toast = document.createElement('div');
+  toast.className = `toast-notification ${type}`;
+  toast.innerHTML = `<i class="bi ${icons[type]}"></i>${message}`;
+  
+  container.appendChild(toast);
+  
+  setTimeout(() => toast.classList.add('show'), 100);
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 400);
+  }, duration);
+}
+
 let lastScrollTop = 0;
 const navbar = document.getElementById("mainNavbar");
 let ticking = false;
@@ -30,33 +56,33 @@ if (navbar) {
 }
 
 const offersData = [
-  { id: 'offer1', img: 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=800&h=600&fit=crop', title: 'Inseltraum Santorini', text: 'Genießen Sie spektakuläre Sonnenuntergänge und die einzigartige Architektur.', longText: '7 Nächte Santorini inkl. Frühstück, Flüge optional. Entspannen Sie in charmanten Unterkünften mit Blick auf die Caldera.', price: '€899', duration: '7 Nächte' },
-  { id: 'offer2', img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&h=600&fit=crop', title: 'Kulturreise nach Kyoto', text: 'Erleben Sie die Faszination Japans zwischen Tradition und Moderne.', longText: '8 Tage Kulturreise Kyoto: Tempel, traditionelle Teehäuser und geführte Ausflüge. Ideal für Kulturinteressierte.', price: '€1.299', duration: '8 Tage' },
-  { id: 'offer3', img: 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=800&h=600&fit=crop', title: 'Abenteuer in Island', text: 'Entdecken Sie Geysire, Wasserfälle und das magische Nordlicht.', longText: '6 Tage Island-Abenteuer: Mietwagen, Geysire, Wasserfälle und Nordlichter (saisonabhängig).', price: '€1.099', duration: '6 Tage' },
-  { id: 'offer4', img: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&h=600&fit=crop', title: 'Strandurlaub in Thailand', text: 'Entspannen Sie an paradiesischen Stränden und genießen Sie die Kultur.', longText: '10 Tage Strandurlaub Thailand: All-Inclusive-Optionen verfügbar, Transfers und Ausflüge zubuchbar.', price: '€1.199', duration: '10 Tage' },
-  { id: 'offer5', img: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop', title: 'City-Trip nach Lissabon', text: 'Erkunden Sie die historischen Gassen und das moderne Leben Portugals.', longText: '4 Tage City-Trip Lissabon: Stadtrundfahrt, Fado-Abend und Unterkunft in zentraler Lage.', price: '€499', duration: '4 Tage' },
-  { id: 'offer6', img: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&h=600&fit=crop', title: 'Metropole New York', text: 'Erleben Sie den Puls der Stadt, die niemals schläft. Ein Abenteuer wartet.', longText: '5 Tage New York: Hotel in Midtown, Sightseeing-Paket und optionale Broadway-Tickets.', price: '€799', duration: '5 Tage' },
-  { id: 'offer7', img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&h=600&fit=crop', title: 'Paradies Malediven', text: 'Erleben Sie weiße Strände, türkisfarbenes Wasser und Luxusresorts.', longText: '6 Nächte Malediven: Überwasser-Bungalow Optionen, inkl. Frühstück; perfekt für Romantik und Tauchen.', price: '€2.499', duration: '6 Nächte' },
-  { id: 'offer8', img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=600&fit=crop', title: 'Romantisches Paris', text: 'Kultur, Küche und verliebte Spaziergänge entlang der Seine erwarten Sie.', longText: '3 Tage Romantisches Paris: Seine-Bootsfahrt, Louvre-Option und ein Abendessen in einem traditionellen Bistro.', price: '€349', duration: '3 Tage' }
+  { id: 'offer1', img: 'img/bali.jpg', title: 'Traumreise nach Bali', text: 'Entdecken Sie Reisfelder, Tempel und entspannte Strände in Indonesien.', longText: 'Erleben Sie Bali - eine Insel voller Geschichte und Charme. Erleben Sie 3 unvergessliche Tage mit erstklassigen Hotels, lokaler Küche und kulturellen Highlights.', price: '€299', duration: '3 Tage' },
+  { id: 'offer2', img: 'img/barcelona.jpg', title: 'Städtetrip Barcelona', text: 'Gaudí-Architektur, Strände und katalanische Kultur erleben.', longText: 'Tauchen Sie ein in die faszinierende Welt von Barcelona. Diese 5-tägige Reise bietet Ihnen authentische Erlebnisse, moderne Annehmlichkeiten und unvergessliche Momente.', price: '€459', duration: '5 Tage' },
+  { id: 'offer3', img: 'img/dubai.jpg', title: 'Luxus in Dubai', text: 'Moderne Wolkenkratzer, Wüstensafaris und orientalischer Luxus.', longText: 'Dubai erwartet Sie! Genießen Sie 7 Tage voller Abenteuer, Entspannung und kultureller Entdeckungen in einer der schönsten Destinationen.', price: '€699', duration: '7 Tage' },
+  { id: 'offer4', img: 'img/Thailand.jpg', title: 'Strandurlaub in Thailand', text: 'Entspannen Sie an paradiesischen Stränden und genießen Sie die Kultur.', longText: '10 Tage Strandurlaub Thailand: All-Inclusive-Optionen verfügbar, Transfers und Ausflüge zubuchbar.', price: '€899', duration: '10 Tage' },
+  { id: 'offer5', img: 'img/Paris.jpg', title: 'Romantisches Paris', text: 'Stadt der Liebe mit Eiffelturm, Louvre und Seine-Romantik.', longText: 'Willkommen in Paris! Diese 14-tägige Reise kombiniert Sightseeing, Erholung und authentische Begegnungen mit Land und Leuten.', price: '€1299', duration: '14 Tage' },
+  { id: 'offer6', img: 'img/New York.jpg', title: 'Metropole New York', text: 'Erleben Sie den Puls der Stadt, die niemals schläft. Ein Abenteuer wartet.', longText: '5 Tage New York: Hotel in Midtown, Sightseeing-Paket und optionale Broadway-Tickets.', price: '€799', duration: '5 Tage' },
+  { id: 'offer7', img: 'img/Malediven.jpg', title: 'Paradies Malediven', text: 'Erleben Sie weiße Strände, türkisfarbenes Wasser und Luxusresorts.', longText: '6 Nächte Malediven: Überwasser-Bungalow Optionen, inkl. Frühstück; perfekt für Romantik und Tauchen.', price: '€2.499', duration: '6 Nächte' },
+  { id: 'offer8', img: 'img/Lissabon.jpg', title: 'City-Trip nach Lissabon', text: 'Erkunden Sie die historischen Gassen und das moderne Leben Portugals.', longText: '4 Tage City-Trip Lissabon: Stadtrundfahrt, Fado-Abend und Unterkunft in zentraler Lage.', price: '€499', duration: '4 Tage' }
 ];
 
 const destinationsData = [
-  { id: 'dest-paris', title: 'Paris', desc: 'Stadt der Liebe mit Eiffelturm, Louvre und Seine.', img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&h=400&fit=crop', tags: ['couples','friends'] },
-  { id: 'dest-london', title: 'London', desc: 'Big Ben, Buckingham Palace und britische Kultur.', img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=600&h=400&fit=crop', tags: ['solo','friends'] },
-  { id: 'dest-rom', title: 'Rom', desc: 'Kolosseum, Vatikan und italienische Geschichte.', img: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&h=400&fit=crop', tags: ['couples','friends'] },
-  { id: 'dest-barcelona', title: 'Barcelona', desc: 'Gaudí-Architektur, Strände und katalanische Kultur.', img: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600&h=400&fit=crop', tags: ['family-no-kids','friends'] },
-  { id: 'dest-dubai', title: 'Dubai', desc: 'Luxus, Wüstensafaris und moderne Wolkenkratzer.', img: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&h=400&fit=crop', tags: ['solo','friends'] },
-  { id: 'dest-bangkok', title: 'Bangkok', desc: 'Tempel, Märkte und thailändische Street Food.', img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=600&h=400&fit=crop', tags: ['family-kids','couples'] },
-  { id: 'dest-newyork', title: 'New York', desc: 'Die Stadt, die niemals schläft – Kultur und Broadway.', img: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&h=400&fit=crop', tags: ['solo','friends'] },
-  { id: 'dest-malediven', title: 'Malediven', desc: 'Luxusresorts und türkisfarbenes Wasser.', img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&h=400&fit=crop', tags: ['couples'] },
-  { id: 'dest-santorini', title: 'Santorini', desc: 'Spektakuläre Sonnenuntergänge über der Caldera.', img: 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=600&h=400&fit=crop', tags: ['couples','friends'] },
-  { id: 'dest-bali', title: 'Bali', desc: 'Reisfelder, Tempel und entspannte Strände.', img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&h=400&fit=crop', tags: ['family-kids','couples'] },
-  { id: 'dest-istanbul', title: 'Istanbul', desc: 'Brücke zwischen Europa und Asien, Moscheen und Basare.', img: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=600&h=400&fit=crop', tags: ['couples','friends'] },
-  { id: 'dest-sydney', title: 'Sydney', desc: 'Opernhaus, Häfen und sonnige Strände.', img: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=600&h=400&fit=crop', tags: ['family-no-kids','friends'] },
-  { id: 'dest-tokio', title: 'Tokio', desc: 'Moderne Metropole mit Tradition und Technologie.', img: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=400&fit=crop', tags: ['solo','couples'] },
-  { id: 'dest-lissabon', title: 'Lissabon', desc: 'Historische Gassen und Fado-Musik.', img: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=600&h=400&fit=crop', tags: ['couples','friends'] },
-  { id: 'dest-prag', title: 'Prag', desc: 'Goldene Stadt mit Karlsbrücke und Altstadt.', img: 'https://images.unsplash.com/photo-1541849546-216549ae216d?w=600&h=400&fit=crop', tags: ['couples','friends'] },
-  { id: 'dest-singapur', title: 'Singapur', desc: 'Moderne Stadtarchitektur und multikulturelle Vielfalt.', img: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=600&h=400&fit=crop', tags: ['solo','friends'] }
+  { id: 'dest-bali', title: 'Bali', desc: 'Reisfelder, Tempel und entspannte Strände in Indonesien.', img: 'img/bali.jpg', tags: ['family-kids','couples'] },
+  { id: 'dest-barcelona', title: 'Barcelona', desc: 'Gaudí-Architektur, Strände und katalanische Kultur.', img: 'img/barcelona.jpg', tags: ['family-no-kids','friends'] },
+  { id: 'dest-dubai', title: 'Dubai', desc: 'Luxus, Wüstensafaris und moderne Wolkenkratzer.', img: 'img/dubai.jpg', tags: ['solo','friends'] },
+  { id: 'dest-paris', title: 'Paris', desc: 'Stadt der Liebe mit Eiffelturm, Louvre und Seine.', img: 'img/Paris.jpg', tags: ['couples','friends'] },
+  { id: 'dest-london', title: 'London', desc: 'Big Ben, Buckingham Palace und britische Kultur.', img: 'img/London.jpg', tags: ['solo','friends'] },
+  { id: 'dest-bangkok', title: 'Bangkok', desc: 'Tempel, Märkte und thailändische Street Food.', img: 'img/Thailand.jpg', tags: ['family-kids','couples'] },
+  { id: 'dest-newyork', title: 'New York', desc: 'Die Stadt, die niemals schläft – Kultur und Broadway.', img: 'img/New York.jpg', tags: ['solo','friends'] },
+  { id: 'dest-malediven', title: 'Malediven', desc: 'Luxusresorts und türkisfarbenes Wasser.', img: 'img/Malediven.jpg', tags: ['couples'] },
+  { id: 'dest-santorini', title: 'Santorini', desc: 'Spektakuläre Sonnenuntergänge über der Caldera.', img: 'img/santorini.webp', tags: ['couples','friends'] },
+  { id: 'dest-lissabon', title: 'Lissabon', desc: 'Historische Gassen und Fado-Musik.', img: 'img/Lissabon.jpg', tags: ['couples','friends'] },
+  { id: 'dest-sydney', title: 'Sydney', desc: 'Opernhaus, Häfen und sonnige Strände.', img: 'img/sydney.jpg', tags: ['family-no-kids','friends'] },
+  { id: 'dest-kyoto', title: 'Kyoto', desc: 'Moderne Metropole mit Tradition und Technologie.', img: 'img/kyoto.jpg', tags: ['solo','couples'] },
+  { id: 'dest-madrid', title: 'Madrid', desc: 'Spanische Hauptstadt mit Museen und Kultur.', img: 'img/Madrid.jpg', tags: ['couples','friends'] },
+  { id: 'dest-venedig', title: 'Venedig', desc: 'Kanäle, Gondeln und italienische Romantik.', img: 'img/Venedig.jpg', tags: ['couples','friends'] },
+  { id: 'dest-florenz', title: 'Florenz', desc: 'Renaissance-Kunst und toskanische Kultur.', img: 'img/Florenz.jpg', tags: ['couples','friends'] },
+  { id: 'dest-vancouver', title: 'Vancouver', desc: 'Moderne Stadtarchitektur und multikulturelle Vielfalt.', img: 'img/vancouver.jpg', tags: ['solo','friends'] }
 ];
 
 function mulberry32(a) {
@@ -105,7 +131,7 @@ async function renderOffers(options = { count: 6 }) {
             <p class="card-text">${offer.text}</p>
             <div class="d-flex justify-content-between align-items-center mt-auto">
               <span class="fw-bold text-primary">${offer.price}</span>
-              <a href="buchung.html?offer=${offer.id}" class="btn btn-primary">Buchen</a>
+              <button class="btn btn-primary" onclick="showOfferDetails('${offer.id}')">Buchen</button>
             </div>
           </div>
         </div>
@@ -119,23 +145,32 @@ let currentBookingOffer = null;
 
 async function showOfferDetails(offerId) {
   try {
-    const offers = await DB.getOffers();
-    const offer = offers.find(o => o.id === offerId);
+    const offer = offersData.find(o => o.id === offerId);
     if (!offer) return;
     
     currentBookingOffer = offer;
-    const modal = document.getElementById('offerDetailsModal');
+    const modal = document.getElementById('offerDetailModal');
     if (!modal) return;
     
-    modal.querySelector('#offerModalImage').src = offer.image_url;
-    modal.querySelector('#offerModalTitle').textContent = offer.title;
-    modal.querySelector('#offerModalLongText').textContent = offer.description;
-    modal.querySelector('#offerModalPrice').textContent = offer.price;
-    modal.querySelector('#offerModalDuration').textContent = offer.duration;
+    // Извлекаем название города из заголовка
+    const cityName = offer.title.replace(/^.*nach |^.*in |^.*Reise |^Traumreise nach |^Städtetrip |^Luxus in |^Romantisches /, '');
+    const priceNumber = offer.price.replace('€', '');
     
-    const bookBtn = modal.querySelector('#offerModalBook');
+    document.getElementById('detailImage').src = offer.img;
+    document.getElementById('detailCity').textContent = cityName;
+    document.getElementById('detailCountry').textContent = 'Europa'; // Default
+    document.getElementById('detailPrice').textContent = priceNumber;
+    document.getElementById('detailPrice2').textContent = priceNumber;
+    document.getElementById('detailPrice3').textContent = priceNumber;
+    document.getElementById('detailAirport').textContent = 'Wien';
+    document.getElementById('detailDate').textContent = 'Flexibel';
+    document.getElementById('detailDays').textContent = offer.duration.replace(' Tage', '').replace(' Nächte', '');
+    document.getElementById('detailRating').textContent = '4.5';
+    document.getElementById('detailDescription').textContent = offer.longText;
+    
+    const bookBtn = document.getElementById('bookOfferBtn');
     bookBtn.onclick = async function() {
-      const user = await DB.getUser();
+      const user = await window.DB.getUser();
       if (!user) {
         bootstrap.Modal.getInstance(modal).hide();
         new bootstrap.Modal(document.getElementById('loginModal')).show();
@@ -178,7 +213,7 @@ function renderDestinations(options = { count: 16 }) {
   for (let i = 0; i < count; i++) {
     const d = shuffled[i];
     const tags = (d.tags || []).join(',');
-    const imgSrc = d.img ? (d.img.startsWith('http') ? d.img : 'img/' + d.img) : '';
+    const imgSrc = d.img || '';
     html += `<div class="col-lg-3 col-md-6">
       <div class="reiseziel-item" data-dest-id="${d.id}" data-tags="${tags}">
         ${imgSrc ? `<img src="${imgSrc}" alt="${d.title}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;">` : ''}
@@ -268,7 +303,7 @@ if (searchBtn) {
     const datum = document.getElementById('reisedatum')?.value;
     
     if (!destination) {
-      alert('Bitte geben Sie ein Reiseziel ein');
+      showToast('Bitte geben Sie ein Reiseziel ein', 'warning');
       return;
     }
     
@@ -383,15 +418,15 @@ function initMainReviews() {
     const text = document.getElementById('reviewTextMain').value.trim();
     
     if (selectedRating === 0) {
-      alert('⭐ Bitte wählen Sie eine Bewertung');
+      showToast('Bitte wählen Sie eine Bewertung', 'warning');
       return;
     }
     if (!name) {
-      alert('👤 Bitte geben Sie Ihren Namen ein');
+      showToast('Bitte geben Sie Ihren Namen ein', 'warning');
       return;
     }
     if (!text) {
-      alert('✍️ Bitte schreiben Sie eine Bewertung');
+      showToast('Bitte schreiben Sie eine Bewertung', 'warning');
       return;
     }
     
@@ -404,7 +439,7 @@ function initMainReviews() {
     selectedRating = 0;
     stars.forEach(s => s.className = 'bi bi-star');
     
-    alert('✅ Vielen Dank für Ihre Bewertung!');
+    showToast('Vielen Dank für Ihre Bewertung!', 'success');
     displayMainReviews();
   });
   

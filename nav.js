@@ -44,14 +44,21 @@ async function updateNavigation() {
 
 // Выход
 async function logout() {
-  if (confirm('Möchten Sie sich wirklich abmelden?')) {
-    try {
-      await window.DB.signOut();
-    } catch (error) {
-      console.error('Logout error:', error);
+  showToast('Möchten Sie sich wirklich abmelden?', 'warning', 6000);
+  setTimeout(() => {
+    if (confirm('Wirklich abmelden?')) {
+      try {
+        window.DB.signOut();
+        showToast('Erfolgreich abgemeldet!', 'success');
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 1000);
+      } catch (error) {
+        console.error('Logout error:', error);
+        showToast('Fehler beim Abmelden', 'error');
+      }
     }
-    window.location.href = 'index.html';
-  }
+  }, 100);
 }
 
 // Запуск при загрузке
