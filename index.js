@@ -1,3 +1,29 @@
+// Toast notification system
+function showToast(message, type = 'info', duration = 4000) {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+  
+  const icons = {
+    success: 'bi-check-circle-fill',
+    error: 'bi-x-circle-fill',
+    warning: 'bi-exclamation-triangle-fill',
+    info: 'bi-info-circle-fill'
+  };
+  
+  const toast = document.createElement('div');
+  toast.className = `toast-notification ${type}`;
+  toast.innerHTML = `<i class="bi ${icons[type]}"></i>${message}`;
+  
+  container.appendChild(toast);
+  
+  setTimeout(() => toast.classList.add('show'), 100);
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 400);
+  }, duration);
+}
+
 let lastScrollTop = 0;
 const navbar = document.getElementById("mainNavbar");
 let ticking = false;
@@ -7,6 +33,15 @@ if (navbar) {
     if (!ticking) {
       window.requestAnimationFrame(function() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Add 'scrolled' class for effect
+        if (scrollTop > 50) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+        
+        // Hide/show navigation on scroll
         if (scrollTop > lastScrollTop && scrollTop > 100) {
           navbar.style.top = "-80px";
         } else {
@@ -21,25 +56,33 @@ if (navbar) {
 }
 
 const offersData = [
-  { id: 'offer1', img: 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=800&h=600&fit=crop', title: 'Inseltraum Santorini', text: 'Genießen Sie spektakuläre Sonnenuntergänge und die einzigartige Architektur.', longText: '7 Nächte Santorini inkl. Frühstück, Flüge optional. Entspannen Sie in charmanten Unterkünften mit Blick auf die Caldera.', price: '€899', duration: '7 Nächte' },
-  { id: 'offer2', img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&h=600&fit=crop', title: 'Kulturreise nach Kyoto', text: 'Erleben Sie die Faszination Japans zwischen Tradition und Moderne.', longText: '8 Tage Kulturreise Kyoto: Tempel, traditionelle Teehäuser und geführte Ausflüge. Ideal für Kulturinteressierte.', price: '€1.299', duration: '8 Tage' },
-  { id: 'offer3', img: 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=800&h=600&fit=crop', title: 'Abenteuer in Island', text: 'Entdecken Sie Geysire, Wasserfälle und das magische Nordlicht.', longText: '6 Tage Island-Abenteuer: Mietwagen, Geysire, Wasserfälle und Nordlichter (saisonabhängig).', price: '€1.099', duration: '6 Tage' },
-  { id: 'offer4', img: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&h=600&fit=crop', title: 'Strandurlaub in Thailand', text: 'Entspannen Sie an paradiesischen Stränden und genießen Sie die Kultur.', longText: '10 Tage Strandurlaub Thailand: All-Inclusive-Optionen verfügbar, Transfers und Ausflüge zubuchbar.', price: '€1.199', duration: '10 Tage' },
-  { id: 'offer5', img: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop', title: 'City-Trip nach Lissabon', text: 'Erkunden Sie die historischen Gassen und das moderne Leben Portugals.', longText: '4 Tage City-Trip Lissabon: Stadtrundfahrt, Fado-Abend und Unterkunft in zentraler Lage.', price: '€499', duration: '4 Tage' },
-  { id: 'offer6', img: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&h=600&fit=crop', title: 'Metropole New York', text: 'Erleben Sie den Puls der Stadt, die niemals schläft. Ein Abenteuer wartet.', longText: '5 Tage New York: Hotel in Midtown, Sightseeing-Paket und optionale Broadway-Tickets.', price: '€799', duration: '5 Tage' },
-  { id: 'offer7', img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&h=600&fit=crop', title: 'Paradies Malediven', text: 'Erleben Sie weiße Strände, türkisfarbenes Wasser und Luxusresorts.', longText: '6 Nächte Malediven: Überwasser-Bungalow Optionen, inkl. Frühstück; perfekt für Romantik und Tauchen.', price: '€2.499', duration: '6 Nächte' },
-  { id: 'offer8', img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=600&fit=crop', title: 'Romantisches Paris', text: 'Kultur, Küche und verliebte Spaziergänge entlang der Seine erwarten Sie.', longText: '3 Tage Romantisches Paris: Seine-Bootsfahrt, Louvre-Option und ein Abendessen in einem traditionellen Bistro.', price: '€349', duration: '3 Tage' }
+  { id: 'offer1', img: 'img/bali.jpg', title: 'Traumreise nach Bali', text: 'Entdecken Sie Reisfelder, Tempel und entspannte Strände in Indonesien.', longText: 'Erleben Sie Bali - eine Insel voller Geschichte und Charme. Erleben Sie 3 unvergessliche Tage mit erstklassigen Hotels, lokaler Küche und kulturellen Highlights.', price: '€299', duration: '3 Tage' },
+  { id: 'offer2', img: 'img/barcelona.jpg', title: 'Städtetrip Barcelona', text: 'Gaudí-Architektur, Strände und katalanische Kultur erleben.', longText: 'Tauchen Sie ein in die faszinierende Welt von Barcelona. Diese 5-tägige Reise bietet Ihnen authentische Erlebnisse, moderne Annehmlichkeiten und unvergessliche Momente.', price: '€459', duration: '5 Tage' },
+  { id: 'offer3', img: 'img/dubai.jpg', title: 'Luxus in Dubai', text: 'Moderne Wolkenkratzer, Wüstensafaris und orientalischer Luxus.', longText: 'Dubai erwartet Sie! Genießen Sie 7 Tage voller Abenteuer, Entspannung und kultureller Entdeckungen in einer der schönsten Destinationen.', price: '€699', duration: '7 Tage' },
+  { id: 'offer4', img: 'img/Thailand.jpg', title: 'Strandurlaub in Thailand', text: 'Entspannen Sie an paradiesischen Stränden und genießen Sie die Kultur.', longText: '10 Tage Strandurlaub Thailand: All-Inclusive-Optionen verfügbar, Transfers und Ausflüge zubuchbar.', price: '€899', duration: '10 Tage' },
+  { id: 'offer5', img: 'img/Paris.jpg', title: 'Romantisches Paris', text: 'Stadt der Liebe mit Eiffelturm, Louvre und Seine-Romantik.', longText: 'Willkommen in Paris! Diese 14-tägige Reise kombiniert Sightseeing, Erholung und authentische Begegnungen mit Land und Leuten.', price: '€1299', duration: '14 Tage' },
+  { id: 'offer6', img: 'img/New York.jpg', title: 'Metropole New York', text: 'Erleben Sie den Puls der Stadt, die niemals schläft. Ein Abenteuer wartet.', longText: '5 Tage New York: Hotel in Midtown, Sightseeing-Paket und optionale Broadway-Tickets.', price: '€799', duration: '5 Tage' },
+  { id: 'offer7', img: 'img/Malediven.jpg', title: 'Paradies Malediven', text: 'Erleben Sie weiße Strände, türkisfarbenes Wasser und Luxusresorts.', longText: '6 Nächte Malediven: Überwasser-Bungalow Optionen, inkl. Frühstück; perfekt für Romantik und Tauchen.', price: '€2.499', duration: '6 Nächte' },
+  { id: 'offer8', img: 'img/Lissabon.jpg', title: 'City-Trip nach Lissabon', text: 'Erkunden Sie die historischen Gassen und das moderne Leben Portugals.', longText: '4 Tage City-Trip Lissabon: Stadtrundfahrt, Fado-Abend und Unterkunft in zentraler Lage.', price: '€499', duration: '4 Tage' }
 ];
 
 const destinationsData = [
-  { id: 'dest-barcelona', title: 'Barcelona', desc: 'Lebendige Kultur, Architektur von Gaudí und sonnige Strände am Mittelmeer.', img: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600&h=400&fit=crop', tags: ['couples','friends'], recommended: ['offer5'] },
-  { id: 'dest-dubai', title: 'Dubai', desc: 'Moderne Metropole mit Wüstenabenteuern, Luxus und ikonischer Skyline.', img: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&h=400&fit=crop', tags: ['solo','friends'], recommended: ['offer6'] },
-  { id: 'dest-bali', title: 'Bali', desc: 'Tropische Insel mit Reisfeldern, spirituellen Tempeln und entspannten Stränden.', img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&h=400&fit=crop', tags: ['family-kids','couples'], recommended: ['offer4'] },
-  { id: 'dest-capetown', title: 'Kapstadt', desc: 'Beeindruckende Küsten, Tafelberg und vielfältige Naturerlebnisse.', img: 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=600&h=400&fit=crop', tags: ['family-no-kids','friends'], recommended: ['offer3'] },
-  { id: 'dest-vancouver', title: 'Vancouver', desc: 'Stadt zwischen Meer und Bergen – ideal für Outdoor‑Aktivitäten und Kultur.', img: 'https://images.unsplash.com/photo-1559511260-66a654ae982a?w=600&h=400&fit=crop', tags: ['solo','couples'], recommended: ['offer6'] },
-  { id: 'dest-sydney', title: 'Sydney', desc: 'Opernhaus, Häfen und sonnige Strände – Australiens vielseitige Metropole.', img: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=600&h=400&fit=crop', tags: ['family-no-kids','friends'], recommended: ['offer5'] },
-  { id: 'dest-marrakech', title: 'Marrakesch', desc: 'Bunte Märkte, historische Paläste und lebendige marokkanische Kultur.', img: 'https://images.unsplash.com/photo-1597212618440-806262de4f6b?w=600&h=400&fit=crop', tags: ['couples','friends'], recommended: ['offer8'] },
-  { id: 'dest-edinburgh', title: 'Edinburgh', desc: 'Geschichte, Schlösser und Festivals in Schottlands charmanter Hauptstadt.', img: 'https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?w=600&h=400&fit=crop', tags: ['solo','couples'], recommended: ['offer6'] }
+  { id: 'dest-bali', title: 'Bali', desc: 'Reisfelder, Tempel und entspannte Strände in Indonesien.', img: 'img/bali.jpg', tags: ['family-kids','couples'] },
+  { id: 'dest-barcelona', title: 'Barcelona', desc: 'Gaudí-Architektur, Strände und katalanische Kultur.', img: 'img/barcelona.jpg', tags: ['family-no-kids','friends'] },
+  { id: 'dest-dubai', title: 'Dubai', desc: 'Luxus, Wüstensafaris und moderne Wolkenkratzer.', img: 'img/dubai.jpg', tags: ['solo','friends'] },
+  { id: 'dest-paris', title: 'Paris', desc: 'Stadt der Liebe mit Eiffelturm, Louvre und Seine.', img: 'img/Paris.jpg', tags: ['couples','friends'] },
+  { id: 'dest-london', title: 'London', desc: 'Big Ben, Buckingham Palace und britische Kultur.', img: 'img/London.jpg', tags: ['solo','friends'] },
+  { id: 'dest-bangkok', title: 'Bangkok', desc: 'Tempel, Märkte und thailändische Street Food.', img: 'img/Thailand.jpg', tags: ['family-kids','couples'] },
+  { id: 'dest-newyork', title: 'New York', desc: 'Die Stadt, die niemals schläft – Kultur und Broadway.', img: 'img/New York.jpg', tags: ['solo','friends'] },
+  { id: 'dest-malediven', title: 'Malediven', desc: 'Luxusresorts und türkisfarbenes Wasser.', img: 'img/Malediven.jpg', tags: ['couples'] },
+  { id: 'dest-santorini', title: 'Santorini', desc: 'Spektakuläre Sonnenuntergänge über der Caldera.', img: 'img/santorini.webp', tags: ['couples','friends'] },
+  { id: 'dest-lissabon', title: 'Lissabon', desc: 'Historische Gassen und Fado-Musik.', img: 'img/Lissabon.jpg', tags: ['couples','friends'] },
+  { id: 'dest-sydney', title: 'Sydney', desc: 'Opernhaus, Häfen und sonnige Strände.', img: 'img/sydney.jpg', tags: ['family-no-kids','friends'] },
+  { id: 'dest-kyoto', title: 'Kyoto', desc: 'Moderne Metropole mit Tradition und Technologie.', img: 'img/kyoto.jpg', tags: ['solo','couples'] },
+  { id: 'dest-madrid', title: 'Madrid', desc: 'Spanische Hauptstadt mit Museen und Kultur.', img: 'img/Madrid.jpg', tags: ['couples','friends'] },
+  { id: 'dest-venedig', title: 'Venedig', desc: 'Kanäle, Gondeln und italienische Romantik.', img: 'img/Venedig.jpg', tags: ['couples','friends'] },
+  { id: 'dest-florenz', title: 'Florenz', desc: 'Renaissance-Kunst und toskanische Kultur.', img: 'img/Florenz.jpg', tags: ['couples','friends'] },
+  { id: 'dest-vancouver', title: 'Vancouver', desc: 'Moderne Stadtarchitektur und multikulturelle Vielfalt.', img: 'img/vancouver.jpg', tags: ['solo','friends'] }
 ];
 
 function mulberry32(a) {
@@ -70,66 +113,78 @@ function hashStringToInt(str) {
   return h >>> 0;
 }
 
-function renderOffers(options = { count: 6 }) {
+async function renderOffers(options = { count: 6 }) {
   const container = document.getElementById('angebote-grid');
   if (!container) return;
-  const path = (location && location.pathname) ? location.pathname : '/';
-  const seed = hashStringToInt(path + (location.search || '') + (location.hash || ''));
-  const shuffled = seededShuffle(offersData, seed);
-  const count = Math.min(options.count || 6, shuffled.length);
+  
+  const count = Math.min(options.count || 6, offersData.length);
   let html = '';
+  
   for (let i = 0; i < count; i++) {
-    const o = shuffled[i];
+    const offer = offersData[i];
     html += `
       <div class="col-lg-4 col-md-6 mb-4">
         <div class="angebot-card">
-          <img src="${o.img.startsWith('http') ? o.img : 'img/' + o.img}" loading="lazy" class="card-img-top" alt="${o.title}">
+          <img src="${offer.img}" loading="lazy" class="card-img-top" alt="${offer.title}">
           <div class="card-body d-flex flex-column">
-            <h5 class="card-title">${o.title}</h5>
-            <p class="card-text">${o.text}</p>
-            <button class="btn mt-auto" data-offer-id="${o.id}">Details ansehen</button>
+            <h5 class="card-title">${offer.title}</h5>
+            <p class="card-text">${offer.text}</p>
+            <div class="d-flex justify-content-between align-items-center mt-auto">
+              <span class="fw-bold text-primary">${offer.price}</span>
+              <button class="btn btn-primary" onclick="showOfferDetails('${offer.id}')">Buchen</button>
+            </div>
           </div>
         </div>
       </div>
     `;
   }
   container.innerHTML = html;
-  container.querySelectorAll('button[data-offer-id]').forEach(btn => {
-    btn.addEventListener('click', function(ev) {
-      ev.preventDefault();
-      showOfferDetails(this.getAttribute('data-offer-id'));
-    });
-  });
 }
 
 let currentBookingOffer = null;
 
-function showOfferDetails(offerId) {
-  const offer = offersData.find(o => o.id === offerId);
-  if (!offer) return;
-  currentBookingOffer = offer;
-  const modal = document.getElementById('offerDetailsModal');
-  if (!modal) return;
-  modal.querySelector('#offerModalImage').src = offer.img.startsWith('http') ? offer.img : 'img/' + offer.img;
-  modal.querySelector('#offerModalTitle').textContent = offer.title;
-  modal.querySelector('#offerModalLongText').textContent = offer.longText;
-  modal.querySelector('#offerModalPrice').textContent = offer.price;
-  modal.querySelector('#offerModalDuration').textContent = offer.duration;
-  
-  const bookBtn = modal.querySelector('#offerModalBook');
-  bookBtn.onclick = function() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser) {
+async function showOfferDetails(offerId) {
+  try {
+    const offer = offersData.find(o => o.id === offerId);
+    if (!offer) return;
+    
+    currentBookingOffer = offer;
+    const modal = document.getElementById('offerDetailModal');
+    if (!modal) return;
+    
+    // Extract city name from title
+    const cityName = offer.title.replace(/^.*nach |^.*in |^.*Reise |^Traumreise nach |^Städtetrip |^Luxus in |^Romantisches /, '');
+    const priceNumber = offer.price.replace('€', '');
+    
+    document.getElementById('detailImage').src = offer.img;
+    document.getElementById('detailCity').textContent = cityName;
+    document.getElementById('detailCountry').textContent = 'Europa'; // Default
+    document.getElementById('detailPrice').textContent = priceNumber;
+    document.getElementById('detailPrice2').textContent = priceNumber;
+    document.getElementById('detailPrice3').textContent = priceNumber;
+    document.getElementById('detailAirport').textContent = 'Wien';
+    document.getElementById('detailDate').textContent = 'Flexibel';
+    document.getElementById('detailDays').textContent = offer.duration.replace(' Tage', '').replace(' Nächte', '');
+    document.getElementById('detailRating').textContent = '4.5';
+    document.getElementById('detailDescription').textContent = offer.longText;
+    
+    const bookBtn = document.getElementById('bookOfferBtn');
+    bookBtn.onclick = async function() {
+      const user = await window.DB.getUser();
+      if (!user) {
+        bootstrap.Modal.getInstance(modal).hide();
+        new bootstrap.Modal(document.getElementById('loginModal')).show();
+        return;
+      }
       bootstrap.Modal.getInstance(modal).hide();
-      new bootstrap.Modal(document.getElementById('loginModal')).show();
-      return;
+      openBookingModal(offer);
+    };
+    
+    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+      new bootstrap.Modal(modal).show();
     }
-    bootstrap.Modal.getInstance(modal).hide();
-    openBookingModal(offer);
-  };
-  
-  if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-    new bootstrap.Modal(modal).show();
+  } catch (error) {
+    console.error('Error loading offer details:', error);
   }
 }
 
@@ -147,7 +202,7 @@ function openBookingModal(offer) {
   new bootstrap.Modal(modal).show();
 }
 
-function renderDestinations(options = { count: 8 }) {
+function renderDestinations(options = { count: 16 }) {
   const container = document.getElementById('reiseziele-grid');
   if (!container) return;
   const path = (location && location.pathname) ? location.pathname : '/';
@@ -158,7 +213,7 @@ function renderDestinations(options = { count: 8 }) {
   for (let i = 0; i < count; i++) {
     const d = shuffled[i];
     const tags = (d.tags || []).join(',');
-    const imgSrc = d.img ? (d.img.startsWith('http') ? d.img : 'img/' + d.img) : '';
+    const imgSrc = d.img || '';
     html += `<div class="col-lg-3 col-md-6">
       <div class="reiseziel-item" data-dest-id="${d.id}" data-tags="${tags}">
         ${imgSrc ? `<img src="${imgSrc}" alt="${d.title}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;">` : ''}
@@ -183,50 +238,10 @@ function initDestinationClicks() {
 function showDestinationDetails(destId) {
   const data = destinationsData.find(d => d.id === destId);
   if (!data) return;
-  const modal = document.getElementById('destDetailsOffcanvas');
-  if (!modal) return;
-  modal.querySelector('#destOffcanvasImage').src = data.img.startsWith('http') ? data.img : 'img/' + data.img;
-  modal.querySelector('#destOffcanvasTitle').textContent = data.title;
-  modal.querySelector('#destOffcanvasDesc').textContent = data.desc;
-  const tagsEl = modal.querySelector('#destOffcanvasTags');
-  tagsEl.innerHTML = '';
-  const tagLabels = {'family-kids': 'Familie mit Kindern', 'family-no-kids': 'Familie ohne Kinder', 'couples': 'Paare', 'solo': 'Alleinreisende', 'friends': 'Freunde'};
-  (data.tags || []).forEach(t => {
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-sm btn-outline-primary me-2 mb-2';
-    btn.textContent = tagLabels[t] || t;
-    btn.addEventListener('click', function() {
-      const filterBtn = document.querySelector(`.filter-btn[data-filter="${t}"]`);
-      if (filterBtn) filterBtn.click();
-    });
-    tagsEl.appendChild(btn);
-  });
-  const offersEl = modal.querySelector('#destOffcanvasOffers');
-  offersEl.innerHTML = '';
-  (data.recommended || []).forEach(offerId => {
-    const offer = offersData.find(o => o.id === offerId);
-    if (!offer) return;
-    const col = document.createElement('div');
-    col.className = 'col-12';
-    const smallCard = document.createElement('div');
-    smallCard.className = 'd-flex align-items-center gap-2';
-    const thumb = document.createElement('img');
-    thumb.src = offer.img.startsWith('http') ? offer.img : 'img/' + offer.img;
-    thumb.style.width = '80px';
-    thumb.style.height = '60px';
-    thumb.style.objectFit = 'cover';
-    thumb.className = 'rounded';
-    const meta = document.createElement('div');
-    meta.innerHTML = `<strong>${offer.title}</strong><br><small>${offer.price} • ${offer.duration}</small>`;
-    smallCard.appendChild(thumb);
-    smallCard.appendChild(meta);
-    smallCard.addEventListener('click', function() { showOfferDetails(offer.id); });
-    col.appendChild(smallCard);
-    offersEl.appendChild(col);
-  });
-  if (typeof bootstrap !== 'undefined' && bootstrap.Offcanvas) {
-    new bootstrap.Offcanvas(modal).show();
-  }
+  
+  const params = new URLSearchParams();
+  params.set('destination', data.title);
+  window.location.href = 'angebote.html?' + params.toString();
 }
 
 function initDestinationFilters() {
@@ -258,8 +273,18 @@ function applyDestinationFilter(filter) {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const href = this.getAttribute('href');
+    // ignore bare hashes and empty hrefs
+    if (!href || href === '#' || href === '#0') return;
+    if (href.startsWith('#')) {
+      // valid hash target like `#section-id`
+      const selector = href;
+      const target = document.querySelector(selector) || document.getElementById(selector.slice(1));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      // non-hash links: navigate normally
+      window.location.href = href;
+    }
   });
 });
 
@@ -279,218 +304,443 @@ document.querySelectorAll('img').forEach(img => {
   if (img.complete) img.classList.add('loaded');
 });
 
-let reiseendePicker = null;
-let reisebeginnPicker = null;
-
-function calculateDuration() {
-  const beginn = reisebeginnPicker?.selectedDates[0];
-  const ende = reiseendePicker?.selectedDates[0];
-  if (beginn && ende && ende >= beginn) {
-    const diff = Math.ceil((ende - beginn) / (1000 * 60 * 60 * 24));
-    const dauerInput = document.getElementById('dauer-input');
-    const unitBtn = document.getElementById('dauer-unit');
-    const unit = unitBtn?.getAttribute('data-selected') || 'tage';
+const searchBtn = document.querySelector('.btn-search');
+if (searchBtn) {
+  searchBtn.addEventListener('click', function() {
+    const destination = document.getElementById('destination-search')?.value;
+    const abflug = document.getElementById('abflughafen')?.value;
+    const personen = document.getElementById('personen')?.value;
+    const datum = document.getElementById('reisedatum')?.value;
     
-    if (unit === 'wochen') {
-      dauerInput.value = Math.round(diff / 7);
-    } else if (unit === 'monate') {
-      dauerInput.value = Math.round(diff / 30);
-    } else {
-      dauerInput.value = diff;
+    if (!destination) {
+      showToast('Bitte geben Sie ein Reiseziel ein', 'warning');
+      return;
     }
-  }
-}
 
-function calculateEndDate() {
-  const beginn = reisebeginnPicker?.selectedDates[0];
-  const dauerInput = document.getElementById('dauer-input');
-  const dauer = parseInt(dauerInput?.value);
-  const unitBtn = document.getElementById('dauer-unit');
-  const unit = unitBtn?.getAttribute('data-selected') || 'tage';
-  
-  if (beginn && dauer > 0) {
-    let days = dauer;
-    if (unit === 'wochen') days = dauer * 7;
-    else if (unit === 'monate') days = dauer * 30;
+    // Direkt zur Angebote-Seite weiterleiten
+    const params = new URLSearchParams();
+    params.set('destination', destination);
+    if (abflug) params.set('airport', abflug);
+    if (personen) params.set('people', personen);
+    if (datum) params.set('date', datum);
     
-    const ende = new Date(beginn);
-    ende.setDate(ende.getDate() + days);
-    reiseendePicker?.setDate(ende);
-  }
+    window.location.href = 'angebote.html?' + params.toString();
+  });
 }
 
-if (typeof flatpickr === 'function') {
-  reisebeginnPicker = flatpickr("#reisebeginn", {
-    dateFormat: "d.m.Y",
-    locale: "de",
-    minDate: "today",
-    onChange: function(selectedDates, dateStr) {
-      if (reiseendePicker) reiseendePicker.set('minDate', dateStr);
-      const dauerInput = document.getElementById('dauer-input');
-      if (dauerInput?.value) calculateEndDate();
-      else calculateDuration();
+// Simple preview generator for homepage (keeps consistent with offers)
+function generateOffersPreview(city, opts = {}) {
+  if (!city) return [];
+  
+  // Zuerst prüfen ob es echte Angebote für diese Stadt gibt
+  const matches = (offersData || []).filter(o => 
+    o.title.toLowerCase().includes(city.toLowerCase()) || 
+    o.title.toLowerCase().includes(city.split(' ')[0].toLowerCase())
+  );
+  
+  if (matches && matches.length > 0) {
+    return matches.slice(0, 3).map(m => ({ 
+      id: m.id, 
+      city, 
+      title: m.title, 
+      price: parseInt(m.price.replace(/[^0-9]/g,'')), 
+      days: parseInt(m.duration) || null, 
+      departure: 'Flexibel', 
+      image: m.img,
+      isReal: true
+    }));
+  }
+
+  // Fallback: Generiere synthetische Angebote
+  const num = 2 + Math.floor(Math.random() * 2); // 2-3 Angebote
+  const offers = [];
+  
+  const baseImages = {
+    Paris: 'img/Paris.jpg', London: 'img/London.jpg', Bali: 'img/bali.jpg', 
+    Barcelona: 'img/barcelona.jpg', 'New York': 'img/New York.jpg', Dubai: 'img/dubai.jpg', 
+    Santorini: 'img/santorini.webp', Kyoto: 'img/kyoto.jpg', Madrid: 'img/Madrid.jpg',
+    Venedig: 'img/Venedig.jpg', Florenz: 'img/Florenz.jpg', Lissabon: 'img/Lissabon.jpg',
+    Malaga: 'img/Malaga.jpg', Valencia: 'img/Valencia.jpg', Sevilla: 'img/Sevilla.jpg',
+    Mailand: 'img/Mailand.jpg', Neapel: 'img/Neapel.jpg', Turin: 'img/Turin.jpg',
+    Bologna: 'img/Bologna.jpg', Verona: 'img/Verona.jpg', Nizza: 'img/Nizza.jpg',
+    Marseille: 'img/Marseille.jpg', Bordeaux: 'img/Bordeaux.jpg', Toulouse: 'img/Toulouse.jpg',
+    Manchester: 'img/Manchester.jpg', Liverpool: 'img/Liverpool.jpg', Glasgow: 'img/Glasgow.jpg',
+    Edinburgh: 'img/edinburgh.jpg', Ibiza: 'img/Ibiza.jpg', Palma: 'img/Palma.jpg',
+    Granada: 'img/Granada.jpg', Sydney: 'img/sydney.jpg', Vancouver: 'img/vancouver.jpg',
+    Malediven: 'img/Malediven.jpg', Bangkok: 'img/Thailand.jpg', Kapstadt: 'img/capetown.jpg',
+    Marrakesch: 'img/marrakech.jpg', Reykjavik: 'img/Island.jpg'
+  };
+  
+  for (let i = 0; i < num; i++) {
+    const price = Math.floor(299 + Math.random() * 1200);
+    const days = 3 + Math.floor(Math.random() * 12); // 3-14 Tage
+    const departure = new Date(); 
+    departure.setDate(departure.getDate() + 7 + Math.floor(Math.random() * 180));
+    
+    const tourTypes = ['✈️ Städtetrip', '🏖️ Strandurlaub', '🏠 Kulturreise', '🎆 Erlebnisreise'];
+    const tourType = tourTypes[Math.floor(Math.random() * tourTypes.length)];
+    
+    offers.push({
+      id: 'preview-' + city.replace(/\s+/g, '-') + '-' + i,
+      city,
+      title: `${tourType} ${city}`,
+      price,
+      days,
+      departure: departure.toLocaleDateString('de-DE'),
+      image: baseImages[city] || baseImages[city.split(' ')[0]] || 'img/bali.jpg',
+      isReal: false
+    });
+  }
+  return offers;
+}
+
+function searchAndShowOffers(destination, abflug, personen, datum) {
+  const params = new URLSearchParams();
+  if (destination) params.set('destination', destination);
+  if (abflug) params.set('airport', abflug);
+  if (datum) params.set('date', datum);
+  if (personen) params.set('people', personen);
+
+  const city = (destination || '').split(',')[0].trim();
+  if (!city) { window.location.href = 'angebote.html?' + params.toString(); return; }
+
+  const cityLower = city.toLowerCase();
+  
+  // Erweiterte Suche in allen verfügbaren Destinationen
+  const allDestinations = [
+    'Bali', 'Barcelona', 'Kapstadt', 'Dubai', 'Edinburgh', 'Reykjavik', 'Kyoto', 'Lissabon', 
+    'Malediven', 'Marrakesch', 'New York', 'Paris', 'Santorini', 'Sydney', 'Bangkok', 'Vancouver',
+    'Bologna', 'Bordeaux', 'Florenz', 'Glasgow', 'Granada', 'Ibiza', 'Liverpool', 'London',
+    'Madrid', 'Mailand', 'Malaga', 'Manchester', 'Marseille', 'Neapel', 'Nizza', 'Palma',
+    'Sevilla', 'Toulouse', 'Turin', 'Valencia', 'Venedig', 'Verona'
+  ];
+  
+  // Finde passende Destinationen
+  const matchingDestinations = allDestinations.filter(dest => 
+    dest.toLowerCase().includes(cityLower) || cityLower.includes(dest.toLowerCase())
+  );
+  
+  let chosen = [];
+  
+  // Zuerst in echten Angeboten suchen
+  const realMatches = (offersData || []).filter(o => 
+    (o.title||'').toLowerCase().includes(cityLower) || 
+    (o.text||'').toLowerCase().includes(cityLower)
+  );
+  
+  if (realMatches && realMatches.length > 0) {
+    chosen = realMatches.map(m => ({
+      id: m.id, 
+      city: city, 
+      title: m.title, 
+      price: parseInt((m.price||'').replace(/[^0-9]/g,'')) || m.price, 
+      days: parseInt(m.duration) || null, 
+      departure: 'Flexibel', 
+      image: m.img,
+      isReal: true
+    }));
+  }
+  
+  // Wenn keine echten Angebote gefunden, generiere Vorschau-Angebote für passende Destinationen
+  if (chosen.length === 0 && matchingDestinations.length > 0) {
+    matchingDestinations.forEach(dest => {
+      const previewOffers = generateOffersPreview(dest, { personen, datum });
+      chosen = chosen.concat(previewOffers.map(offer => ({...offer, isReal: false})));
+    });
+  }
+  
+  // Wenn immer noch keine Treffer, versuche Länder-Suche
+  if (chosen.length === 0) {
+    const countryMatches = destinations.filter(d => 
+      d.country.toLowerCase().includes(cityLower) || 
+      d.city.toLowerCase().includes(cityLower)
+    );
+    
+    if (countryMatches.length > 0) {
+      // Nimm die ersten 3 Städte aus dem Land
+      const selectedCities = countryMatches.slice(0, 3);
+      selectedCities.forEach(cityData => {
+        const previewOffers = generateOffersPreview(cityData.city, { personen, datum });
+        chosen = chosen.concat(previewOffers.map(offer => ({...offer, isReal: false})));
+      });
     }
-  });
-  reiseendePicker = flatpickr("#reiseende", {
-    dateFormat: "d.m.Y",
-    locale: "de",
-    minDate: "today",
-    onChange: calculateDuration
+  }
+
+  const paramsString = params.toString();
+
+  if (chosen && chosen.length > 0) {
+    renderOffersPreview(chosen, paramsString);
+    const previewEl = document.getElementById('offersPreview');
+    if (previewEl) { 
+      previewEl.style.display = ''; 
+      previewEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); 
+    }
+  } else {
+    // Keine Treffer -> zur vollständigen Angebote-Seite
+    window.location.href = 'angebote.html?' + paramsString;
+  }
+} 
+
+function renderOffersPreview(offers, paramsString) {
+  const container = document.getElementById('offersPreviewContainer');
+  if (!container) return;
+  container.innerHTML = '';
+  
+  // Begrenze auf maximal 6 Angebote für die Vorschau
+  const limitedOffers = offers.slice(0, 6);
+  
+  limitedOffers.forEach(o => {
+    const col = document.createElement('div');
+    col.className = 'col-12 col-md-6 col-lg-4';
+    col.innerHTML = `
+      <div class="card h-100 shadow-sm" style="border-radius: 15px; overflow: hidden; transition: transform 0.3s ease;">
+        <img src="${o.image}" class="card-img-top" alt="${o.city}" style="height:180px; object-fit:cover;">
+        <div class="card-body d-flex flex-column">
+          <h6 class="card-title mb-2 fw-bold">${o.title}</h6>
+          <p class="text-muted small mb-2">
+            <i class="bi bi-calendar-event me-1"></i>Abflug: ${o.departure} 
+            ${o.days ? '<i class="bi bi-clock ms-2 me-1"></i>' + o.days + ' Tage' : ''}
+          </p>
+          <div class="d-flex align-items-center justify-content-between mt-auto" id="offer-action-${o.id}">
+            <strong class="text-primary fs-5">${typeof o.price === 'number' ? o.price + '€' : o.price}</strong>
+          </div>
+        </div>
+      </div>`;
+
+    // Hover-Effekt hinzufügen
+    const card = col.querySelector('.card');
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-5px)';
+      card.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'translateY(0)';
+      card.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+    });
+
+    // Action Button hinzufügen
+    const action = col.querySelector(`#offer-action-${o.id}`);
+    const isReal = o.isReal || (offersData || []).findIndex(item => item.id === o.id) >= 0;
+    if (action) {
+      if (isReal) {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-sm btn-primary';
+        btn.innerHTML = '<i class="bi bi-eye me-1"></i>Details';
+        btn.addEventListener('click', () => showOfferDetails(o.id));
+        action.appendChild(btn);
+      } else {
+        const a = document.createElement('a');
+        a.className = 'btn btn-sm btn-primary';
+        a.href = 'angebote.html?' + paramsString;
+        a.innerHTML = '<i class="bi bi-search me-1"></i>Alle Angebote';
+        action.appendChild(a);
+      }
+    }
+
+    container.appendChild(col);
   });
   
-  const dauerInput = document.getElementById('dauer-input');
-  if (dauerInput) {
-    dauerInput.addEventListener('input', calculateEndDate);
+  // "Mehr Angebote" Link aktualisieren
+  const more = document.getElementById('offersPreviewMore');
+  if (more) {
+    more.href = 'angebote.html?' + paramsString;
+    more.innerHTML = `<i class="bi bi-arrow-right me-1"></i>Alle ${offers.length > 6 ? offers.length : ''} Angebote anzeigen`;
   }
 }
 
-document.querySelectorAll('.dropdown-item').forEach(item => {
-  item.addEventListener('click', function(e) {
-    e.preventDefault();
-    const value = this.getAttribute('data-value');
-    const button = document.getElementById('dauer-unit');
-    if (button) {
-      button.textContent = this.textContent;
-      button.setAttribute('data-selected', value);
-      calculateDuration();
-    }
-  });
-});
-
-const resetBtn = document.querySelector('.btn-reset');
-if (resetBtn) {
-  resetBtn.addEventListener('click', function() {
-    document.querySelectorAll('.search-row input').forEach(input => input.value = '');
-    if (typeof flatpickr === 'function') flatpickr("#reisebeginn").clear();
-    if (reiseendePicker) reiseendePicker.clear();
-    const button = document.getElementById('dauer-unit');
-    if (button) {
-      button.textContent = 'Tage';
-      button.setAttribute('data-selected', 'tage');
-    }
-  });
-}
-
-const destinationsDB = [
-  'Barcelona, Spanien', 'Berlin, Deutschland', 'Bali, Indonesien',
-  'Dubai, VAE', 'Edinburgh, Schottland', 'Kapstadt, Südafrika',
-  'Kyoto, Japan', 'Lissabon, Portugal', 'Malediven',
-  'Marrakesch, Marokko', 'New York, USA', 'Paris, Frankreich',
-  'Santorini, Griechenland', 'Sydney, Australien', 'Thailand',
-  'Vancouver, Kanada', 'Wien, Österreich', 'Island', 'Rom, Italien',
-  'London, Großbritannien', 'Tokio, Japan', 'Amsterdam, Niederlande',
-  'Hotel Adlon Berlin, Deutschland', 'Hotel Sacher Wien, Österreich',
-  'Ritz Paris, Frankreich', 'Burj Al Arab Dubai, VAE',
-  'Marina Bay Sands Singapur', 'Hilton Barcelona, Spanien',
-  'Marriott London, Großbritannien', 'Sheraton New York, USA',
-  'Hyatt Regency Tokio, Japan', 'InterContinental Sydney, Australien',
-  'Four Seasons Bali, Indonesien', 'Waldorf Astoria Amsterdam, Niederlande',
-  'Grand Hyatt Dubai, VAE', 'Park Hyatt Paris, Frankreich',
-  'Mandarin Oriental Bangkok, Thailand', 'The Peninsula Hongkong',
-  'Atlantis The Palm Dubai, VAE', 'Belmond Hotel Caruso Amalfi, Italien',
-  'Aman Tokio, Japan', 'The Savoy London, Großbritannien',
-  'Hotel Arts Barcelona, Spanien', 'The Plaza New York, USA',
-  'Raffles Singapur', 'Sofitel Legend Metropole Hanoi, Vietnam',
-  'Fairmont Banff Springs Kanada', 'Shangri-La Paris, Frankreich'
+const destinations = [
+  {city: 'Paris', country: 'Frankreich'}, {city: 'Marseille', country: 'Frankreich'}, {city: 'Lyon', country: 'Frankreich'}, {city: 'Nizza', country: 'Frankreich'},
+  {city: 'London', country: 'Großbritannien'}, {city: 'Edinburgh', country: 'Großbritannien'}, {city: 'Manchester', country: 'Großbritannien'},
+  {city: 'Rom', country: 'Italien'}, {city: 'Venedig', country: 'Italien'}, {city: 'Florenz', country: 'Italien'}, {city: 'Mailand', country: 'Italien'}, {city: 'Neapel', country: 'Italien'},
+  {city: 'Barcelona', country: 'Spanien'}, {city: 'Madrid', country: 'Spanien'}, {city: 'Valencia', country: 'Spanien'}, {city: 'Sevilla', country: 'Spanien'}, {city: 'Malaga', country: 'Spanien'}, {city: 'Ibiza', country: 'Spanien'}, {city: 'Palma', country: 'Spanien'},
+  {city: 'Amsterdam', country: 'Niederlande'}, {city: 'Rotterdam', country: 'Niederlande'},
+  {city: 'Berlin', country: 'Deutschland'}, {city: 'München', country: 'Deutschland'}, {city: 'Hamburg', country: 'Deutschland'}, {city: 'Frankfurt', country: 'Deutschland'}, {city: 'Köln', country: 'Deutschland'},
+  {city: 'Wien', country: 'Österreich'}, {city: 'Salzburg', country: 'Österreich'}, {city: 'Innsbruck', country: 'Österreich'},
+  {city: 'Prag', country: 'Tschechien'}, {city: 'Budapest', country: 'Ungarn'}, {city: 'Krakau', country: 'Polen'}, {city: 'Warschau', country: 'Polen'},
+  {city: 'Lissabon', country: 'Portugal'}, {city: 'Porto', country: 'Portugal'},
+  {city: 'Athen', country: 'Griechenland'}, {city: 'Santorini', country: 'Griechenland'}, {city: 'Mykonos', country: 'Griechenland'}, {city: 'Kreta', country: 'Griechenland'}, {city: 'Rhodos', country: 'Griechenland'}, {city: 'Korfu', country: 'Griechenland'},
+  {city: 'Istanbul', country: 'Türkei'}, {city: 'Antalya', country: 'Türkei'}, {city: 'Bodrum', country: 'Türkei'}, {city: 'Izmir', country: 'Türkei'},
+  {city: 'Dubai', country: 'VAE'}, {city: 'Abu Dhabi', country: 'VAE'},
+  {city: 'Bangkok', country: 'Thailand'}, {city: 'Phuket', country: 'Thailand'}, {city: 'Krabi', country: 'Thailand'},
+  {city: 'Tokio', country: 'Japan'}, {city: 'Kyoto', country: 'Japan'}, {city: 'Osaka', country: 'Japan'},
+  {city: 'New York', country: 'USA'}, {city: 'Los Angeles', country: 'USA'}, {city: 'Miami', country: 'USA'}, {city: 'San Francisco', country: 'USA'}, {city: 'Las Vegas', country: 'USA'}, {city: 'Chicago', country: 'USA'}, {city: 'Boston', country: 'USA'}, {city: 'Washington', country: 'USA'},
+  {city: 'Cancun', country: 'Mexiko'}, {city: 'Mexiko-Stadt', country: 'Mexiko'}, {city: 'Acapulco', country: 'Mexiko'},
+  {city: 'Rio de Janeiro', country: 'Brasilien'}, {city: 'Buenos Aires', country: 'Argentinien'},
+  {city: 'Sydney', country: 'Australien'}, {city: 'Melbourne', country: 'Australien'},
+  {city: 'Bali', country: 'Indonesien'}, {city: 'Jakarta', country: 'Indonesien'},
+  {city: 'Singapur', country: 'Singapur'}, {city: 'Hongkong', country: 'China'}, {city: 'Shanghai', country: 'China'}, {city: 'Peking', country: 'China'},
+  {city: 'Malediven', country: 'Malediven'}, {city: 'Mauritius', country: 'Mauritius'}, {city: 'Seychellen', country: 'Seychellen'},
+  {city: 'Sansibar', country: 'Tansania'}, {city: 'Kapstadt', country: 'Südafrika'}, {city: 'Marrakesch', country: 'Marokko'}, {city: 'Kairo', country: 'Ägypten'}, {city: 'Hurghada', country: 'Ägypten'},
+  {city: 'Reykjavik', country: 'Island'}, {city: 'Oslo', country: 'Norwegen'}, {city: 'Stockholm', country: 'Schweden'}, {city: 'Kopenhagen', country: 'Dänemark'},
+  {city: 'Moskau', country: 'Russland'}, {city: 'St. Petersburg', country: 'Russland'},
+  {city: 'Dubrovnik', country: 'Kroatien'}, {city: 'Split', country: 'Kroatien'},
+  {city: 'Brüssel', country: 'Belgien'}, {city: 'Zürich', country: 'Schweiz'}, {city: 'Genf', country: 'Schweiz'},
+  {city: 'Dublin', country: 'Irland'}, {city: 'Zypern', country: 'Zypern'}, {city: 'Malta', country: 'Malta'},
+  {city: 'Toronto', country: 'Kanada'}, {city: 'Vancouver', country: 'Kanada'}, {city: 'Montreal', country: 'Kanada'},
+  {city: 'Seoul', country: 'Südkorea'}, {city: 'Mumbai', country: 'Indien'}, {city: 'Delhi', country: 'Indien'}, {city: 'Goa', country: 'Indien'},
+  {city: 'Hanoi', country: 'Vietnam'}, {city: 'Ho Chi Minh', country: 'Vietnam'}, {city: 'Manila', country: 'Philippinen'},
+  {city: 'Havanna', country: 'Kuba'}, {city: 'Punta Cana', country: 'Dominikanische Republik'}
 ];
+
+const destinationsDB = destinations.map(d => d.city + ', ' + d.country);
 
 function initAutocomplete() {
   const input = document.getElementById('destination-search');
   const list = document.getElementById('autocomplete-list');
   if (!input || !list) return;
+  
+  const allDestinations = destinationsDB;
+  
   input.addEventListener('input', function() {
     const value = this.value.toLowerCase();
     list.innerHTML = '';
     if (!value) {
       list.style.display = 'none';
+      const previewEl = document.getElementById('offersPreview');
+      if (previewEl) previewEl.style.display = 'none';
       return;
     }
-    const matches = destinationsDB.filter(item => item.toLowerCase().includes(value)).slice(0, 8);
+    
+    // Erweiterte Suche: Sowohl in Destinationen als auch in Ländern
+    const cityMatches = allDestinations.filter(item => 
+      item.toLowerCase().includes(value)
+    ).slice(0, 5);
+    
+    // Zusätzlich nach Ländern suchen
+    const countryMatches = destinations.filter(d => 
+      d.country.toLowerCase().includes(value) && 
+      !cityMatches.some(city => city.includes(d.city))
+    ).slice(0, 3).map(d => d.city + ', ' + d.country);
+    
+    const matches = [...cityMatches, ...countryMatches].slice(0, 8);
+    
     if (matches.length > 0) {
       matches.forEach(match => {
         const div = document.createElement('div');
-        const isHotel = match.toLowerCase().includes('hotel') || match.toLowerCase().includes('resort') || 
-                        match.toLowerCase().includes('marriott') || match.toLowerCase().includes('hilton') ||
-                        match.toLowerCase().includes('hyatt') || match.toLowerCase().includes('sheraton') ||
-                        match.toLowerCase().includes('ritz') || match.toLowerCase().includes('burj') ||
-                        match.toLowerCase().includes('marina bay') || match.toLowerCase().includes('four seasons') ||
-                        match.toLowerCase().includes('waldorf') || match.toLowerCase().includes('grand') ||
-                        match.toLowerCase().includes('park hyatt') || match.toLowerCase().includes('mandarin') ||
-                        match.toLowerCase().includes('peninsula') || match.toLowerCase().includes('atlantis') ||
-                        match.toLowerCase().includes('belmond') || match.toLowerCase().includes('aman') ||
-                        match.toLowerCase().includes('savoy') || match.toLowerCase().includes('plaza') ||
-                        match.toLowerCase().includes('raffles') || match.toLowerCase().includes('sofitel') ||
-                        match.toLowerCase().includes('fairmont') || match.toLowerCase().includes('shangri');
-        div.className = isHotel ? 'autocomplete-item hotel-item' : 'autocomplete-item city-item';
-        div.textContent = match;
+        div.className = 'autocomplete-item city-item';
+        
+        // Hervorhebung des Suchbegriffs
+        const regex = new RegExp(`(${value})`, 'gi');
+        const highlightedText = match.replace(regex, '<strong>$1</strong>');
+        div.innerHTML = `<i class="bi bi-geo-alt me-2"></i>${highlightedText}`;
+        
         div.addEventListener('click', function() {
           input.value = match;
           list.style.display = 'none';
+          // Sofortige Vorschau für diese Stadt anzeigen
+          const city = match.split(',')[0].trim();
+          const abflug = document.getElementById('abflughafen')?.value;
+          const personen = document.getElementById('personen')?.value;
+          const datum = document.getElementById('reisedatum')?.value;
+          searchAndShowOffers(city, abflug, personen, datum);
         });
         list.appendChild(div);
       });
       list.style.display = 'block';
     } else {
-      list.style.display = 'none';
+      // Keine direkten Treffer - zeige "Suchen nach..." Option
+      const div = document.createElement('div');
+      div.className = 'autocomplete-item search-item';
+      div.innerHTML = `<i class="bi bi-search me-2"></i>Suchen nach "${value}"`;
+      div.addEventListener('click', function() {
+        input.value = value;
+        list.style.display = 'none';
+        const abflug = document.getElementById('abflughafen')?.value;
+        const personen = document.getElementById('personen')?.value;
+        const datum = document.getElementById('reisedatum')?.value;
+        searchAndShowOffers(value, abflug, personen, datum);
+      });
+      list.appendChild(div);
+      list.style.display = 'block';
     }
   });
   document.addEventListener('click', function(e) {
-    if (e.target !== input) list.style.display = 'none';
+    if (e.target !== input) {
+      list.style.display = 'none';
+      const previewEl = document.getElementById('offersPreview');
+      if (previewEl) previewEl.style.display = 'none';
+    }
   });
 }
 
 function initMainReviews() {
-  const mainReviews = JSON.parse(localStorage.getItem('mainReviews') || '[]');
   const stars = document.querySelectorAll('.rating-input-main i');
   let selectedRating = 0;
   
-  stars.forEach(star => {
-    star.onclick = () => {
-      selectedRating = parseInt(star.getAttribute('data-rating'));
+  stars.forEach((star, index) => {
+    star.addEventListener('mouseenter', () => {
+      stars.forEach((s, i) => {
+        s.className = i <= index ? 'bi bi-star-fill text-warning active' : 'bi bi-star';
+      });
+    });
+    
+    star.addEventListener('click', () => {
+      selectedRating = index + 1;
       stars.forEach((s, i) => {
         s.className = i < selectedRating ? 'bi bi-star-fill text-warning' : 'bi bi-star';
       });
-    };
+    });
   });
   
-  document.getElementById('submitReviewMain').onclick = () => {
+  document.querySelector('.rating-input-main')?.addEventListener('mouseleave', () => {
+    stars.forEach((s, i) => {
+      s.className = i < selectedRating ? 'bi bi-star-fill text-warning' : 'bi bi-star';
+    });
+  });
+  
+  document.getElementById('submitReviewMain')?.addEventListener('click', async () => {
     const name = document.getElementById('reviewName').value.trim();
     const text = document.getElementById('reviewTextMain').value.trim();
-    if (selectedRating === 0) return alert('Bitte wählen Sie eine Bewertung');
-    if (!name) return alert('Bitte geben Sie Ihren Namen ein');
-    if (!text) return alert('Bitte schreiben Sie eine Bewertung');
     
-    mainReviews.push({ rating: selectedRating, name, text, date: new Date().toLocaleDateString('de-DE') });
-    localStorage.setItem('mainReviews', JSON.stringify(mainReviews));
+    if (selectedRating === 0) {
+      showToast('Bitte wählen Sie eine Bewertung', 'warning');
+      return;
+    }
+    if (!name) {
+      showToast('Bitte geben Sie Ihren Namen ein', 'warning');
+      return;
+    }
+    if (!text) {
+      showToast('Bitte schreiben Sie eine Bewertung', 'warning');
+      return;
+    }
+    
+    const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+    reviews.push({ name, text, rating: selectedRating, created_at: new Date().toISOString() });
+    localStorage.setItem('reviews', JSON.stringify(reviews));
     
     document.getElementById('reviewName').value = '';
     document.getElementById('reviewTextMain').value = '';
     selectedRating = 0;
     stars.forEach(s => s.className = 'bi bi-star');
+    
+    showToast('Vielen Dank für Ihre Bewertung!', 'success');
     displayMainReviews();
-  };
+  });
   
   displayMainReviews();
 }
 
-function displayMainReviews() {
-  const reviews = JSON.parse(localStorage.getItem('mainReviews') || '[]');
+async function displayMainReviews() {
   const listEl = document.getElementById('reviewsListMain');
+  if (!listEl) return;
   
-  if (reviews.length === 0) {
+  const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+  
+  if (!reviews || reviews.length === 0) {
     listEl.innerHTML = '<p class="text-center text-muted">Noch keine Bewertungen vorhanden</p>';
     return;
   }
   
-  listEl.innerHTML = reviews.slice().reverse().map(r => `
+  listEl.innerHTML = reviews.map(r => `
     <div class="card mb-3">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-start">
           <div>
-            <h6 class="mb-1">${r.name}</h6>
+            <h6 class="mb-1">${r.name || 'Anonym'}</h6>
             <div class="text-warning mb-2">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
           </div>
-          <small class="text-muted">${r.date}</small>
+          <small class="text-muted">${new Date(r.created_at).toLocaleDateString('de-DE')}</small>
         </div>
         <p class="mb-0">${r.text}</p>
       </div>
@@ -498,77 +748,162 @@ function displayMainReviews() {
   `).join('');
 }
 
+// Initialize profile handlers
+function initProfileHandlers() {
+  document.getElementById('editProfileBtn')?.addEventListener('click', function() {
+    document.getElementById('profileView').style.display = 'none';
+    document.getElementById('profileEdit').style.display = 'block';
+    this.style.display = 'none';
+  });
+  
+  document.getElementById('cancelEditBtn')?.addEventListener('click', function() {
+    document.getElementById('profileView').style.display = 'block';
+    document.getElementById('profileEdit').style.display = 'none';
+    document.getElementById('editProfileBtn').style.display = 'block';
+  });
+  
+  document.getElementById('profileEditForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    try {
+      await DB.updateProfile({
+        firstname: document.getElementById('editFirstName').value,
+        lastname: document.getElementById('editLastName').value,
+        address: document.getElementById('editAddress').value,
+        date_of_birth: document.getElementById('editBirthDate').value || null
+      });
+      
+      alert('✅ Profil erfolgreich aktualisiert!');
+      showProfile(); // Neu laden
+    } catch (error) {
+      alert('❌ Fehler beim Speichern: ' + error.message);
+    }
+  });
+  
+  document.getElementById('changePasswordBtn')?.addEventListener('click', function() {
+    const newPassword = prompt('Neues Passwort eingeben (mindestens 6 Zeichen):');
+    if (newPassword && newPassword.length >= 6) {
+      DB.changePassword(newPassword)
+        .then(() => alert('✅ Passwort erfolgreich geändert!'))
+        .catch(error => alert('❌ Fehler: ' + error.message));
+    } else if (newPassword) {
+      alert('❌ Passwort muss mindestens 6 Zeichen haben');
+    }
+  });
+  
+  document.getElementById('resetPasswordBtn')?.addEventListener('click', async function() {
+    try {
+      const user = await DB.getUser();
+      if (user) {
+        await DB.resetPassword(user.email);
+        alert('✅ Passwort-Reset E-Mail gesendet!');
+      }
+    } catch (error) {
+      alert('❌ Fehler: ' + error.message);
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+  // Add fade-in animation for elements
+  const animateOnScroll = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '0';
+        entry.target.style.transform = 'translateY(30px)';
+        entry.target.style.transition = 'all 0.6s ease';
+        setTimeout(() => {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }, 100);
+        animateOnScroll.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  document.querySelectorAll('.angebot-card, .service-card, .reiseziel-item').forEach(el => {
+    animateOnScroll.observe(el);
+  });
+  
   initAutocomplete();
   initDestinationFilters();
   renderOffers();
   renderDestinations();
   initModals();
+  initMainReviews();
+  updateNavigation();
+  
+  const today = new Date().toISOString().split('T')[0];
+  const dateInput = document.getElementById('reisedatum');
+  if (dateInput) dateInput.min = today;
+  
+  // Add smooth hero section entrance
+  const heroContent = document.querySelector('.hero-content');
+  if (heroContent) {
+    heroContent.style.opacity = '0';
+    heroContent.style.transform = 'translateY(50px)';
+    setTimeout(() => {
+      heroContent.style.transition = 'all 1s ease';
+      heroContent.style.opacity = '1';
+      heroContent.style.transform = 'translateY(0)';
+    }, 200);
+  }
+  
+  document.getElementById('showProfile')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    showProfile();
+  });
+  
+  document.getElementById('navLogout')?.addEventListener('click', async function(e) {
+    e.preventDefault();
+    await DB.signOut();
+    updateNavigation();
+    
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification success';
+    toast.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Erfolgreich abgemeldet!';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 100);
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  });
 });
 
 function initModals() {
-  document.getElementById('loginForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    const konten = JSON.parse(localStorage.getItem('konten') || '[]');
-    const konto = konten.find(k => k.email === email && k.password === password);
-    
-    if (konto) {
-      localStorage.setItem('currentUser', JSON.stringify(konto));
-      bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
-      updateNavigation();
-      alert('✅ Erfolgreich angemeldet!');
-    } else {
-      alert('❌ E-Mail oder Passwort falsch!');
-    }
-  });
-
-  document.getElementById('registerForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const konto = {
-      id: Date.now(),
-      firstName: document.getElementById('regFirstName').value,
-      lastName: document.getElementById('regLastName').value,
-      email: document.getElementById('regEmail').value,
-      password: document.getElementById('regPassword').value,
-      state: document.getElementById('regState').value,
-      role: 'user',
-      datum: new Date().toLocaleString('de-DE')
-    };
-    
-    let konten = JSON.parse(localStorage.getItem('konten') || '[]');
-    konten.push(konto);
-    localStorage.setItem('konten', JSON.stringify(konten));
-    
-    bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
-    alert('✅ Konto erfolgreich erstellt!');
-    this.reset();
-  });
-
-  document.getElementById('bookingForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser || !currentBookingOffer) return;
-    
-    const buchung = {
-      id: Date.now(),
-      angebot: currentBookingOffer.title,
-      preis: currentBookingOffer.price,
-      dauer: currentBookingOffer.duration,
-      reisedatum: document.getElementById('bookingDate').value,
-      personen: document.getElementById('bookingPersons').value,
-      telefon: document.getElementById('bookingPhone').value,
-      buchungsdatum: new Date().toLocaleString('de-DE'),
-      status: 'Bestätigt'
-    };
-    
-    let buchungen = JSON.parse(localStorage.getItem('buchungen_' + currentUser.email) || '[]');
-    buchungen.push(buchung);
-    localStorage.setItem('buchungen_' + currentUser.email, JSON.stringify(buchungen));
-    
-    bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();
-    alert('✅ Buchung erfolgreich!');
-    this.reset();
-  });
+  // Only handlers for toggling password visibility
+  const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+  const toggleRegPassword = document.getElementById('toggleRegPassword');
+  
+  if (toggleLoginPassword) {
+    toggleLoginPassword.addEventListener('click', function() {
+      const input = document.getElementById('loginPassword');
+      const icon = this.querySelector('i');
+      if (input && icon) {
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.className = 'bi bi-eye-slash';
+        } else {
+          input.type = 'password';
+          icon.className = 'bi bi-eye';
+        }
+      }
+    });
+  }
+  
+  if (toggleRegPassword) {
+    toggleRegPassword.addEventListener('click', function() {
+      const input = document.getElementById('regPassword');
+      const icon = this.querySelector('i');
+      if (input && icon) {
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.className = 'bi bi-eye-slash';
+        } else {
+          input.type = 'password';
+          icon.className = 'bi bi-eye';
+        }
+      }
+    });
+  }
 }
