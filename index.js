@@ -317,37 +317,78 @@ if (searchBtn) {
       return;
     }
 
-    searchAndShowOffers(destination, abflug, personen, datum);
+    // Direkt zur Angebote-Seite weiterleiten
+    const params = new URLSearchParams();
+    params.set('destination', destination);
+    if (abflug) params.set('airport', abflug);
+    if (personen) params.set('people', personen);
+    if (datum) params.set('date', datum);
+    
+    window.location.href = 'angebote.html?' + params.toString();
   });
 }
 
 // Simple preview generator for homepage (keeps consistent with offers)
 function generateOffersPreview(city, opts = {}) {
   if (!city) return [];
-  // Prefer matching real offersData entries if available
-  const matches = (offersData || []).filter(o => o.title.toLowerCase().includes(city.toLowerCase()) || o.title.toLowerCase().includes(city.split(' ')[0].toLowerCase()));
+  
+  // Zuerst prüfen ob es echte Angebote für diese Stadt gibt
+  const matches = (offersData || []).filter(o => 
+    o.title.toLowerCase().includes(city.toLowerCase()) || 
+    o.title.toLowerCase().includes(city.split(' ')[0].toLowerCase())
+  );
+  
   if (matches && matches.length > 0) {
-    return matches.slice(0, 3).map(m => ({ id: m.id, city, title: m.title, price: parseInt(m.price.replace(/[^0-9]/g,'')), days: parseInt(m.duration) || null, departure: 'Flexibel', image: m.img }));
+    return matches.slice(0, 3).map(m => ({ 
+      id: m.id, 
+      city, 
+      title: m.title, 
+      price: parseInt(m.price.replace(/[^0-9]/g,'')), 
+      days: parseInt(m.duration) || null, 
+      departure: 'Flexibel', 
+      image: m.img,
+      isReal: true
+    }));
   }
 
-  // Fallback: synthetic previews
-  const num = 1 + Math.floor(Math.random() * 2); // 1-2 offers
+  // Fallback: Generiere synthetische Angebote
+  const num = 2 + Math.floor(Math.random() * 2); // 2-3 Angebote
   const offers = [];
+  
   const baseImages = {
-    Paris: 'img/Paris.jpg', London: 'img/London.jpg', Bali: 'img/bali.jpg', Barcelona: 'img/barcelona.jpg', 'New': 'img/New York.jpg', Dubai: 'img/dubai.jpg', Santorini: 'img/santorini.webp', Kyoto: 'img/kyoto.jpg'
+    Paris: 'img/Paris.jpg', London: 'img/London.jpg', Bali: 'img/bali.jpg', 
+    Barcelona: 'img/barcelona.jpg', 'New York': 'img/New York.jpg', Dubai: 'img/dubai.jpg', 
+    Santorini: 'img/santorini.webp', Kyoto: 'img/kyoto.jpg', Madrid: 'img/Madrid.jpg',
+    Venedig: 'img/Venedig.jpg', Florenz: 'img/Florenz.jpg', Lissabon: 'img/Lissabon.jpg',
+    Malaga: 'img/Malaga.jpg', Valencia: 'img/Valencia.jpg', Sevilla: 'img/Sevilla.jpg',
+    Mailand: 'img/Mailand.jpg', Neapel: 'img/Neapel.jpg', Turin: 'img/Turin.jpg',
+    Bologna: 'img/Bologna.jpg', Verona: 'img/Verona.jpg', Nizza: 'img/Nizza.jpg',
+    Marseille: 'img/Marseille.jpg', Bordeaux: 'img/Bordeaux.jpg', Toulouse: 'img/Toulouse.jpg',
+    Manchester: 'img/Manchester.jpg', Liverpool: 'img/Liverpool.jpg', Glasgow: 'img/Glasgow.jpg',
+    Edinburgh: 'img/edinburgh.jpg', Ibiza: 'img/Ibiza.jpg', Palma: 'img/Palma.jpg',
+    Granada: 'img/Granada.jpg', Sydney: 'img/sydney.jpg', Vancouver: 'img/vancouver.jpg',
+    Malediven: 'img/Malediven.jpg', Bangkok: 'img/Thailand.jpg', Kapstadt: 'img/capetown.jpg',
+    Marrakesch: 'img/marrakech.jpg', Reykjavik: 'img/Island.jpg'
   };
+  
   for (let i = 0; i < num; i++) {
-    const price = Math.floor(299 + Math.random() * 1000);
-    const days = 4 + Math.floor(Math.random() * 11);
-    const departure = new Date(); departure.setDate(departure.getDate() + 7 + Math.floor(Math.random() * 180));
+    const price = Math.floor(299 + Math.random() * 1200);
+    const days = 3 + Math.floor(Math.random() * 12); // 3-14 Tage
+    const departure = new Date(); 
+    departure.setDate(departure.getDate() + 7 + Math.floor(Math.random() * 180));
+    
+    const tourTypes = ['✈️ Städtetrip', '🏖️ Strandurlaub', '🏠 Kulturreise', '🎆 Erlebnisreise'];
+    const tourType = tourTypes[Math.floor(Math.random() * tourTypes.length)];
+    
     offers.push({
       id: 'preview-' + city.replace(/\s+/g, '-') + '-' + i,
       city,
-      title: `${city} - ${days} Tage`,
+      title: `${tourType} ${city}`,
       price,
       days,
-      departure: departure.toISOString().slice(0,10),
-      image: baseImages[city] || baseImages[city.split(' ')[0]] || 'img/bali.jpg'
+      departure: departure.toLocaleDateString('de-DE'),
+      image: baseImages[city] || baseImages[city.split(' ')[0]] || 'img/bali.jpg',
+      isReal: false
     });
   }
   return offers;
@@ -364,16 +405,64 @@ function searchAndShowOffers(destination, abflug, personen, datum) {
   if (!city) { window.location.href = 'angebote.html?' + params.toString(); return; }
 
   const cityLower = city.toLowerCase();
-  // try to find real offers that mention the city
-  const matches = (offersData || []).filter(o => (o.title||'').toLowerCase().includes(cityLower) || (o.text||'').toLowerCase().includes(cityLower));
+  
+  // Erweiterte Suche in allen verfügbaren Destinationen
+  const allDestinations = [
+    'Bali', 'Barcelona', 'Kapstadt', 'Dubai', 'Edinburgh', 'Reykjavik', 'Kyoto', 'Lissabon', 
+    'Malediven', 'Marrakesch', 'New York', 'Paris', 'Santorini', 'Sydney', 'Bangkok', 'Vancouver',
+    'Bologna', 'Bordeaux', 'Florenz', 'Glasgow', 'Granada', 'Ibiza', 'Liverpool', 'London',
+    'Madrid', 'Mailand', 'Malaga', 'Manchester', 'Marseille', 'Neapel', 'Nizza', 'Palma',
+    'Sevilla', 'Toulouse', 'Turin', 'Valencia', 'Venedig', 'Verona'
+  ];
+  
+  // Finde passende Destinationen
+  const matchingDestinations = allDestinations.filter(dest => 
+    dest.toLowerCase().includes(cityLower) || cityLower.includes(dest.toLowerCase())
+  );
+  
   let chosen = [];
-  if (matches && matches.length > 0) {
-    chosen = matches.map(m => ({ id: m.id, city: city, title: m.title, price: parseInt((m.price||'').replace(/[^0-9]/g,'')) || m.price, days: parseInt(m.duration) || null, departure: 'Flexibel', image: m.img }));
-  } else {
-    // if no direct matches in offersData, try destinations list and generate previews
-    const destMatch = (destinationsData || []).find(d => d.title.toLowerCase() === cityLower);
-    if (destMatch) {
-      chosen = generateOffersPreview(city, { personen, datum });
+  
+  // Zuerst in echten Angeboten suchen
+  const realMatches = (offersData || []).filter(o => 
+    (o.title||'').toLowerCase().includes(cityLower) || 
+    (o.text||'').toLowerCase().includes(cityLower)
+  );
+  
+  if (realMatches && realMatches.length > 0) {
+    chosen = realMatches.map(m => ({
+      id: m.id, 
+      city: city, 
+      title: m.title, 
+      price: parseInt((m.price||'').replace(/[^0-9]/g,'')) || m.price, 
+      days: parseInt(m.duration) || null, 
+      departure: 'Flexibel', 
+      image: m.img,
+      isReal: true
+    }));
+  }
+  
+  // Wenn keine echten Angebote gefunden, generiere Vorschau-Angebote für passende Destinationen
+  if (chosen.length === 0 && matchingDestinations.length > 0) {
+    matchingDestinations.forEach(dest => {
+      const previewOffers = generateOffersPreview(dest, { personen, datum });
+      chosen = chosen.concat(previewOffers.map(offer => ({...offer, isReal: false})));
+    });
+  }
+  
+  // Wenn immer noch keine Treffer, versuche Länder-Suche
+  if (chosen.length === 0) {
+    const countryMatches = destinations.filter(d => 
+      d.country.toLowerCase().includes(cityLower) || 
+      d.city.toLowerCase().includes(cityLower)
+    );
+    
+    if (countryMatches.length > 0) {
+      // Nimm die ersten 3 Städte aus dem Land
+      const selectedCities = countryMatches.slice(0, 3);
+      selectedCities.forEach(cityData => {
+        const previewOffers = generateOffersPreview(cityData.city, { personen, datum });
+        chosen = chosen.concat(previewOffers.map(offer => ({...offer, isReal: false})));
+      });
     }
   }
 
@@ -382,9 +471,12 @@ function searchAndShowOffers(destination, abflug, personen, datum) {
   if (chosen && chosen.length > 0) {
     renderOffersPreview(chosen, paramsString);
     const previewEl = document.getElementById('offersPreview');
-    if (previewEl) { previewEl.style.display = ''; previewEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    if (previewEl) { 
+      previewEl.style.display = ''; 
+      previewEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); 
+    }
   } else {
-    // no matches -> go to full offers page
+    // Keine Treffer -> zur vollständigen Angebote-Seite
     window.location.href = 'angebote.html?' + paramsString;
   }
 } 
@@ -393,44 +485,67 @@ function renderOffersPreview(offers, paramsString) {
   const container = document.getElementById('offersPreviewContainer');
   if (!container) return;
   container.innerHTML = '';
-  offers.forEach(o => {
+  
+  // Begrenze auf maximal 6 Angebote für die Vorschau
+  const limitedOffers = offers.slice(0, 6);
+  
+  limitedOffers.forEach(o => {
     const col = document.createElement('div');
     col.className = 'col-12 col-md-6 col-lg-4';
     col.innerHTML = `
-      <div class="card h-100 shadow-sm">
-        <img src="${o.image}" class="card-img-top" alt="${o.city}" style="height:160px; object-fit:cover;">
-        <div class="card-body">
-          <h6 class="card-title mb-1">${o.title}</h6>
-          <p class="text-muted small mb-2">Abflug: ${o.departure} ${o.days ? '• ' + o.days + ' Tage' : ''}</p>
-          <div class="d-flex align-items-center justify-content-between" id="offer-action-${o.id}">
-            <strong class="text-primary">${typeof o.price === 'number' ? o.price + '€' : o.price}</strong>
+      <div class="card h-100 shadow-sm" style="border-radius: 15px; overflow: hidden; transition: transform 0.3s ease;">
+        <img src="${o.image}" class="card-img-top" alt="${o.city}" style="height:180px; object-fit:cover;">
+        <div class="card-body d-flex flex-column">
+          <h6 class="card-title mb-2 fw-bold">${o.title}</h6>
+          <p class="text-muted small mb-2">
+            <i class="bi bi-calendar-event me-1"></i>Abflug: ${o.departure} 
+            ${o.days ? '<i class="bi bi-clock ms-2 me-1"></i>' + o.days + ' Tage' : ''}
+          </p>
+          <div class="d-flex align-items-center justify-content-between mt-auto" id="offer-action-${o.id}">
+            <strong class="text-primary fs-5">${typeof o.price === 'number' ? o.price + '€' : o.price}</strong>
           </div>
         </div>
       </div>`;
 
-    // append action button (open modal for real offers, otherwise link to offers page)
+    // Hover-Effekt hinzufügen
+    const card = col.querySelector('.card');
+    card.addEventListener('mouseenter', () => {
+      card.style.transform = 'translateY(-5px)';
+      card.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'translateY(0)';
+      card.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+    });
+
+    // Action Button hinzufügen
     const action = col.querySelector(`#offer-action-${o.id}`);
-    const isReal = (offersData || []).findIndex(item => item.id === o.id) >= 0;
+    const isReal = o.isReal || (offersData || []).findIndex(item => item.id === o.id) >= 0;
     if (action) {
       if (isReal) {
         const btn = document.createElement('button');
         btn.className = 'btn btn-sm btn-primary';
-        btn.textContent = 'Jetzt ansehen';
+        btn.innerHTML = '<i class="bi bi-eye me-1"></i>Details';
         btn.addEventListener('click', () => showOfferDetails(o.id));
         action.appendChild(btn);
       } else {
         const a = document.createElement('a');
         a.className = 'btn btn-sm btn-primary';
         a.href = 'angebote.html?' + paramsString;
-        a.textContent = 'Jetzt ansehen';
+        a.innerHTML = '<i class="bi bi-search me-1"></i>Alle Angebote';
         action.appendChild(a);
       }
     }
 
     container.appendChild(col);
   });
+  
+  // "Mehr Angebote" Link aktualisieren
   const more = document.getElementById('offersPreviewMore');
-  if (more) more.href = 'angebote.html?' + paramsString;
+  if (more) {
+    more.href = 'angebote.html?' + paramsString;
+    more.innerHTML = `<i class="bi bi-arrow-right me-1"></i>Alle ${offers.length > 6 ? offers.length : ''} Angebote anzeigen`;
+  }
 }
 
 const destinations = [
@@ -485,16 +600,34 @@ function initAutocomplete() {
       if (previewEl) previewEl.style.display = 'none';
       return;
     }
-    const matches = allDestinations.filter(item => item.toLowerCase().includes(value)).slice(0, 8);
+    
+    // Erweiterte Suche: Sowohl in Destinationen als auch in Ländern
+    const cityMatches = allDestinations.filter(item => 
+      item.toLowerCase().includes(value)
+    ).slice(0, 5);
+    
+    // Zusätzlich nach Ländern suchen
+    const countryMatches = destinations.filter(d => 
+      d.country.toLowerCase().includes(value) && 
+      !cityMatches.some(city => city.includes(d.city))
+    ).slice(0, 3).map(d => d.city + ', ' + d.country);
+    
+    const matches = [...cityMatches, ...countryMatches].slice(0, 8);
+    
     if (matches.length > 0) {
       matches.forEach(match => {
         const div = document.createElement('div');
         div.className = 'autocomplete-item city-item';
-        div.textContent = match;
+        
+        // Hervorhebung des Suchbegriffs
+        const regex = new RegExp(`(${value})`, 'gi');
+        const highlightedText = match.replace(regex, '<strong>$1</strong>');
+        div.innerHTML = `<i class="bi bi-geo-alt me-2"></i>${highlightedText}`;
+        
         div.addEventListener('click', function() {
           input.value = match;
           list.style.display = 'none';
-          // show preview immediately for this city
+          // Sofortige Vorschau für diese Stadt anzeigen
           const city = match.split(',')[0].trim();
           const abflug = document.getElementById('abflughafen')?.value;
           const personen = document.getElementById('personen')?.value;
@@ -505,7 +638,20 @@ function initAutocomplete() {
       });
       list.style.display = 'block';
     } else {
-      list.style.display = 'none';
+      // Keine direkten Treffer - zeige "Suchen nach..." Option
+      const div = document.createElement('div');
+      div.className = 'autocomplete-item search-item';
+      div.innerHTML = `<i class="bi bi-search me-2"></i>Suchen nach "${value}"`;
+      div.addEventListener('click', function() {
+        input.value = value;
+        list.style.display = 'none';
+        const abflug = document.getElementById('abflughafen')?.value;
+        const personen = document.getElementById('personen')?.value;
+        const datum = document.getElementById('reisedatum')?.value;
+        searchAndShowOffers(value, abflug, personen, datum);
+      });
+      list.appendChild(div);
+      list.style.display = 'block';
     }
   });
   document.addEventListener('click', function(e) {

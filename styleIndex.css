@@ -370,26 +370,33 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   gap: 12px;
   transition: all 0.2s ease;
+  font-size: 0.95rem;
 }
 
-.city-item::before {
-  content: '🌍';
-  font-size: 1.1rem;
+.autocomplete-item.city-item {
+  color: #333;
 }
 
-.hotel-item::before {
-  content: '🏨';
-  font-size: 1.1rem;
+.autocomplete-item.search-item {
+  color: #666;
+  font-style: italic;
+  background: linear-gradient(90deg, rgba(0,123,255,0.05) 0%, rgba(0,123,255,0.02) 100%);
 }
 
 .autocomplete-item:hover {
-  background: linear-gradient(90deg, rgba(0,123,255,0.08) 0%, rgba(0,123,255,0.02) 100%);
+  background: linear-gradient(90deg, rgba(0,123,255,0.12) 0%, rgba(0,123,255,0.04) 100%);
   padding-left: 22px;
   border-left: 3px solid #007bff;
+  color: #007bff;
 }
 
 .autocomplete-item:last-child {
   border-bottom: none;
+}
+
+.autocomplete-item strong {
+  color: #007bff;
+  font-weight: 600;
 }
 
 img {
