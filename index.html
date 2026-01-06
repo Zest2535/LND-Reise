@@ -25,6 +25,170 @@
   <!-- Eigene Styles -->
   <link rel="stylesheet" href="styleIndex.css">
   <link rel="stylesheet" href="animations.css">
+<style>
+  /* Additional mobile enhancements */
+  @media (max-width: 768px) {
+    .hero h1 {
+      font-size: 2.2rem !important;
+    }
+
+    .hero p {
+      font-size: 1.1rem !important;
+    }
+
+    .search-strip {
+      padding: 1rem !important;
+    }
+
+    .field {
+      margin-bottom: 0.75rem;
+    }
+
+    .btn-search {
+      width: 100% !important;
+      margin-top: 0.5rem;
+    }
+
+    .modal-dialog {
+      margin: 0.5rem;
+      max-width: calc(100vw - 1rem);
+    }
+
+    .modal-body {
+      padding: 1rem;
+    }
+
+    .form-control,
+    .form-select {
+      font-size: 0.9rem;
+      padding: 0.6rem 0.75rem;
+    }
+
+    .btn {
+      font-size: 0.9rem;
+      padding: 0.6rem 1.2rem;
+    }
+
+    .card-body {
+      padding: 1rem;
+    }
+
+    .service-card {
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .service-card i {
+      font-size: 2.5rem;
+    }
+
+    .filter-btn {
+      font-size: 0.85rem;
+      padding: 0.5rem 0.8rem;
+      margin: 0.25rem;
+    }
+
+    .reiseziel-item {
+      height: 220px;
+    }
+
+    .reiseziel-item span {
+      font-size: 1.2rem;
+    }
+
+    .angebot-card .card-img-top {
+      height: 160px;
+    }
+
+    .angebot-card .card-body {
+      padding: 1rem;
+    }
+
+    .rating-input-main i {
+      font-size: 1.5rem;
+    }
+
+    footer .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .hero {
+      padding: 4rem 1rem 3rem !important;
+    }
+
+    .hero h1 {
+      font-size: 1.8rem !important;
+    }
+
+    .hero p {
+      font-size: 1rem !important;
+    }
+
+    .search-row {
+      grid-template-columns: 1fr !important;
+      gap: 0.5rem !important;
+    }
+
+    .field.input-pill {
+      padding: 0.4rem 0.75rem;
+    }
+
+    .btn-search {
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    .section-title {
+      font-size: 1.6rem !important;
+    }
+
+    .service-card h4 {
+      font-size: 1.1rem;
+    }
+
+    .service-card p {
+      font-size: 0.9rem;
+    }
+
+    .angebot-card {
+      margin-bottom: 1rem;
+    }
+
+    .modal-xl {
+      max-width: 95vw;
+    }
+
+    .offcanvas {
+      width: 90vw !important;
+    }
+
+    .toast-container {
+      top: 10px;
+      right: 10px;
+      left: 10px;
+    }
+
+    .toast-notification {
+      min-width: auto;
+      font-size: 0.85rem;
+      padding: 0.75rem 1rem;
+    }
+  }
+
+  /* Touch-friendly enhancements */
+  @media (hover: none) and (pointer: coarse) {
+    .btn, .angebot-card, .reiseziel-item, .service-card {
+      min-height: 44px;
+    }
+
+    .form-control, .form-select {
+      min-height: 44px;
+    }
+  }
+</style>
 </head>
 
 <body>
