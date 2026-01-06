@@ -34,14 +34,14 @@ if (navbar) {
       window.requestAnimationFrame(function() {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         
-        // Добавляем класс scrolled для эффекта
+        // Add 'scrolled' class for effect
         if (scrollTop > 50) {
           navbar.classList.add('scrolled');
         } else {
           navbar.classList.remove('scrolled');
         }
         
-        // Скрываем/показываем навигацию при скролле
+        // Hide/show navigation on scroll
         if (scrollTop > lastScrollTop && scrollTop > 100) {
           navbar.style.top = "-80px";
         } else {
@@ -152,7 +152,7 @@ async function showOfferDetails(offerId) {
     const modal = document.getElementById('offerDetailModal');
     if (!modal) return;
     
-    // Извлекаем название города из заголовка
+    // Extract city name from title
     const cityName = offer.title.replace(/^.*nach |^.*in |^.*Reise |^Traumreise nach |^Städtetrip |^Luxus in |^Romantisches /, '');
     const priceNumber = offer.price.replace('€', '');
     
@@ -273,8 +273,18 @@ function applyDestinationFilter(filter) {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const href = this.getAttribute('href');
+    // ignore bare hashes and empty hrefs
+    if (!href || href === '#' || href === '#0') return;
+    if (href.startsWith('#')) {
+      // valid hash target like `#section-id`
+      const selector = href;
+      const target = document.querySelector(selector) || document.getElementById(selector.slice(1));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      // non-hash links: navigate normally
+      window.location.href = href;
+    }
   });
 });
 
@@ -306,14 +316,121 @@ if (searchBtn) {
       showToast('Bitte geben Sie ein Reiseziel ein', 'warning');
       return;
     }
-    
-    const params = new URLSearchParams();
-    if (destination) params.set('destination', destination);
-    if (abflug) params.set('airport', abflug);
-    if (datum) params.set('date', datum);
-    
-    window.location.href = 'angebote.html?' + params.toString();
+
+    searchAndShowOffers(destination, abflug, personen, datum);
   });
+}
+
+// Simple preview generator for homepage (keeps consistent with offers)
+function generateOffersPreview(city, opts = {}) {
+  if (!city) return [];
+  // Prefer matching real offersData entries if available
+  const matches = (offersData || []).filter(o => o.title.toLowerCase().includes(city.toLowerCase()) || o.title.toLowerCase().includes(city.split(' ')[0].toLowerCase()));
+  if (matches && matches.length > 0) {
+    return matches.slice(0, 3).map(m => ({ id: m.id, city, title: m.title, price: parseInt(m.price.replace(/[^0-9]/g,'')), days: parseInt(m.duration) || null, departure: 'Flexibel', image: m.img }));
+  }
+
+  // Fallback: synthetic previews
+  const num = 1 + Math.floor(Math.random() * 2); // 1-2 offers
+  const offers = [];
+  const baseImages = {
+    Paris: 'img/Paris.jpg', London: 'img/London.jpg', Bali: 'img/bali.jpg', Barcelona: 'img/barcelona.jpg', 'New': 'img/New York.jpg', Dubai: 'img/dubai.jpg', Santorini: 'img/santorini.webp', Kyoto: 'img/kyoto.jpg'
+  };
+  for (let i = 0; i < num; i++) {
+    const price = Math.floor(299 + Math.random() * 1000);
+    const days = 4 + Math.floor(Math.random() * 11);
+    const departure = new Date(); departure.setDate(departure.getDate() + 7 + Math.floor(Math.random() * 180));
+    offers.push({
+      id: 'preview-' + city.replace(/\s+/g, '-') + '-' + i,
+      city,
+      title: `${city} - ${days} Tage`,
+      price,
+      days,
+      departure: departure.toISOString().slice(0,10),
+      image: baseImages[city] || baseImages[city.split(' ')[0]] || 'img/bali.jpg'
+    });
+  }
+  return offers;
+}
+
+function searchAndShowOffers(destination, abflug, personen, datum) {
+  const params = new URLSearchParams();
+  if (destination) params.set('destination', destination);
+  if (abflug) params.set('airport', abflug);
+  if (datum) params.set('date', datum);
+  if (personen) params.set('people', personen);
+
+  const city = (destination || '').split(',')[0].trim();
+  if (!city) { window.location.href = 'angebote.html?' + params.toString(); return; }
+
+  const cityLower = city.toLowerCase();
+  // try to find real offers that mention the city
+  const matches = (offersData || []).filter(o => (o.title||'').toLowerCase().includes(cityLower) || (o.text||'').toLowerCase().includes(cityLower));
+  let chosen = [];
+  if (matches && matches.length > 0) {
+    chosen = matches.map(m => ({ id: m.id, city: city, title: m.title, price: parseInt((m.price||'').replace(/[^0-9]/g,'')) || m.price, days: parseInt(m.duration) || null, departure: 'Flexibel', image: m.img }));
+  } else {
+    // if no direct matches in offersData, try destinations list and generate previews
+    const destMatch = (destinationsData || []).find(d => d.title.toLowerCase() === cityLower);
+    if (destMatch) {
+      chosen = generateOffersPreview(city, { personen, datum });
+    }
+  }
+
+  const paramsString = params.toString();
+
+  if (chosen && chosen.length > 0) {
+    renderOffersPreview(chosen, paramsString);
+    const previewEl = document.getElementById('offersPreview');
+    if (previewEl) { previewEl.style.display = ''; previewEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  } else {
+    // no matches -> go to full offers page
+    window.location.href = 'angebote.html?' + paramsString;
+  }
+} 
+
+function renderOffersPreview(offers, paramsString) {
+  const container = document.getElementById('offersPreviewContainer');
+  if (!container) return;
+  container.innerHTML = '';
+  offers.forEach(o => {
+    const col = document.createElement('div');
+    col.className = 'col-12 col-md-6 col-lg-4';
+    col.innerHTML = `
+      <div class="card h-100 shadow-sm">
+        <img src="${o.image}" class="card-img-top" alt="${o.city}" style="height:160px; object-fit:cover;">
+        <div class="card-body">
+          <h6 class="card-title mb-1">${o.title}</h6>
+          <p class="text-muted small mb-2">Abflug: ${o.departure} ${o.days ? '• ' + o.days + ' Tage' : ''}</p>
+          <div class="d-flex align-items-center justify-content-between" id="offer-action-${o.id}">
+            <strong class="text-primary">${typeof o.price === 'number' ? o.price + '€' : o.price}</strong>
+          </div>
+        </div>
+      </div>`;
+
+    // append action button (open modal for real offers, otherwise link to offers page)
+    const action = col.querySelector(`#offer-action-${o.id}`);
+    const isReal = (offersData || []).findIndex(item => item.id === o.id) >= 0;
+    if (action) {
+      if (isReal) {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-sm btn-primary';
+        btn.textContent = 'Jetzt ansehen';
+        btn.addEventListener('click', () => showOfferDetails(o.id));
+        action.appendChild(btn);
+      } else {
+        const a = document.createElement('a');
+        a.className = 'btn btn-sm btn-primary';
+        a.href = 'angebote.html?' + paramsString;
+        a.textContent = 'Jetzt ansehen';
+        action.appendChild(a);
+      }
+    }
+
+    container.appendChild(col);
+  });
+  const more = document.getElementById('offersPreviewMore');
+  if (more) more.href = 'angebote.html?' + paramsString;
 }
 
 const destinations = [
@@ -364,6 +481,8 @@ function initAutocomplete() {
     list.innerHTML = '';
     if (!value) {
       list.style.display = 'none';
+      const previewEl = document.getElementById('offersPreview');
+      if (previewEl) previewEl.style.display = 'none';
       return;
     }
     const matches = allDestinations.filter(item => item.toLowerCase().includes(value)).slice(0, 8);
@@ -375,6 +494,12 @@ function initAutocomplete() {
         div.addEventListener('click', function() {
           input.value = match;
           list.style.display = 'none';
+          // show preview immediately for this city
+          const city = match.split(',')[0].trim();
+          const abflug = document.getElementById('abflughafen')?.value;
+          const personen = document.getElementById('personen')?.value;
+          const datum = document.getElementById('reisedatum')?.value;
+          searchAndShowOffers(city, abflug, personen, datum);
         });
         list.appendChild(div);
       });
@@ -384,7 +509,11 @@ function initAutocomplete() {
     }
   });
   document.addEventListener('click', function(e) {
-    if (e.target !== input) list.style.display = 'none';
+    if (e.target !== input) {
+      list.style.display = 'none';
+      const previewEl = document.getElementById('offersPreview');
+      if (previewEl) previewEl.style.display = 'none';
+    }
   });
 }
 
@@ -473,7 +602,7 @@ async function displayMainReviews() {
   `).join('');
 }
 
-// Инициализация профиля
+// Initialize profile handlers
 function initProfileHandlers() {
   document.getElementById('editProfileBtn')?.addEventListener('click', function() {
     document.getElementById('profileView').style.display = 'none';
@@ -529,7 +658,7 @@ function initProfileHandlers() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Добавляем анимацию появления элементов
+  // Add fade-in animation for elements
   const animateOnScroll = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -561,7 +690,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const dateInput = document.getElementById('reisedatum');
   if (dateInput) dateInput.min = today;
   
-  // Добавляем плавное появление hero секции
+  // Add smooth hero section entrance
   const heroContent = document.querySelector('.hero-content');
   if (heroContent) {
     heroContent.style.opacity = '0';
@@ -596,7 +725,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initModals() {
-  // Только обработчики для переключения видимости пароля
+  // Only handlers for toggling password visibility
   const toggleLoginPassword = document.getElementById('toggleLoginPassword');
   const toggleRegPassword = document.getElementById('toggleRegPassword');
   

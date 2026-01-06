@@ -1,4 +1,4 @@
-// Обновление навигации
+// Update navigation
 async function updateNavigation() {
   console.log('updateNavigation called');
   const navLogin = document.getElementById('navLogin');
@@ -42,7 +42,7 @@ async function updateNavigation() {
   }
 }
 
-// Выход
+// Logout
 async function logout() {
   showToast('Möchten Sie sich wirklich abmelden?', 'warning', 6000);
   setTimeout(() => {
@@ -61,7 +61,7 @@ async function logout() {
   }, 100);
 }
 
-// Запуск при загрузке
+// Run on load
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(updateNavigation, 100);

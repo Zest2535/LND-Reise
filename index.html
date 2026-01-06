@@ -126,6 +126,16 @@
             <button class="btn btn-search" aria-label="Reise suchen"><i class="bi bi-search me-2"></i>Suchen</button>
           </div>
         </div>
+
+        <!-- Preview area for offers when searching on the homepage -->
+        <div id="offersPreview" class="container mt-4" style="display: none;">
+          <h5 class="mb-3">Passende Angebote</h5>
+          <div id="offersPreviewContainer" class="row g-3"></div>
+          <div class="mt-3 text-end">
+            <a id="offersPreviewMore" class="btn btn-sm btn-outline-primary" href="#">Mehr Angebote anzeigen</a>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -715,7 +725,7 @@
 
   
   <script>
-    // Простая система без базы данных
+    // Simple system without a database
     
     window.DB = {
       async getUser() {
@@ -773,13 +783,13 @@
     };
   </script>
 
-  <!-- Авторизация и формы логин/регистр -->
+  <!-- Authentication and login/register forms -->
   <script>
-     // Инициализация проверки сессии при загрузке страницы
+     // Initialize session check on page load
      window.addEventListener('load', async function() {
        console.log('Page loaded, checking session...');
      
-       // Ждем инициализации DB
+       // Wait for DB initialization
        let attempts = 0;
        while (!window.DB && attempts < 100) {
          await new Promise(r => setTimeout(r, 50));
@@ -792,7 +802,7 @@
        }
      });
    
-    // Обработка логин формы
+    // Login form handling
     document.addEventListener('DOMContentLoaded', function() {
       const loginForm = document.getElementById('loginForm');
       if (loginForm) {
@@ -809,11 +819,11 @@
            }
          
            try {
-             // Отключаем кнопку отправки
+             // Disable submit button
              submitBtn.disabled = true;
              submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Anmeldung...';
            
-             // Ждем инициализации DB
+             // Wait for DB initialization
              let attempts = 0;
              while (!window.DB && attempts < 50) {
                await new Promise(r => setTimeout(r, 100));
@@ -825,16 +835,16 @@
              await window.DB.signIn(email, password);
            console.log('User logged in successfully');
            
-           // Закрываем модальное окно
+           // Close modal window
            const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
            if (loginModal) loginModal.hide();
            
-           // Очищаем форму
+           // Reset the form
            loginForm.reset();
            submitBtn.disabled = false;
            submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Anmelden';
            
-           // Обновляем навигацию с задержкой
+           // Update navigation with a delay
            setTimeout(async () => {
              if (typeof updateNavigation === 'function') {
                await updateNavigation();
@@ -846,14 +856,14 @@
              console.error('Login error:', error);
              showToast('Anmeldung fehlgeschlagen: ' + (error.message || 'Unbekannter Fehler'), 'error');
            } finally {
-             // Восстанавливаем кнопку
+             // Re-enable button
              submitBtn.disabled = false;
              submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Anmelden';
           }
         });
       }
       
-      // Обработка регистрации
+      // Registration handling
       const registerForm = document.getElementById('registerForm');
       if (registerForm) {
         registerForm.addEventListener('submit', async function(e) {
@@ -866,7 +876,7 @@
           const lastname = document.getElementById('regLastName').value.trim();
            const submitBtn = this.querySelector('button[type="submit"]');
          
-           // Валидация
+           // Validation
            if (!email || !password || !firstname || !lastname) {
              showToast('Bitte füllen Sie alle Felder aus', 'error');
              return;
@@ -883,11 +893,11 @@
            }
           
           try {
-             // Отключаем кнопку отправки
+             // Disable submit button
              submitBtn.disabled = true;
              submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Registrierung...';
            
-             // Ждем инициализации DB
+             // Wait for DB initialization
              let attempts = 0;
              while (!window.DB && attempts < 50) {
                await new Promise(r => setTimeout(r, 100));
@@ -898,14 +908,14 @@
            
             await window.DB.signUp(email, password, firstname, lastname);
            
-             // Закрываем модальное окно регистрации
+             // Close the registration modal
             const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
             if (registerModal) registerModal.hide();
            
-             // Очищаем форму
+             // Reset the form
              registerForm.reset();
            
-             // Обновляем навигацию
+             // Update navigation
              setTimeout(async () => {
                if (typeof updateNavigation === 'function') {
                  await updateNavigation();
@@ -917,7 +927,7 @@
              console.error('Registration error:', error);
              showToast('Registrierung fehlgeschlagen: ' + (error.message || 'Unbekannter Fehler'), 'error');
            } finally {
-             // Восстанавливаем кнопку
+             // Re-enable button
              submitBtn.disabled = false;
              submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Jetzt registrieren';
           }
@@ -926,7 +936,7 @@
     });
   </script>
   
-  <!-- Профиль -->
+  <!-- Profile -->
   <script>
     async function loadProfile() {
       const user = await window.DB.getUser();
@@ -980,10 +990,10 @@
     });
   </script>
   
-  <!-- Навигация -->
+  <!-- Navigation -->
   <script src="nav.js"></script>
   
-  <!-- Основной скрипт -->
+  <!-- Main script -->
   <script src="index.js"></script>
 
 
